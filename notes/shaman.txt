@@ -1,0 +1,25 @@
+stun 6257
+lightning 9386
+fire 12515
+lava 8448
+lightning 1 weakness 14549
+lightning 2 weakness 19711
+fire 1 weakness 22839
+fire 2 weakness 33165
+fire dot 2347 (3x)
+
+
+about 3.35 sec between throws
+3.2 sec pulse lava
+1.8 sec between perfect timed replacement
+
+
+
+dev server:
+22309 fire totem 1 weakness
+34103 fire totem 2 weakness
+
+14783 lightning 1 weakness
+20180 lightning 2 weakness
+7337 stun 1 weakness
+8416 stun 2 weakness

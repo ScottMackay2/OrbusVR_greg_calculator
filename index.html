@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html style="background:#EEEEEE"> <!---- EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE ;) ---->
+<head>
+	<title></title>
+	<script src="libs//Chart.min.js"></script>
+	<script src="libs//jquery-3.4.1.min.js"></script>
+</head>
+<body>
+	<div>
+		Chart number: <input type="number" id="chartNum" placeholder="Chart num" value="1"/>
+	</div>
+	<div>
+		<span>Attacks:</span>
+	</div>
+	<div>
+		<span><textarea placeholder="attacks..." id="attackInput" style="width:1000px;" rows="5"></textarea></span>
+		<span id="loadingText" style="font-size: 50px;padding-left:10px;">Calculating...</span>
+	</div>
+	<div>
+		<button id="toggleTilesets" onclick="toggleTilesets()">Disable tilesets</button>
+		<button id="togglePots" onclick="togglePots()">Disable pots</button>
+		<div>
+			<table>
+				<tr>
+					<td>Tilesets:</td>
+					<td><input type="text" id="tileset1" placeholder="tileset1"></td>
+					<td><input type="text" id="tileset2" placeholder="tileset2"></td>
+					<td><input type="text" id="tileset3" placeholder="tileset3"></td>
+					<td><input type="text" id="tileset4" placeholder="tileset4"></td>
+					<td><input type="text" id="tileset5" placeholder="tileset5"></td>
+				</tr>
+				<tr>
+					<td>boost %:</td>
+					<td><input type="text" id="tileset_percent_1" placeholder="boost %" disabled></td>
+					<td><input type="text" id="tileset_percent_2" placeholder="boost %" disabled></td>
+					<td><input type="text" id="tileset_percent_3" placeholder="boost %" disabled></td>
+					<td><input type="text" id="tileset_percent_4" placeholder="boost %" disabled></td>
+					<td><input type="text" id="tileset_percent_5" placeholder="boost %" disabled></td>
+					<td><input type="text" id="tileset_percent_total" placeholder="boost % all" disabled></td>
+				</tr>
+			</table>
+		</div>
+		<div>
+			<textarea placeholder="triggered tiles..." id="triggered_tiles" style="width:1600px" rows="5" disabled></textarea>
+		</div>
+	</div>
+	<div>
+		<canvas id="line-chart" width="1800" height="400"></canvas>
+	</div>
+	
+	<script type="text/javascript" src="defaultRotations.js"></script>
+	<script type="text/javascript" src="allClassData.js"></script>
+	<script type="text/javascript" src="index.js"></script>
+</body>
+</html>

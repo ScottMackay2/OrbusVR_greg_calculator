@@ -1,0 +1,35 @@
+###normal 30 wand
+frost 2 = ~9460   9457-9471
+frost 2 aff = 10700-10800
+frost 2 emp = 11800-12400
+fire 2 = 15140 mid damge point   (15136-15147)
+fire 2 aff = 17180-17218
+affl 2 = 3442 each tick (12 ticks, with frost buff 15 ticks)
+arcane missle = 6883
+super = 61949
+super selfish streak = 66905 (8.00%)
+super shared streak = 64427 (4.00%)
+super weakness = 64962 (4.864%)
+super 2 weakness = 68282 (10.223%)
+super fire boost = 70396 (13.635%)
+super runic diverse = 78844 (begin triplicity trick xD) (27.272433776%)
+super fire boost and runic diversity = 87292 (40.90945778%)
+
+
+empowered fire boost = 13.635409773%
+runic diversity boost = 27.272433776%
+
+35 alternate fire frost = super up
+67 same spell = super up
+
+
+
++5 max stats (163 int)
+super = 83154
+super aff = 94493 (13.636144984%)
+
+
+
+
+dev
+118266 super runic diversity crit

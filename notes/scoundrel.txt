@@ -1,0 +1,58 @@
+========Scoundrel normal 30 gun no armour or rings=========
+
+5334 normal shot (charged 3 bullets = 3x dmg)
+9169 rank V (71.897% increase)
+7517 flame  (8244 potency)
+22550 charged flame (24773 potency)
+3129 8x 12x poison (12x potency) (doesn't care for rank V) (10x 14x with talent)
+5594 weakness (4.9% boost for about 20 bullets)
+potency any non flame card... 6062 (113.6%)
+
+Added damage poison: 10x3129=31290
+Added damage charged 3x flame: 6548
+Added weakness boost damage: 5334 (rounded up to 5% boost and 20 bullets)
+Added damage flame: 2223
+
+Potency: added damage poison: 4x3129=12516
+Potency: added damage flame: 2223
+
+https://www.youtube.com/watch?v=zId7XEAGpyU&feature=youtu.be
+
+Super:
+5 bullets 1.14542281684x damage...
+
+8002 crit
+10002 first super unranked crit (1.25x dmg)
+13753 rank V crit
+15753 rank V super crit (1.14542281684x damage)
+
+New card every 4 and 1/6 seconds. (expect human thinking time when another card already on belt, delaying card grabbing time)
+
+extra testing:
+1.27768057986% dps increase +0 gun to +4 gun (8002 crit vs 10224 crit)
+12000 dps long term no rank no crit chance increase no armour or buffs damage (10% crit chance)
+
+1.7 sec charge time (1 bullet takes 0.5 seconds to charge. Starting the charging has a delay. Which seems to be possible on 0.2 seconds)
+0.2 sec between shots (on fast trigger pull)
+
+
+
+
+
+
+
+
+Dev server
+5851 normal shot (1.10x)
+6319 normal shot weakness rank (1.08x)
+12541 charged 2 bullet shot (2.14)
+20697 charged 3 bullet shot (da fuck) (3.53x)
+30880 charged 4 bullet shot (da fuck even more) (5.27x)
+10056 ranked V shot (1.718x)
+3911 poison 10 ticks (1.24x)
+flame bullet = 8776 (1.5x relative to dev server normal shot)
+flame bullet charge 3 = 31045 (1.5x relative to dev server charged shot)
+flame bullet charge 3 potency = 35749 (1.15x relative to dev server charged flame)
+break shot 8% now (instead of 5%)
+7180 normal empowered potency bullet (1.227x relative without potency)
+25400 charge 3 empowered potency bullet (1.227x relative without potency)

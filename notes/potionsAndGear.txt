@@ -1,0 +1,7 @@
+150 crit = 10% (base class crit)
+2 rings is 70 crit = 4.6666%
++250 crit is max pot = 16.66%
+250 strenght (max pot) = 8.33%  (150 = 5%)
+250 int (max pot) = 8.33% (150 = 5%)
+empowered ring = 3% more crit damage (relative to uncritted dmg)
++0 to +6 (164 str) = 1.4094488189x)

@@ -1,0 +1,161 @@
+### Class stats
+Weakspot stay time 5 seconds (spawn delay) (3 seconds for the lvl 30 talent Needler, hit within 2 seconds to get the Needler boost)
+Piercing back every 6 seconds
+Charged arrow back every 7 seconds (need a whole second to charge. So fastest possible 8.1 seconds 0.9 arrow)
+Poison back every 12 seconds
+super about 9 normal arrows of time. (8 seconds of uptime)
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
+
+### +0 bow no globes precision
+0.8 normal = 6758
+0.8 normal 6 globes 10326 (52.7% boost)
+0.9 normal = 7433
+0.9 normal 6 globes 11358
+0.9 normal huntersmark = 7805 (5%)
+
+poison tick = 3442 (8x)
+poison tick 5 globes = 4995
+poison tick 6 globes (calculated) = 5306
+
+0.8 piercing 0 globes 15362
+0.8 piercing 6 globes 23473
+0.9 piercing 16037
+0.8 charge 0 globes 21025
+0.9 charge 0 globes 21700
+0.8 charge pierce 0 globe 29629
+0.9 charge pierce 0 globe 30304
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
+
+
+### TALENTS
+Arrow Sight: 10% boost
+Multishot : 10% chance on increase of damage with adding 2253 dmg for + bow (also on charges +2253, )?
+
+
+Multishot with precision ranger +0:
+Multishot has about 10% chance to proc on any non-DoT damage.
+Damage of arrow is the same +2253 for:
+- Piercing arrow
+- Charge shot
+- Normal arrow
+Weakspot hits increases the +2253 damage increase.
+Critting increases the +2253 damage.
+Weakness boosts and stuff like that increases the +2253 damage.
+Multishot does NOT proc for poison ticks.
+
+
+
+
+
+
+
+
+@@@@@@@@@@@ EXRRA
+### +5 bow (163, 163) precision
+0.8 normal = 9071
+0.8 with 1 globe = 9869
+0.8 with 6 globes = 13860 (52.8% boost, 8.8% each globe)
+0.8 with 6 globes arrow sight = 15247 (10% arrow sight)
+0.9 normal = 9978
+0.9 with 6 globes = 15247
+0.9 with 6 globes arrow sight = 16771 (10% arrow sight)
+0.8 charge shot overcharge 0 globes = 39771
+0.9 charge shot overcharge 0 globes = 40677
+0.8 charge shot overcharge 5 globes = 62249 (56.5%, 11.3% each globe)
+0.9 charge shot overcharge 5 globes = 63555
+0.8 weakspot 0 globes = 10885 (20% boost)
+0.9 weakspot 0 globes = 11974
+0.8 charge = 28221
+0.8 charge weakspot = 39511 (40% boost)
+0.8 piercing = 20620
+0.9 piercing = 21528
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
+
+
+
+On old +4 (159 int, 158 str):
+Only multishot talent selected and nothing else:
+2904 normal shot
+4415 crit
+5810 multishot
+3480 weak point
+5290 crit weak spot
+6961 multishot weak spot
+8832 multishot crit
+
++0 bow
+3244 normal 5 globes
+3893 weakspot 5 globes (20%)
+4866 weakspot 31m (50%)
+23788 charge 5 globes
+36178 charge piercing 5 globes
+47576 charge weakspot 31m 5 globes
+50649 charge piercing weakspot 5 globes (40%)
+2253 normal 0 globes
+2703 weakspot 0 globes
+3041 weakspot fast 0 globes needler (35%)
+16519 charge 0 globes
+23127 charge weakspot 0 globes
+28083 charge weakspot fast 0 globes needler (70%)
+
+
+
+
+
+
+
+
+
+
+
+######################################################################################################################################################
+##Dev server v1 +0 bow:
+10345 normal arrow 0.8 with 0 globes  (1.53x)
+11357 normal arrow 0.8 with 0 globes
+15776 normal arrow 0.8 with 6 globes
+24592 charged shot 0.8 with 0 globes
+33196 charged piercing with 0 globes
+18929 piercing arrows with 0 globes
+4380 poison DoT 8 ticks with 0 globes. (1.27x)
+6308 poison DoT 8 ticks with 5 globes.
+
+Only normal arrow damage increased. Added piercing and charged shot not increased.
+
+16354 0.8 with 6 globes 30 meter (arrow sight)
+23788 0.8 with 6 globes 30 meter hit weakspot (arrow sight) (1.45456768986x intead of 1.5x. Its 1.5x without Arrow Sight aaaaah)
+######################################################################################################################################################
+
+##Dev server v2 +0 bow (everything that changed since last time):
+10669 normal arrow 0.8 with 0 globes (1.578x)
+12734 normal arrow 0.9 with 0 globes (1.713x)
+16942 normal arrow 0.8 with 6 globes  (1.587x)
+20221 normal arrow 0.9 with 6 globes  (1.713x)
+33165 charge weakspot 0.8
+
+39598 charge 6 globes
+72267 charge 6 globes weakspot 30 meter talent
+fire rain from 30 sec to 15
+3129 fire rain 6x
+5788 fire rain charged shot (1.85x)
+3442 spread arrow 5x
+4337 spread charged 5x
+poison charged shot = 12x (instead of 8)
+needler weakspot every 2 seconds a new one spawns
+######################################################################################################################################################
+
+##Dev server v3 +0 bow (everything that changed since last time):
+11633 0.8 arrow (1.721x)
+12734 0.9 arrow
+20237 piercing 0.8 with 0 globes (adds 8604 damage)
+21338 piercing 0.9 with 0 globes (adds 8604 damage)
+25900 charged shot 0.8 (adds 14267 damage)
+34446 charged weakspot 0.8 no globes (1.33x)
+40857 charged shot 0.8 weakspot hit needler (1.577x)
+34504 charged piercing 0.8 (adds 22871 damage. Which basically is 8604 (piercing) + 14267 (charge))
+56167 charged piercing 0.8 needler
+Weakcircles hit with charged shots are no longer doubling the boost. But they are 1.65x the boost. Example 20% boost becomes 20x1.65 = 33% boost.
+######################################################################################################################################################
+
+##Release server v4 +0 bow (everything that changed since last time):
+35364 charged piercing 0.8 (1.01x of piercing) (+860 damage)
+######################################################################################################################################################
