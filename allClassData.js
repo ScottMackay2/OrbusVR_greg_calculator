@@ -90,7 +90,8 @@ function initializeAllClassData(){
 	// const POISON_DAMAGE_MULTIPLIER_SCOUNDREL = 1.0 / 3.0 * (2.9473 + AMOUNT_OF_EXTRA_POISON_FROM_EMPOWERED);
 
 	// // Because of the poison damage reduction, a full rotation of cards takes less time
-	// // then 8 cards too. This means the time of a single card needs to be reduced tor
+	// // then 8 cards too. This means the time of a single card needs to be reduced to
+	// // mirror the time it takes to make a full card rotation (7.9473 cards) 
 	// const CARD_TIME_REDUCTION_SCOUNDREL = 1.0 / 8.0 * 7.9473;
 
 	const SCOUNDREL_HUMAN_THINKING_TIME = 0.3;
@@ -227,8 +228,6 @@ function initializeAllClassData(){
 		if(graphSpecificData.shootCard != -1){
 			// Add a new poison DoT right after the attack of the
 			if(graphSpecificData.shootCard == CARD_POISON){
-				graphSpecificData.numPoisonCards += 1;
-
 				if(graphSpecificData.burnEffect == EFFECT_CHEAT){
 					addToDeckRandom(graphSpecificData.deck, CARD_POISON);
 				}
@@ -245,7 +244,6 @@ function initializeAllClassData(){
 				boost *= 1.5; // Increase total damage from flame itself.d
 				SCOUNDREL_NEW_SPAWNED_CARD.tiles = "B";
 				var newAttack = clone(SCOUNDREL_NEW_SPAWNED_CARD);
-				graphSpecificData.numBurnCards += 1;
 				targetPatternData.pattern.splice(targetPatternData.patternIdx+1, 0, newAttack);
 			} else if(graphSpecificData.shootCard == CARD_HEAL){
 				SCOUNDREL_NEW_SPAWNED_CARD.tiles = "SH";

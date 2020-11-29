@@ -23,13 +23,6 @@ function toggleTilesets(e){
 	loadAllCharts();
 }
 
-$("#attackInput").on("keyup",function search(e) {if($("#attackInput").val() != localStorage[$("#chartNum").val()]){updateLocalDataToNew(e);}});
-$("#tileset1").on("keyup",function search(e) {if($("#tileset1").val() != localStorage[$("#chartNum").val()*100+1]){updateLocalDataToNew(e);}});
-$("#tileset2").on("keyup",function search(e) {if($("#tileset2").val() != localStorage[$("#chartNum").val()*100+2]){updateLocalDataToNew(e);}});
-$("#tileset3").on("keyup",function search(e) {if($("#tileset3").val() != localStorage[$("#chartNum").val()*100+3]){updateLocalDataToNew(e);}});
-$("#tileset4").on("keyup",function search(e) {if($("#tileset4").val() != localStorage[$("#chartNum").val()*100+4]){updateLocalDataToNew(e);}});
-$("#tileset5").on("keyup",function search(e) {if($("#tileset5").val() != localStorage[$("#chartNum").val()*100+5]){updateLocalDataToNew(e);}});
-
 
 function restoreAttacks() {
 	var curClass = parseInt($("#chartnum").val());
