@@ -447,7 +447,7 @@ function initializeAllClassData(){
 
 	// Pre init the chart data.
 	if(dpsChart == undefined){
-		dpsChart = new Chart(document.getElementById("line-chart"), {
+		dpsChart = new Chart(document.getElementById("line_chart"), {
 			type: 'line',
 			data: undefined,
 			options: {
@@ -458,6 +458,11 @@ function initializeAllClassData(){
 				scales: {
 					xAxes: [{
 						distribution: 'linear'
+					}],
+					yAxes: [{
+						afterFit: function(scaleInstance) {
+							scaleInstance.width = 100; // sets the width to 100px
+						}
 					}]
 				}
 			}
