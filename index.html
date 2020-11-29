@@ -4,50 +4,120 @@
 	<title></title>
 	<script src="libs//Chart.min.js"></script>
 	<script src="libs//jquery-3.4.1.min.js"></script>
+	<script src="libs//bootstrap.min.js"></script>
+	<link rel="stylesheet" href="libs//bootstrap.min.css">
 </head>
+<style>
+	td input {
+		max-width: 75px;
+	}
+</style>
 <body>
-	<div>
-		Chart number: <input type="number" id="chartNum" placeholder="Chart num" value="1"/>
-	</div>
-	<div>
-		<span>Attacks:</span>
-	</div>
-	<div>
-		<span><textarea placeholder="attacks..." id="attackInput" style="width:1000px;" rows="5"></textarea></span>
-		<span id="loadingText" style="font-size: 50px;padding-left:10px;">Calculating...</span>
-	</div>
-	<div>
-		<button id="toggleTilesets" onclick="toggleTilesets()">Disable tilesets</button>
-		<button id="togglePots" onclick="togglePots()">Disable pots</button>
-		<div>
-			<table>
-				<tr>
-					<td>Tilesets:</td>
-					<td><input type="text" id="tileset1" placeholder="tileset1"></td>
-					<td><input type="text" id="tileset2" placeholder="tileset2"></td>
-					<td><input type="text" id="tileset3" placeholder="tileset3"></td>
-					<td><input type="text" id="tileset4" placeholder="tileset4"></td>
-					<td><input type="text" id="tileset5" placeholder="tileset5"></td>
-				</tr>
-				<tr>
-					<td>boost %:</td>
-					<td><input type="text" id="tileset_percent_1" placeholder="boost %" disabled></td>
-					<td><input type="text" id="tileset_percent_2" placeholder="boost %" disabled></td>
-					<td><input type="text" id="tileset_percent_3" placeholder="boost %" disabled></td>
-					<td><input type="text" id="tileset_percent_4" placeholder="boost %" disabled></td>
-					<td><input type="text" id="tileset_percent_5" placeholder="boost %" disabled></td>
-					<td><input type="text" id="tileset_percent_total" placeholder="boost % all" disabled></td>
-				</tr>
-			</table>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-12">
+				<h4>Scott's DPS Calculator</h4>
+			</div>
 		</div>
-		<div>
-			<textarea placeholder="triggered tiles..." id="triggered_tiles" style="width:1600px" rows="5" disabled></textarea>
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-5 col-xl-5">
+				<form>
+					<div class="form-group">
+						<label for="chartnum">Class: </label>
+						<select name="chartnum" id="chartnum" class="form-control" onchange="restoreDefaults()">
+							<option value="1">mage</option>
+							<option value="2">scoundrel</option>
+							<option value="3">shaman</option>
+							<option value="4">ranger</option>
+							<option value="5">fire mage</option>
+							<option value="6">manip_ranger</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="attacks">Attacks</label>
+						<textarea class="form-control" id="attacks" rows="5"></textarea>
+						<button type="button" class="btn btn-outline-secondary btn-sm float-right" onclick="restoreAttacks()">Restore default attacks</button>
+					</div>
+				</form>
+				<button id="togglePots" onclick="togglePots()" class="btn btn-outline-secondary btn-sm active" data-toggle="button" aria-pressed="true">Disable pots</button>
+				<hr>
+				<div class="form-group">
+					<label for="calcCount">Calc Count</label>
+					<input type="number"  name="calcCount" id="calcCount" class="form-control" style="max-width:120px; margin-bottom:10px;" value=100>
+					<button id="updateChart" class="btn btn-info" onclick="loadAllCharts()">Update Chart</button>
+				</div>
+			</div>
+
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-5 col-xl-5">
+				<button id="toggleTilesets" onclick="toggleTilesets()" class="btn btn-outline-secondary btn-sm active" data-toggle="button" aria-pressed="true">Disable tilesets</button>
+				<button id="resetTilesets" onclick="restoreTilesets()" class="btn btn-outline-secondary btn-sm float">Restore default tileset</button>
+				<div class="table-responsive-sm">
+					<table class="table">
+						<thead>
+						<tr>
+							<th scope="col">Tileset</th>
+							<th scope="col">Boost %</th>
+							<th scope="col">Num Procs</th>
+							<th scope="col">Avg Int</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td><input type="text" id="tileset1" placeholder="tileset1"></td>
+							<td><input type="text" id="tileset_percent_1" placeholder="boost %" disabled></td>
+							<td><input type="text" id="tileset_numprocs_1"  disabled></td>
+							<td><input type="text" id="tileset_avgint_1" disabled></td>
+						</tr>
+						<tr>
+							<td><input type="text" id="tileset2" placeholder="tileset2"></td>
+							<td><input type="text" id="tileset_percent_2" placeholder="boost %" disabled></td>
+							<td><input type="text" id="tileset_numprocs_2"  disabled></td>
+							<td><input type="text" id="tileset_avgint_2"  disabled></td>
+						</tr>
+						<tr>
+							<td><input type="text" id="tileset3" placeholder="tileset3"></td>
+							<td><input type="text" id="tileset_percent_3" placeholder="boost %" disabled></td>
+							<td><input type="text" id="tileset_numprocs_3"  disabled></td>
+							<td><input type="text" id="tileset_avgint_3"  disabled></td>
+						</tr>
+						<tr>
+							<td><input type="text" id="tileset4" placeholder="tileset4"></td>
+							<td><input type="text" id="tileset_percent_4" placeholder="boost %" disabled></td>
+							<td><input type="text" id="tileset_numprocs_4"  disabled></td>
+							<td><input type="text" id="tileset_avgint_4"  disabled></td>
+						</tr>
+						<tr>
+							<td><input type="text" id="tileset5" placeholder="tileset5"></td>
+							<td><input type="text" id="tileset_percent_5" placeholder="boost %" disabled></td>
+							<td><input type="text" id="tileset_numprocs_5" disabled></td>
+							<td><input type="text" id="tileset_avgint_5"  disabled></td>
+						</tr>
+						<tr class="bg-info">
+							<td>Total Boost</td>
+							<td><input type="text" id="tileset_percent_total" placeholder="boost % all" disabled></td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<h2 id="loadingText">Calculating...</h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<canvas id="line-chart" width="1800" height="400"></canvas>
+			</div>
+		</div>
+		<br />
+		<div class="row">
+			<div class="col-sm-12">
+				<textarea class= "form-control" placeholder="No triggered tiles." id="triggered_tiles" rows="5" disabled></textarea>
+			</div>
 		</div>
 	</div>
-	<div>
-		<canvas id="line-chart" width="1800" height="400"></canvas>
-	</div>
-	
 	<script type="text/javascript" src="defaultRotations.js"></script>
 	<script type="text/javascript" src="allClassData.js"></script>
 	<script type="text/javascript" src="index.js"></script>

@@ -107,13 +107,19 @@ function loadAllCharts(){
 			updateEditTimemout = setTimeout(timeoutFunc, 1000);
 		} else{
 			chartFilling = true;
-			for(var i=1;i<20;i++){
-				// Block loading charts that are empty or aren't suppose to be loaded.
-				if(localStorage[i] == undefined || localStorage[i*1000] == 1){
+			// Update the hidden values first.
+			var curChart = parseInt($('#chartnum').val());
+			for(i=0;i<6; i++) {
+				if (dpsChart.data.datasets[i] == undefined) {
 					continue;
+				} else if (i+1 == curChart) {
+					dpsChart.data.datasets[i].hidden = false;
+				} else {
+					dpsChart.data.datasets[i].hidden = true;
 				}
-				fillChart(i);
 			}
+
+			fillChart(curChart);
 			setTimeout(chartCanRefillTimeoutFunc, 1000);
 		}
 	};
@@ -130,16 +136,6 @@ function loadAllCharts(){
 	}
 }
 
-function toggleTilesets(e){
-	if(tilesetsEnabledFlag){
-		$("#toggleTilesets").html('Enable tilesets');
-	} else{
-		$("#toggleTilesets").html('Disable tilesets');
-	}
-	tilesetsEnabledFlag = !tilesetsEnabledFlag;
-	loadAllCharts();
-}
-
 function togglePots(e){
 	if(chartFilling == false){
 		if(usingPotsFlag){
@@ -153,9 +149,11 @@ function togglePots(e){
 	}
 }
 
-function updateTilesetPercentages(chartNum){
-	if(chartNum == $("#chartNum").val()){
+function  updateTilesetPercentages(chartNum){
+
+	if(chartNum == parseInt($("#chartnum").val())){
 		// Clear to empty boosts.
+		$("#tileset_percent_total").val(0);
 		for(var i=1;i<=5;i++){
 			$("#tileset_percent_"+i).val(0);
 		}
@@ -167,6 +165,9 @@ function updateTilesetPercentages(chartNum){
 				var tileset = graphSpecificData.usedTilesets[i];
 				var percentBoost = tileset.addedDmg*100.0/totalNonTilesetDmg;
 				$("#tileset_percent_"+tileset.idx).val(percentBoost.toFixed(2));
+				$("#tileset_numprocs_"+tileset.idx).val(tileset.numProcs.toLocaleString())
+				var sumInt = tileset.intList.reduce((a,b) => a + b, 0)
+				$("#tileset_avgint_"+tileset.idx).val((sumInt/ tileset.intList.length).toFixed(2))
 			}
 
 			$("#tileset_percent_total").val((graphSpecificData.addedDmgTilesets*100.0/totalNonTilesetDmg).toFixed(2));	
@@ -175,23 +176,7 @@ function updateTilesetPercentages(chartNum){
 	}
 }
 
-function fillInputs(chartNum){
-	$("#attackInput").val(localStorage[chartNum]);
-	$("#tileset1").val(localStorage[chartNum*100+1]);
-	$("#tileset2").val(localStorage[chartNum*100+2]);
-	$("#tileset3").val(localStorage[chartNum*100+3]);
-	$("#tileset4").val(localStorage[chartNum*100+4]);
-	$("#tileset5").val(localStorage[chartNum*100+5]);
-}
-
-fillInputs(1);
 loadAllCharts();
-
-$("#chartNum").on("keyup",function search(e) {
-		var newChartNum = $("#chartNum").val();
-		fillInputs(newChartNum);
-		updateTilesetPercentages(newChartNum);
-});
 
 function updateLocalDataToNew(e){
 	var chartNum = $("#chartNum").val();
@@ -208,14 +193,6 @@ function updateLocalDataToNew(e){
 		} else{
 			chartFilling = true;
 
-			// Store last configuration in the current chart.
-			localStorage[chartNum] = $("#attackInput").val();
-			localStorage[100*chartNum+1] = $("#tileset1").val();
-			localStorage[100*chartNum+2] = $("#tileset2").val();
-			localStorage[100*chartNum+3] = $("#tileset3").val();
-			localStorage[100*chartNum+4] = $("#tileset4").val();
-			localStorage[100*chartNum+5] = $("#tileset5").val();
-			
 			// Draw the info with the current configuration.
 			fillChart(chartNum);
 			setTimeout(chartCanRefillTimeoutFunc, UPDATE_AFTER);
@@ -230,35 +207,35 @@ function updateLocalDataToNew(e){
 	}
 }
 
-$("#attackInput").on("keyup",function search(e) {if($("#attackInput").val() != localStorage[$("#chartNum").val()]){updateLocalDataToNew(e);}});
-$("#tileset1").on("keyup",function search(e) {if($("#tileset1").val() != localStorage[$("#chartNum").val()*100+1]){updateLocalDataToNew(e);}});
-$("#tileset2").on("keyup",function search(e) {if($("#tileset2").val() != localStorage[$("#chartNum").val()*100+2]){updateLocalDataToNew(e);}});
-$("#tileset3").on("keyup",function search(e) {if($("#tileset3").val() != localStorage[$("#chartNum").val()*100+3]){updateLocalDataToNew(e);}});
-$("#tileset4").on("keyup",function search(e) {if($("#tileset4").val() != localStorage[$("#chartNum").val()*100+4]){updateLocalDataToNew(e);}});
-$("#tileset5").on("keyup",function search(e) {if($("#tileset5").val() != localStorage[$("#chartNum").val()*100+5]){updateLocalDataToNew(e);}});
-
 // Calculates all dps over the whole timeline of the chart.
 function fillChart(chartNum){
 	var graphSpecificData = dpsChart.data.datasets[chartNum-1];
+
 	if(graphSpecificData == undefined){
 		return;
 	}
 
 	console.log("load chart " + chartNum);
 
+	// Reset the calcCount
+	graphSpecificData.calcCount = parseInt($("#calcCount").val());
+
 	// Retrieve the current attack pattern.
-	var attackPatternStr = localStorage[chartNum];
+	var attackPatternStr = $("#attacks").val();
 	
 	// Retrieve the current tilesets.
 	graphSpecificData.usedTilesets = [];
+	graphSpecificData.numAfflictions = 0;
+	graphSpecificData.numFireBoosts = 0;
+	graphSpecificData.numBurnCards = 0;
+	graphSpecificData.numPoisonCards = 0;
 	if(tilesetsEnabledFlag){
-		for(var i=0;i<MAX_AVAILABLE_TILESETS;i++){
-			var tilesetData = localStorage[100*chartNum+1+i];
+		for(var i=1;i<MAX_AVAILABLE_TILESETS+1;i++){
+			var tilesetData = $("#tileset"+i).val()
 			if(tilesetData != undefined){
-				
 				tilesetData = tilesetData.replace(/ /g,'');
 				if(tilesetData.length >= MINIMUM_TILESET_LENGTH){
-					graphSpecificData.usedTilesets.push({"idx":1+i,"condition":tilesetData,addedDmg:0});
+					graphSpecificData.usedTilesets.push({"idx":i,"condition":tilesetData,addedDmg:0, numProcs:0, intList: [] });
 				}
 			}
 		}
@@ -325,7 +302,6 @@ function fillChart(chartNum){
 			}
 			attackPatternsData["100_"+i2] = {pattern:attackPattern, patternIdx:0, patternTimePassed:0};
 		}
-
 		var prevNormalAttackTimePassed = -100; // Minus number to trigger start of combat tile.
 
 		// Generate a random startFrame from where the hits a second tiles start triggering.
@@ -473,33 +449,14 @@ function fillChart(chartNum){
 					test += " "+graphSpecificData.activeTilesets[i3].tileset.condition + " = " + (tilesetTimePassed-totalTilesetUptime);
 					if(tilesetTimePassed > totalTilesetUptime-TILESET_HUMAN_UPTIME_CORRECTION){ // Seems to still count even over 4 secs. Like 4.1ish	
 						var goneOne = graphSpecificData.activeTilesets.splice(i3, 1);
-						// if(chartNum == 3){
-							// console.log(timePassed + " = " + goneOne.time + " = " + goneOne[0].tileset.condition);
-							// console.log();
-						// }
 					}
 				}
-				// if(attack.damage > 50000){
-				// 	console.log(test);
-				// }
 
-				// if(tilesetsEnabledFlag){
-				// 	if(attack.damage > 50000){
-				// 		var printIt = "";
-				// 		for(var i6=0;i6<graphSpecificData.activeTilesets.length;i6++){
-				// 			printIt+=" "+(graphSpecificData.activeTilesets[i6].tileset.condition);
-				// 		}
-				// 		console.log(printIt);
-				// 		console.log(attack.damage);
-				// 	}
-				// }
 			}
-
 
 			// Calculate the current boost in damage relative to the base damage.
 			// This includes tilesets, any external boosting factors (e.g. weakness) and a 
 			// default upscaling of damage (e.g. higher lvl weapon).
-			// console.log(addedDmgBoostPercent);
 			var CURRENT_DAMAGE_BOOST = STATIC_BOOST*addedDmgBoostPercent*modifierFuncBoostPercent*critBoostPercent*graphSpecificData.otherBoost;
 
 			// Calculate the added damage by doing boosts time the default damage of the attack.
@@ -512,10 +469,24 @@ function fillChart(chartNum){
 				}
 
 				// Calculate total tileset added damage.
+				var tilesetBoost = 0;
+				var tilesetBoostAmt = 0;
 				for(var i3=targetTilesets.length-1;i3>=0;i3--){
 					addedTilesetDamagePercent += targetTilesets[i3].tilesetBoostAmount;
 					targetTilesets[i3].tileset.addedDmg += ADDED_DMG * targetTilesets[i3].tilesetBoostAmount;
 					graphSpecificData.addedDmgTilesets += ADDED_DMG * targetTilesets[i3].tilesetBoostAmount;
+					tilesetBoost += ADDED_DMG * targetTilesets[i3].tilesetBoostAmount;
+					tilesetBoostAmt += targetTilesets[i3].tilesetBoostAmount;
+				}
+
+				if(attack.type == ATTACK_DOT){
+					graphSpecificData.numAfflictions += 1;
+					var curtiles = attack.dotTiles;
+					for(var i4=curtiles.length-1;i4>=0;i4--) {
+						if (curtiles[i4].tileset.condition == "B26") {
+							graphSpecificData.numFireBoosts += 1;
+						}
+					}
 				}
 
 				// Add the damage to the total tileset damage boosting.
@@ -539,6 +510,7 @@ function fillChart(chartNum){
 			// Attacks with DoT effect will affect the list of attacks were every second
 			// a new DoT attack is added for specified DoT dotTimes amount.
 			if(attack.dotTimes > 0){
+
 				var addedTimeSinceStartNextDot = 1;
 				var amountOfDotsAdded = 0;
 				var timePassed2 = 0;
@@ -644,11 +616,6 @@ function fillChart(chartNum){
 				hitCount += attack.hitCount;
 			}
 
-			// if(chartNum == 1 && newTriggeredTiles.length > 0){
-				// console.log(attack);
-				// console.log(timePassed + " = " +newTriggeredTiles);
-			// }
-
 			stringStoringAllTiles+=newTriggeredTiles;
 
 			// Check for all tilesets adding in the new tiles and see if they proc (and proc the tileset if 
@@ -667,7 +634,6 @@ function fillChart(chartNum){
 					var tile = newTriggeredTiles[i3];
 					// If the first tile does not match with the current tileset condition then add interference.
 					
-					// console.log(tileset.conditionLeft);
 
 					if(!tileset.conditionLeft.startsWith(tile)){
 						tileset.interferenceCount++;
@@ -687,6 +653,8 @@ function fillChart(chartNum){
 						
 						// All tiles were available in tileset so the tileset PROC's!
 						if(tileset.conditionLeft.length == 0){
+							tileset.numProcs += 1;
+							tileset.intList.push(Math.min(9, tileset.interferenceCount));
 							tileset.conditionLeft = tileset.condition; // Reset back for next trigger.
 							
 							tileset.interferenceCount = (tileset.interferenceCount > 9 ? 9 : tileset.interferenceCount);
@@ -709,14 +677,6 @@ function fillChart(chartNum){
 				}
 			}
 
-			// if(chartNum == 4 && newTriggeredTiles.length > 0){
-			// 	console.log(newTriggeredTiles);
-			// }
-
-			// if(chartNum == 1 && attack.time > 0 && attack.type == ATTACK_NORMAL){
-			// 	console.log(addedTilesetDamagePercent);
-			// 	console.log(attack);
-			// }
 		} while(true);
 
 		if(multiDrawEnabled){
@@ -759,25 +719,8 @@ function fillChart(chartNum){
 
 	updateTilesetPercentages(chartNum);
 
-
-
-	// if(chartNum == 2 && stringStoringAllTiles.length > 0){
-	// 	console.log(stringStoringAllTiles);
-	// }
 	dpsChart.update();
 }
-
-
-// 5913
-// normal 0.8
-// 6505
-// normal 0.9
-// 3442
-// poison
-// 28093
-// charge piercing with 0.8 delay
-// 29498
-// charge piercing with 0.9 delay
 
 
 function clone(obj) {

@@ -90,8 +90,7 @@ function initializeAllClassData(){
 	// const POISON_DAMAGE_MULTIPLIER_SCOUNDREL = 1.0 / 3.0 * (2.9473 + AMOUNT_OF_EXTRA_POISON_FROM_EMPOWERED);
 
 	// // Because of the poison damage reduction, a full rotation of cards takes less time
-	// // then 8 cards too. This means the time of a single card needs to be reduced to
-	// // mirror the time it takes to make a full card rotation (7.9473 cards) 
+	// // then 8 cards too. This means the time of a single card needs to be reduced tor
 	// const CARD_TIME_REDUCTION_SCOUNDREL = 1.0 / 8.0 * 7.9473;
 
 	const SCOUNDREL_HUMAN_THINKING_TIME = 0.3;
@@ -228,6 +227,8 @@ function initializeAllClassData(){
 		if(graphSpecificData.shootCard != -1){
 			// Add a new poison DoT right after the attack of the
 			if(graphSpecificData.shootCard == CARD_POISON){
+				graphSpecificData.numPoisonCards += 1;
+
 				if(graphSpecificData.burnEffect == EFFECT_CHEAT){
 					addToDeckRandom(graphSpecificData.deck, CARD_POISON);
 				}
@@ -244,6 +245,7 @@ function initializeAllClassData(){
 				boost *= 1.5; // Increase total damage from flame itself.d
 				SCOUNDREL_NEW_SPAWNED_CARD.tiles = "B";
 				var newAttack = clone(SCOUNDREL_NEW_SPAWNED_CARD);
+				graphSpecificData.numBurnCards += 1;
 				targetPatternData.pattern.splice(targetPatternData.patternIdx+1, 0, newAttack);
 			} else if(graphSpecificData.shootCard == CARD_HEAL){
 				SCOUNDREL_NEW_SPAWNED_CARD.tiles = "SH";
@@ -270,13 +272,6 @@ function initializeAllClassData(){
 	const RANGER_2_GLOBES = (24592+((39598-24592)*2/6))/24592;
 	const ARROW_SIGHT_RANGER = 1.10; // Stand at-least 30 meters away talent. Go get a default 10% boost.
 
-	// var attackTypes = {
-			// Warrior boost
-			// 'F'    : new Attack(0.0,  		0,  					0, 0, 0, 				0.15, 10, 1, 	1,"A"), // Affliction runic diverse frost boost
-	// };
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////
 
 	var mageData = {
 		attackTypes : {
@@ -459,28 +454,14 @@ function initializeAllClassData(){
 			data: undefined,
 			options: {
 				responsive: true,
+				legend: {
+					display: false
+				},
 				scales: {
 					xAxes: [{
 						distribution: 'linear'
 					}]
-				},
-				legend: {
-		            display: true,
-		            // Override the onClick of an legend item to also save in memory if the chart is hidden or not.
-		            onClick: function(e, legendItem, legend){
-		            	const chartNum = legendItem.datasetIndex + 1;
-		            	Chart.defaults.global.legend.onClick.call(this, e, legendItem);
-		            	localStorage[chartNum*1000] = legendItem.hidden ? 0 : 1;
-		            	// On unhide re-load chart. (to make any updated chart info show, or when chart was never loaded make it load for first time)
-		            	if(legendItem.hidden){
-		            		$("#loadingText").css({visibility: "inherit"});
-		            		setTimeout(function(){
-		            			fillChart(chartNum);
-		            			$("#loadingText").css({visibility: "collapse"});
-		            		}, 50);
-		            	}
-		            }
-		        } 
+				}
 			}
 		});
 	}
@@ -488,7 +469,7 @@ function initializeAllClassData(){
 		labels: labelsAxisX,
 		datasets: [{ 
 			data: [],
-			hidden: (localStorage[1*1000] == 1 ? true : false),
+			hidden: (parseInt($("#chartnum").val()) == 1 ? false : true),
 			label: "1: mage",
 			borderColor: "#3e95cd",
 			fill: false,
@@ -501,13 +482,13 @@ function initializeAllClassData(){
 		},
 		{ 
 			data: [],
-			hidden: (localStorage[2*1000] == 1 ? true : false),
+			hidden: (parseInt($("#chartnum").val()) == 2 ? false : true),
 			label: "2: scoundrel",
 			borderColor: "#9e954d",
 			fill: false,
 			usedTilesets : [],
 			classData : scoundrelData,
-			calcCount : 120,
+			calcCount : 100,
 			chargedStrikes: false,
 			randomizedChargedStrikes: true,
 			// To add to the realistic view of iceheart, alot of non-boss enemies are not frosted and alot of boss fights without a mage are not 
@@ -518,7 +499,7 @@ function initializeAllClassData(){
 		},
 		{ 
 			data: [],
-			hidden: (localStorage[3*1000] == 1 ? true : false),
+			hidden: (parseInt($("#chartnum").val()) == 3 ? false : true),
 			label: "3: shaman",
 			borderColor: "#000000",
 			fill: false,
@@ -531,7 +512,7 @@ function initializeAllClassData(){
 		},
 		{ 
 			data: [],
-			hidden: (localStorage[4*1000] == 1 ? true : false),
+			hidden: (parseInt($("#chartnum").val()) == 4 ? false : true),
 			label: "4: ranger",
 			borderColor: "#5eD54d",
 			fill: false,
@@ -544,7 +525,7 @@ function initializeAllClassData(){
 		},
 		{ 
 			data: [],
-			hidden: (localStorage[5*1000] == 1 ? true : false),
+			hidden: (parseInt($("#chartnum").val()) == 5 ? false : true),
 			label: "5: fire mage",
 			borderColor: "#9e0000",
 			fill: false,
@@ -557,7 +538,7 @@ function initializeAllClassData(){
 		},
 		{ 
 			data: [],
-			hidden: (localStorage[6*1000] == 1 ? true : false),
+			hidden: (parseInt($("#chartnum").val()) == 6 ? false : true),
 			label: "6: manip_ranger",
 			borderColor: "#9e9e9e",
 			fill: false,
@@ -568,19 +549,6 @@ function initializeAllClassData(){
 			randomizedChargedStrikes: true,
 			otherBoost: ICEHEART_BOOST - 0.02,
 		},
-		// { 
-		// 	data: [],
-		// 	hidden:localStorage[7*1000] == 1 ? true : false,
-		// 	label: "7: god_ranger",
-		// 	borderColor: "#006400",
-		// 	fill: false,
-		// 	usedTilesets : [],
-		// 	calcCount : 300,
-		// 	classData : rangerData,
-		// 	chargedStrikes: true,
-		// 	randomizedChargedStrikes: false,
-		// 	otherBoost: 1,
-		// },
 		]
 	};
 }
