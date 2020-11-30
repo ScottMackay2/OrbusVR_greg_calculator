@@ -766,7 +766,6 @@ function fillChart(){
 	graphSpecificData.triggeredTiles = stringStoringAllTiles;
 
 	updateTilesetPercentages($("#nameLoadOut").val());
-	//TODO Maggie Fix this before committing again
 	updateTilesetProcChart($("#nameLoadOut").val());
 
 	dpsChart.update();
