@@ -107,19 +107,8 @@ function loadAllCharts(){
 			updateEditTimemout = setTimeout(timeoutFunc, 1000);
 		} else{
 			chartFilling = true;
-			// Update the hidden values first.
-			var curChart = parseInt($('#chartnum').val());
-			for(i=0;i<6; i++) {
-				if (dpsChart.data.datasets[i] == undefined) {
-					continue;
-				} else if (i+1 == curChart) {
-					dpsChart.data.datasets[i].hidden = false;
-				} else {
-					dpsChart.data.datasets[i].hidden = true;
-				}
-			}
 
-			fillChart(curChart);
+			fillChart();
 			setTimeout(chartCanRefillTimeoutFunc, 1000);
 		}
 	};
@@ -208,7 +197,12 @@ function updateLocalDataToNew(e){
 }
 
 // Calculates all dps over the whole timeline of the chart.
-function fillChart(chartNum){
+function fillChart(){
+
+	// Reset the data
+	dpsChart.data.datasets = [];
+
+
 	var graphSpecificData = dpsChart.data.datasets[chartNum-1];
 
 	if(graphSpecificData == undefined){

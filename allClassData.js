@@ -1,10 +1,15 @@
-// Different attack types have different type of effect. The dps code will make some attacks do different things.
-const ATTACK_NORMAL = 0;
-const ATTACK_DOT = 1;
-const ATTACK_HITS_PER_SECOND = 3;
 
 var dpsChart;
 function initializeAllClassData(){
+	// Set the classes in the UI.
+	var classOptions = document.getElementById('classData');
+	for (i=1; i<= CONST_CLASSES.length; i++) {
+		var newOption = new Option(CONST_CLASSES[i-1]);
+		classOptions.options.add(newOption);
+	}
+
+	updateLoadOutList();
+
 	const ICEHEART_BOOST = 1.05;
 
 	const MAX_ADDED_CRIT_DMG_FROM_ARMOUR = 0.08; // 0.02 = 2% every armour piece. With 4 armour pieces.
@@ -465,9 +470,13 @@ function initializeAllClassData(){
 			}
 		});
 	}
+}
+
+function loadChartDatasets(orbusClass,
+						   ranger){
 	dpsChart.data = {
 		labels: labelsAxisX,
-		datasets: [{ 
+		datasets: [{
 			data: [],
 			hidden: (parseInt($("#chartnum").val()) == 1 ? false : true),
 			label: "1: mage",
@@ -480,75 +489,75 @@ function initializeAllClassData(){
 			randomizedChargedStrikes: true,
 			otherBoost: ICEHEART_BOOST,
 		},
-		{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 2 ? false : true),
-			label: "2: scoundrel",
-			borderColor: "#9e954d",
-			fill: false,
-			usedTilesets : [],
-			classData : scoundrelData,
-			calcCount : 100,
-			chargedStrikes: false,
-			randomizedChargedStrikes: true,
-			// To add to the realistic view of iceheart, alot of non-boss enemies are not frosted and alot of boss fights without a mage are not 
-			// frosted either. This is why I remove 2%, even though it might be even more on the average situation...
-			// Although in theory this is the only number that isn't fully correct, but in practice it proves to be almost impossible to always
-			// have frost on enemies, and the full 5% boost credit should be taken with a grain of salt for every non-mage class.
-			otherBoost: ICEHEART_BOOST - 0.02,
-		},
-		{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 3 ? false : true),
-			label: "3: shaman",
-			borderColor: "#000000",
-			fill: false,
-			usedTilesets : [],
-			classData : shamanData,
-			calcCount : 50,
-			chargedStrikes: true,
-			randomizedChargedStrikes: true,
-			otherBoost: 1,
-		},
-		{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 4 ? false : true),
-			label: "4: ranger",
-			borderColor: "#5eD54d",
-			fill: false,
-			usedTilesets : [],
-			classData : rangerData,
-			calcCount : 200,
-			chargedStrikes: false,
-			randomizedChargedStrikes: true,
-			otherBoost: ICEHEART_BOOST - 0.02,
-		},
-		{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 5 ? false : true),
-			label: "5: fire mage",
-			borderColor: "#9e0000",
-			fill: false,
-			usedTilesets : [],
-			classData : mageData,
-			calcCount : 200,
-			chargedStrikes: false,
-			randomizedChargedStrikes: true,
-			otherBoost: 1,
-		},
-		{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 6 ? false : true),
-			label: "6: manip_ranger",
-			borderColor: "#9e9e9e",
-			fill: false,
-			usedTilesets : [],
-			calcCount : 100,
-			classData : rangerData,
-			chargedStrikes: false,
-			randomizedChargedStrikes: true,
-			otherBoost: ICEHEART_BOOST - 0.02,
-		},
+			{
+				data: [],
+				hidden: (parseInt($("#chartnum").val()) == 2 ? false : true),
+				label: "2: scoundrel",
+				borderColor: "#9e954d",
+				fill: false,
+				usedTilesets : [],
+				classData : scoundrelData,
+				calcCount : 100,
+				chargedStrikes: false,
+				randomizedChargedStrikes: true,
+				// To add to the realistic view of iceheart, alot of non-boss enemies are not frosted and alot of boss fights without a mage are not
+				// frosted either. This is why I remove 2%, even though it might be even more on the average situation...
+				// Although in theory this is the only number that isn't fully correct, but in practice it proves to be almost impossible to always
+				// have frost on enemies, and the full 5% boost credit should be taken with a grain of salt for every non-mage class.
+				otherBoost: ICEHEART_BOOST - 0.02,
+			},
+			{
+				data: [],
+				hidden: (parseInt($("#chartnum").val()) == 3 ? false : true),
+				label: "3: shaman",
+				borderColor: "#000000",
+				fill: false,
+				usedTilesets : [],
+				classData : shamanData,
+				calcCount : 50,
+				chargedStrikes: true,
+				randomizedChargedStrikes: true,
+				otherBoost: 1,
+			},
+			{
+				data: [],
+				hidden: (parseInt($("#chartnum").val()) == 4 ? false : true),
+				label: "4: ranger",
+				borderColor: "#5eD54d",
+				fill: false,
+				usedTilesets : [],
+				classData : rangerData,
+				calcCount : 200,
+				chargedStrikes: false,
+				randomizedChargedStrikes: true,
+				otherBoost: ICEHEART_BOOST - 0.02,
+			},
+			{
+				data: [],
+				hidden: (parseInt($("#chartnum").val()) == 5 ? false : true),
+				label: "5: fire mage",
+				borderColor: "#9e0000",
+				fill: false,
+				usedTilesets : [],
+				classData : mageData,
+				calcCount : 200,
+				chargedStrikes: false,
+				randomizedChargedStrikes: true,
+				otherBoost: 1,
+			},
+			{
+				data: [],
+				hidden: (parseInt($("#chartnum").val()) == 6 ? false : true),
+				label: "6: manip_ranger",
+				borderColor: "#9e9e9e",
+				fill: false,
+				usedTilesets : [],
+				calcCount : 100,
+				classData : rangerData,
+				chargedStrikes: false,
+				randomizedChargedStrikes: true,
+				otherBoost: ICEHEART_BOOST - 0.02,
+			},
 		]
 	};
 }

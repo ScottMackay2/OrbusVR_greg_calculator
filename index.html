@@ -16,20 +16,14 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-12 form-group">
-				<h4>Scott's DPS Calculator</h4>
+				<h4>Scott's DPS Simulator</h4>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-sm-3">
 				<div class="form-group">
-					<label for="chartnum" class="control-label">Class: </label>
-					<select name="chartnum" id="chartnum" class="form-control" onchange="restoreDefaults()">
-						<option value="1">mage</option>
-						<option value="2">scoundrel</option>
-						<option value="3">shaman</option>
-						<option value="4">ranger</option>
-						<option value="5">fire mage</option>
-						<option value="6">manip_ranger</option>
+					<label for="classData" class="control-label">Class: </label>
+					<select name="classData" id="classData" class="form-control" onchange="updateLoadOutList()">
 					</select>
 				</div>
 			</div>
@@ -38,15 +32,16 @@
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-5 col-xl-5">
 				<form>
 					<div class="form-group">
-						<label for="nameLoadOut">LoadOut Name</label>
-						<input type="text" name="nameLoadOut" id="nameLoadOut" class="form-control">
-						<button type="button" class="btn btn-outline-secondary btn-sm float-right">Save Attacks and Tiles as Load Out</button>
-					</div>
+						<label for="nameLoadOut">Load Out Name</label>
+						<select name="nameLoadOut" id="nameLoadOut" class="form-control" onchange="readLoadOuts(this.value)">
+						</select>
+						<br>
+						<button id="togglePots" onclick="togglePots()" class="btn btn-outline-secondary btn-sm active float-left" data-toggle="button" aria-pressed="true">Disable pots</button>
+						<button id="toggleTilesets" onclick="toggleTilesets()" class="btn btn-outline-secondary btn-sm active float-right" data-toggle="button" aria-pressed="true">Disable tilesets</button>
+					</div><br>
 					<div class="form-group">
 						<label for="attacks">Attacks</label>
 						<textarea class="form-control" id="attacks" rows="5"></textarea>
-						<button id="resetTilesets" onclick="restoreTilesets()" class="btn btn-outline-secondary btn-sm float">Restore default tileset</button>
-						<button type="button" class="btn btn-outline-secondary btn-sm float-right" onclick="restoreAttacks()">Restore default attacks</button>
 					</div>
 				</form>
 				<div class="table-responsive-sm">
@@ -100,11 +95,9 @@
 
 				<hr>
 				<div class="form-group">
-					<button id="togglePots" onclick="togglePots()" class="btn btn-outline-secondary btn-sm active" data-toggle="button" aria-pressed="true">Disable pots</button>
-					<button id="toggleTilesets" onclick="toggleTilesets()" class="btn btn-outline-secondary btn-sm active" data-toggle="button" aria-pressed="true">Disable tilesets</button>
-					<br><label for="calcCount">Calc Count</label>
+					<label for="calcCount">Calc Count</label>
 					<input type="number"  name="calcCount" id="calcCount" class="form-control" style="max-width:120px; margin-bottom:10px;" value=100>
-					<button id="updateChart" class="btn btn-info" onclick="loadAllCharts()">Update Chart</button>
+					<button id="updateChart" class="btn btn-info float-right" onclick="loadAllCharts()">Update Chart and Save Load Outs</button>
 				</div>
 			</div>
 
@@ -128,6 +121,7 @@
 			</div>
 		</div>
 	</div>
+	<script type="text/javascript" src="loadConstants.js"></script>
 	<script type="text/javascript" src="defaultRotations.js"></script>
 	<script type="text/javascript" src="allClassData.js"></script>
 	<script type="text/javascript" src="index.js"></script>
