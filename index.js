@@ -7,6 +7,10 @@ const STEP_SIZE = 0.1;
 // Default off flags that can toggle if the dps classes are using pots and tilesets.
 var usingPotsFlag = true;
 var tilesetsEnabledFlag = true;
+const BASE_CRIT_CHANCE = (150+RING_ADDED_CRIT_DMG+(usingPotsFlag ? 250 : 0))/150*0.1; // 150 = 0.1 = 10% more crit chance.
+
+const STR_INT_BOOST = 1+(165 + (usingPotsFlag ? 250 : 0))/150*0.05; // 150 = 0.05x = 5% more damage from the str/int stat.
+
 
 // Very special very laggy feature. This feature will make all charts not draw the average dps. But dps on all individual runs
 // will be drawn. Which will give alot more drawing time. Recommended to keep most graphs disabled when enabling this feature.
@@ -102,6 +106,7 @@ var startLoadingIconFunc = function(){
 };
 
 function loadAllCharts(){
+	// TODO Save the Loadouts when Button Press.
 	var timeoutFunc = function(){
 		if(chartFilling){
 			updateEditTimemout = setTimeout(timeoutFunc, 1000);
@@ -138,36 +143,43 @@ function togglePots(e){
 	}
 }
 
-function  updateTilesetPercentages(chartNum){
+function  updateTilesetPercentages(chartName){
 
-	if(chartNum == parseInt($("#chartnum").val())){
-		// Clear to empty boosts.
-		$("#tileset_percent_total").val(0);
-		for(var i=1;i<=5;i++){
-			$("#tileset_percent_"+i).val(0);
-		}
-		var graphSpecificData = dpsChart.data.datasets[chartNum-1];
-		$("#triggered_tiles").val("");
-		if(graphSpecificData != undefined && tilesetsEnabledFlag){
-			var totalNonTilesetDmg = graphSpecificData.addedTotalDamage-graphSpecificData.addedDmgTilesets;
-			for(var i=0;i<graphSpecificData.usedTilesets.length;i++){
-				var tileset = graphSpecificData.usedTilesets[i];
-				var percentBoost = tileset.addedDmg*100.0/totalNonTilesetDmg;
-				$("#tileset_percent_"+tileset.idx).val(percentBoost.toFixed(2));
-				$("#tileset_numprocs_"+tileset.idx).val(tileset.numProcs.toLocaleString())
-				var sumInt = tileset.intList.reduce((a,b) => a + b, 0)
-				$("#tileset_avgint_"+tileset.idx).val((sumInt/ tileset.intList.length).toFixed(2))
-			}
+	// Clear to empty boosts.
+	$("#tileset_percent_total").val(0);
+	for(var i=1;i<=5;i++){
+		$("#tileset_percent_"+i).val(0);
+	}
 
-			$("#tileset_percent_total").val((graphSpecificData.addedDmgTilesets*100.0/totalNonTilesetDmg).toFixed(2));	
-			$("#triggered_tiles").val(graphSpecificData.triggeredTiles);
+	var graphSpecificData;
+	for(var j=0;j<dpsChart.data.datasets.length;j++) {
+		if (dpsChart.data.datasets[j].label == chartName) {
+			graphSpecificData = dpsChart.data.datasets[j];
 		}
 	}
+
+	$("#triggered_tiles").val("");
+	if(graphSpecificData != undefined && tilesetsEnabledFlag){
+		var totalNonTilesetDmg = graphSpecificData.addedTotalDamage-graphSpecificData.addedDmgTilesets;
+		for(var i=0;i<graphSpecificData.usedTilesets.length;i++){
+			var tileset = graphSpecificData.usedTilesets[i];
+			var percentBoost = tileset.addedDmg*100.0/totalNonTilesetDmg;
+			$("#tileset_percent_"+tileset.idx).val(percentBoost.toFixed(2));
+			$("#tileset_numprocs_"+tileset.idx).val(tileset.numProcs.toLocaleString())
+			var sumInt = tileset.intList.reduce((a,b) => a + b, 0)
+			$("#tileset_avgint_"+tileset.idx).val((sumInt/ tileset.intList.length).toFixed(2))
+		}
+
+		$("#tileset_percent_total").val((graphSpecificData.addedDmgTilesets*100.0/totalNonTilesetDmg).toFixed(2));
+		$("#triggered_tiles").val(graphSpecificData.triggeredTiles);
+	}
+
 }
 
 loadAllCharts();
 
 function updateLocalDataToNew(e){
+	//TODO Ask Scott why I don't Use this and if I should. Whoops! XD
 	var chartNum = $("#chartNum").val();
 	if(updateEditTimemout != null){
 		clearTimeout(updateEditTimemout);
@@ -201,18 +213,19 @@ function fillChart(){
 
 	// Reset the data
 	dpsChart.data.datasets = [];
+	// TODO: This will have to be moved to load for all the datasets when multiple allowed. COMPARISON
+	loadChartDatasets(
+		$("#classData").val(), // Class
+		parseInt($("#calcCount").val()),
+		$("#nameLoadOut").val()
+	);
 
-
-	var graphSpecificData = dpsChart.data.datasets[chartNum-1];
+	// TODO: This will have to be changed when making a comparison to load both atasets. COMPARISON
+	var graphSpecificData = dpsChart.data.datasets[0];
 
 	if(graphSpecificData == undefined){
 		return;
 	}
-
-	console.log("load chart " + chartNum);
-
-	// Reset the calcCount
-	graphSpecificData.calcCount = parseInt($("#calcCount").val());
 
 	// Retrieve the current attack pattern.
 	var attackPatternStr = $("#attacks").val();
@@ -711,7 +724,7 @@ function fillChart(){
 	graphSpecificData.addedTotalDamage = totalTotalDamage;
 	graphSpecificData.triggeredTiles = stringStoringAllTiles;
 
-	updateTilesetPercentages(chartNum);
+	updateTilesetPercentages($("#nameLoadOut").val());
 
 	dpsChart.update();
 }

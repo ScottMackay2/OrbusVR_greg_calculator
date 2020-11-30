@@ -97,7 +97,7 @@ function updateLoadOutList(){
 
 	var loadOutNames = Object.keys(loadOuts);
 	$("#nameLoadOut").empty();
-	for (i=0; i< loadOutNames.length; i++) {
+	for (var i=0; i< loadOutNames.length; i++) {
 		$("#nameLoadOut").append(new Option(loadOutNames[i]));
 	}
 	// Load by default the first element, but allow for passing in which loadout to load.
