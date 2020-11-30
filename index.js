@@ -176,6 +176,40 @@ function  updateTilesetPercentages(chartName){
 
 }
 
+function updateTilesetProcChart(chartName){
+
+	var graphSpecificData;
+	for(var j=0;j<dpsChart.data.datasets.length;j++) {
+		if (dpsChart.data.datasets[j].label == chartName) {
+			graphSpecificData = dpsChart.data.datasets[j];
+		}
+	}
+
+	// Prepare the canvas to draw on.
+	var canvas = document.getElementById("tiles_something");
+	var you = document.getElementById("line_chart");
+	var ctx = canvas.getContext("2d");
+	ctx.canvas.width = you.width-100;
+	ctx.canvas.height = 100;
+	ctx.stokeStyle = "#FF0000";
+	ctx.fillStyle = graphSpecificData.borderColor;
+	ctx.strokeRect(0, 0, ctx.canvas.width, 100);
+
+
+	// Draw all the tilesets their proc times
+	for(var i=0;i<graphSpecificData.usedTilesets.length;i++){
+		var tileset = graphSpecificData.usedTilesets[i];
+		var totalTilesetUptime = (tileset.condition.length-1)*2;
+		var widthTileset = totalTilesetUptime / MAX_TIME_SECONDS * ctx.canvas.width;
+		for(var i2=0;i2<tileset.proccedInfoList.length;i2++){
+			var startLocX = tileset.proccedInfoList[i2].time / MAX_TIME_SECONDS * ctx.canvas.width;
+			ctx.fillRect(startLocX, i*20, widthTileset, 20);
+			ctx.strokeRect(startLocX, i*20, widthTileset, 20);
+		}
+	}
+
+}
+
 loadAllCharts();
 
 function updateLocalDataToNew(e){
@@ -346,6 +380,7 @@ function fillChart(){
 			usedTilesets[i].conditionLeft = usedTilesets[i].condition;
 			usedTilesets[i].conditionStartTime = 0;
 			usedTilesets[i].interferenceCount = -1;
+			usedTilesets[i].proccedInfoList = [];
 		}
 
 		var stringStoringAllTiles = "";
@@ -665,19 +700,25 @@ function fillChart(){
 							tileset.conditionLeft = tileset.condition; // Reset back for next trigger.
 							
 							tileset.interferenceCount = (tileset.interferenceCount > 9 ? 9 : tileset.interferenceCount);
+
 							// Add the tileset to one of the procced tilesets.
-							graphSpecificData.activeTilesets.push(
-								{
+							graphSpecificData.activeTilesets.push({
 									time: timePassed, 
 									tileset: tileset,
 									tilesetBoostAmount: DEFAULT_TILESET_BOOST - 0.01*tileset.interferenceCount
-								}
-							);
+								});
 
 							// Remove the first triggered tileset if a forth tileset is introduced.
 							if(graphSpecificData.activeTilesets.length > MAX_ALLOWED_ACTIVE_TILESETS){
 								graphSpecificData.activeTilesets.shift();
 							}
+
+							if(i10 == calculateAttacksAmount-1){
+								tileset.proccedInfoList.push({
+									time: timePassed
+								});
+							}
+
 							break;
 						}
 					}
@@ -725,6 +766,8 @@ function fillChart(){
 	graphSpecificData.triggeredTiles = stringStoringAllTiles;
 
 	updateTilesetPercentages($("#nameLoadOut").val());
+	//TODO Maggie Fix this before committing again
+	updateTilesetProcChart($("#nameLoadOut").val());
 
 	dpsChart.update();
 }

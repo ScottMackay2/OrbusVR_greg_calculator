@@ -14,7 +14,7 @@ function initializeAllClassData(){
 
 	// Pre init the chart data.
 	if(dpsChart == undefined){
-		dpsChart = new Chart(document.getElementById("line-chart"), {
+		dpsChart = new Chart(document.getElementById("line_chart"), {
 			type: 'line',
 			data: undefined,
 			options: {
@@ -25,11 +25,15 @@ function initializeAllClassData(){
 				scales: {
 					xAxes: [{
 						distribution: 'linear'
+					}],
+					yAxes: [{
+						afterFit: function(scaleInstance) {
+							scaleInstance.width = 100; // sets the width to 100px
+						}
 					}]
 				}
 			}
 		});
-
 		dpsChart.data = {
 			labels: labelsAxisX
 		};
@@ -183,7 +187,8 @@ function getScoundrelData() {
 	// const POISON_DAMAGE_MULTIPLIER_SCOUNDREL = 1.0 / 3.0 * (2.9473 + AMOUNT_OF_EXTRA_POISON_FROM_EMPOWERED);
 
 	// // Because of the poison damage reduction, a full rotation of cards takes less time
-	// // then 8 cards too. This means the time of a single card needs to be reduced tor
+	// // then 8 cards too. This means the time of a single card needs to be reduced to
+	// // mirror the time it takes to make a full card rotation (7.9473 cards)
 	// const CARD_TIME_REDUCTION_SCOUNDREL = 1.0 / 8.0 * 7.9473;
 
 	const SCOUNDREL_HUMAN_THINKING_TIME = 0.3;
@@ -320,8 +325,6 @@ function getScoundrelData() {
 		if(graphSpecificData.shootCard != -1){
 			// Add a new poison DoT right after the attack of the
 			if(graphSpecificData.shootCard == CARD_POISON){
-				graphSpecificData.numPoisonCards += 1;
-
 				if(graphSpecificData.burnEffect == EFFECT_CHEAT){
 					addToDeckRandom(graphSpecificData.deck, CARD_POISON);
 				}
@@ -338,7 +341,6 @@ function getScoundrelData() {
 				boost *= 1.5; // Increase total damage from flame itself.d
 				SCOUNDREL_NEW_SPAWNED_CARD.tiles = "B";
 				var newAttack = clone(SCOUNDREL_NEW_SPAWNED_CARD);
-				graphSpecificData.numBurnCards += 1;
 				targetPatternData.pattern.splice(targetPatternData.patternIdx+1, 0, newAttack);
 			} else if(graphSpecificData.shootCard == CARD_HEAL){
 				SCOUNDREL_NEW_SPAWNED_CARD.tiles = "SH";
@@ -393,8 +395,8 @@ function getRangerData() {
 	const CRIT_DMG_INC_RANGER = 1+CRIT_CHANCE_RANGER*(CRIT_AMOUNT_RANGER-1);
 	const BLEED_BOOST_RANGER = 1+BLEED_ACTUAL_DMG_INC*CRIT_DMG_INC_RANGER;
 	const NORMAL_BOOST_RANGER = BLEED_BOOST_RANGER * PROJECTILE_BOOST_RANGER;
-	const RANGER_6_GLOBES = 39598/24592;
-	const RANGER_2_GLOBES = (24592+((39598-24592)*2/6))/24592;
+	const RANGER_6_GLOBES = 41129/25900;
+	const RANGER_2_GLOBES = (25900+((41129-25900)*2/6))/25900;
 	const ARROW_SIGHT_RANGER = 1.10; // Stand at-least 30 meters away talent. Go get a default 10% boost.
 
 	const ARROW_8 = 0.817;
