@@ -1,26 +1,46 @@
-// Different attack types have different type of effect. The dps code will make some attacks do different things.
-const ATTACK_NORMAL = 0;
-const ATTACK_DOT = 1;
-const ATTACK_HITS_PER_SECOND = 3;
 
 var dpsChart;
 function initializeAllClassData(){
-	const ICEHEART_BOOST = 1.05;
+	// Set the classes in the UI.
+	var classOptions = document.getElementById('classData');
+	for (i=1; i<= CONST_CLASSES.length; i++) {
+		var newOption = new Option(CONST_CLASSES[i-1]);
+		classOptions.options.add(newOption);
+	}
 
-	const MAX_ADDED_CRIT_DMG_FROM_ARMOUR = 0.08; // 0.02 = 2% every armour piece. With 4 armour pieces.
-	const MAX_ADDED_PROJECTILE_DMG_FROM_ARMOUR = 0.04; // 0.01 = 1% every armour piece. With 4 armour pieces.
+	updateLoadOutList();
 
-	const RING_ADDED_CRIT_DMG_EMPOWERED = 0.03;
-	const RING_ADDED_CRIT_DMG = 70;
-	const BASE_CRIT_AMOUNT = 1.5+RING_ADDED_CRIT_DMG_EMPOWERED;
-	const BASE_CRIT_CHANCE = (150+RING_ADDED_CRIT_DMG+(usingPotsFlag ? 250 : 0))/150*0.1; // 150 = 0.1 = 10% more crit chance.
+	var myTimeout;
 
-	const STR_INT_BOOST = 1+(165 + (usingPotsFlag ? 250 : 0))/150*0.05; // 150 = 0.05x = 5% more damage from the str/int stat.
+	// Pre init the chart data.
+	if(dpsChart == undefined){
+		dpsChart = new Chart(document.getElementById("line_chart"), {
+			type: 'line',
+			data: undefined,
+			options: {
+				responsive: true,
+				legend: {
+					display: false
+				},
+				scales: {
+					xAxes: [{
+						distribution: 'linear'
+					}],
+					yAxes: [{
+						afterFit: function(scaleInstance) {
+							scaleInstance.width = 100; // sets the width to 100px
+						}
+					}]
+				}
+			}
+		});
+		dpsChart.data = {
+			labels: labelsAxisX
+		};
+	}
+}
 
-	const BLEED_DEFAULT_DMG_INC = 2.48;
-	const BLEED_CHANCE_PERCENT = 0.02;
-	const BLEED_ACTUAL_DMG_INC = BLEED_DEFAULT_DMG_INC*BLEED_CHANCE_PERCENT;
-
+function getMageData(){
 	// ####################################################################################
 	// Mage
 	const PROJECTILE_BOOST_MAGE = 1+MAX_ADDED_PROJECTILE_DMG_FROM_ARMOUR;
@@ -34,6 +54,38 @@ function initializeAllClassData(){
 	const RUNIC_DIVERSITY_MAGE = 1.2727;
 	const AFFINITY_FIRE_BOOST_MAGE = 1.136;
 
+	var mageData = {
+		attackTypes : {
+			// Default boost of class
+			'X'    : new Attack(0.00,		0, true,												0, 0, 0,			SELFISH_STREAK_BOOST_MAGE*STR_INT_BOOST-1, 999, 3, 	0, 3,"",""),
+			// Fireball
+			'b'    : new Attack(0.43,		15140*NORMAL_BOOST_MAGE, true,							0, 0, 0,			0.00, 0, 0, 	1, 0,"B",""),
+			// Fireball empowered
+			'B'    : new Attack(0.43,		15140*AFFINITY_FIRE_BOOST_MAGE*NORMAL_BOOST_MAGE, true,	0, 0, 0,			0.00, 0, 0, 	1, 0,"B",""),
+			// Frost boosted by fireball
+			'f'    : new Attack(0.43,		9460*AFFINITY_FIRE_BOOST_MAGE*NORMAL_BOOST_MAGE, true,	0, 0, 0,			0.00, 0, 0, 	1, 0,"F",""),
+			// Frost boosted by runic diversity (3th spell)
+			'F'    : new Attack(0.43,		9460*RUNIC_DIVERSITY_MAGE*NORMAL_BOOST_MAGE, true,		0, 0, 0,			0.00, 0, 0, 	1, 0,"F",""),
+			// Frost boosted by runic diversity and fireball.
+			'V'    : new Attack(0.43,		9460*RUNIC_DIVERSITY_MAGE*AFFINITY_FIRE_BOOST_MAGE*NORMAL_BOOST_MAGE, true,	0, 0, 0,		0.00, 0, 0, 	1, 0,"F",""),
+
+			// Affliction affinity fireball
+			'a'    : new Attack(0.55,		3542*AFFINITY_FIRE_BOOST_MAGE*NORMAL_BOOST_MAGE, true,	3442, 12, 3,		0.05, 8, 2, 	1, 1,"A",""),
+			// Affliction runic diversity and frost boosted
+			'A'    : new Attack(0.55,		3542*RUNIC_DIVERSITY_MAGE*NORMAL_BOOST_MAGE, true,		3442, 15, 3,		0.05, 8, 2, 	1, 1,"A",""),
+			// Renew (constant heal tile)
+			'h'    : new Attack(0.0,		0, true,												0, 20, 1,			0.00, 0, 0, 	0, 0,"","H"),
+			// Time spacing (doing nothing)
+			'#'    : new Attack(0.1,		0, true,												0, 0, 0,			0.00, 0, 0, 	0, 0,"",""),
+		},
+		critChance : CRIT_CHANCE_MAGE,
+		critDamage : CRIT_AMOUNT_MAGE
+	};
+
+	return mageData;
+}
+
+function getShamanData(){
 	// ####################################################################################
 	// Shaman
 	const PROJECTILE_BOOST_SHAMAN = 1+MAX_ADDED_PROJECTILE_DMG_FROM_ARMOUR;
@@ -46,7 +98,7 @@ function initializeAllClassData(){
 	// The time it takes between shaman throws of every orb type (stun, fire, lightning)
 	const SHAMAN_ORB_ATTACK_TIME = 3.40;
 
-	// When you replace a totem on the ground, you cut off time that it needs to 
+	// When you replace a totem on the ground, you cut off time that it needs to
 	// respawn a totem. So it takes less time between hits.
 	const SHAMAN_REPLACE_ATTACK_TIME = SHAMAN_ORB_ATTACK_TIME-1.3;
 
@@ -64,6 +116,51 @@ function initializeAllClassData(){
 		}
 		return 1;
 	}
+
+	var shamanData = {
+		attackTypes : {
+			// Default boost of class
+			'X'    : new Attack(0.00,  							0, true,  													0, 0, 0, 		STR_INT_BOOST-1, 999, 3, 	0, 3,"",""),
+
+			// Place totem. (triggers a tile)
+			'T'    : new Attack(0,  							0, true,  													0, 0, 0, 		0.00, 0, 0, 	0, 0,"T",""),
+
+			// Lava pulse (very first placement relative to fight start no time passed)
+			'p'    : new Attack(0.00,  							8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
+			// Lava pulse default timing.
+			'P'    : new Attack(SHAMAN_PULSE_ATTACK_TIME,  		8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
+			// Lava pulse next time replaced (a shorter timeframe between lava pulses because it got replaced)
+			'A'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
+
+			// Stun default timing
+			's'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		6257*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0,		0.00, 0, 0, 	1, 0,"S",""),
+			// Stun after replacing totems (auto crit + faster timing)
+			'S'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	6257*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"S",""),
+
+			// Lightning (with shorter timeframe because spawned relative to previous lightning crit, used as spawn for new lightnings)
+			'i'    : NEW_SPAWNED_LIGHTNING,
+			// Lightning which can have a chance to spawn a new lightning with default time spacing.
+			'L'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		19711*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"X","", lightningSpawnMoreAttacks),
+			// First lightning after replacing totems (auto crit + faster timing)
+			'I'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	19711*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"X",""),
+
+			// Fire default timing.
+			'F'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		33165*NORMAL_BOOST_SHAMAN, true,  							2347, 3, 1, 	0.00, 0, 0, 	1, 2,"B",""),
+			// Fire after placing totems again (auto crit + faster timing)
+			'V'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	33165*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		2347, 3, 1, 	0.00, 0, 0, 	1, 2,"B",""),
+
+			// # small timing used to offset the orb throwing between the different totems. @ is a bigger jump in time.
+			'#'    : new Attack(0.1,  							0, true,  													0, 0, 0, 		0.00, 0, 0, 	0, 0,"",""),
+			'@'    : new Attack(0.5,  							0, true,  													0, 0, 0, 		0.00, 0, 0, 	0, 0,"",""),
+		},
+		critChance : CRIT_CHANCE_SHAMAN,
+		critDamage : CRIT_AMOUNT_SHAMAN
+	};
+
+	return shamanData;
+}
+
+function getScoundrelData() {
 	// ####################################################################################
 	// Scoundrel
 	const TALENT_ADDED_CRIT_SCOUNDREL = 0.5;
@@ -85,13 +182,13 @@ function initializeAllClassData(){
 	// // The program is using 3 out of 8 cards being poison.
 	// // Sadly this is the not complete truth. To make sure the calculation
 	// // is using the exact right amount of damage increase, the poison card
-	// // damage is reduced to mirror using 2.9473 poison cards every 7.9473 cards 
+	// // damage is reduced to mirror using 2.9473 poison cards every 7.9473 cards
 	// // instead of 3 every 8.
 	// const POISON_DAMAGE_MULTIPLIER_SCOUNDREL = 1.0 / 3.0 * (2.9473 + AMOUNT_OF_EXTRA_POISON_FROM_EMPOWERED);
 
 	// // Because of the poison damage reduction, a full rotation of cards takes less time
 	// // then 8 cards too. This means the time of a single card needs to be reduced to
-	// // mirror the time it takes to make a full card rotation (7.9473 cards) 
+	// // mirror the time it takes to make a full card rotation (7.9473 cards)
 	// const CARD_TIME_REDUCTION_SCOUNDREL = 1.0 / 8.0 * 7.9473;
 
 	const SCOUNDREL_HUMAN_THINKING_TIME = 0.3;
@@ -163,7 +260,7 @@ function initializeAllClassData(){
 				attack.tiles = BURN_CARD_TILE;
 			} else if(graphSpecificData.storedCard == CARD_POISON){
 				graphSpecificData.shootCard = card;
-			} 
+			}
 			else{
 				graphSpecificData.storedCard = card;
 			}
@@ -255,50 +352,6 @@ function initializeAllClassData(){
 		graphSpecificData.shootCard = -1;
 		return boost;
 	}
-
-
-
-	// ####################################################################################
-	// Ranger
-	const PROJECTILE_BOOST_RANGER = 1+MAX_ADDED_PROJECTILE_DMG_FROM_ARMOUR;
-	const CRIT_AMOUNT_RANGER = BASE_CRIT_AMOUNT+MAX_ADDED_CRIT_DMG_FROM_ARMOUR;
-	const CRIT_CHANCE_RANGER = BASE_CRIT_CHANCE;
-	const CRIT_DMG_INC_RANGER = 1+CRIT_CHANCE_RANGER*(CRIT_AMOUNT_RANGER-1);
-	const BLEED_BOOST_RANGER = 1+BLEED_ACTUAL_DMG_INC*CRIT_DMG_INC_RANGER;
-	const NORMAL_BOOST_RANGER = BLEED_BOOST_RANGER * PROJECTILE_BOOST_RANGER;
-	const RANGER_6_GLOBES = 41129/25900;
-	const RANGER_2_GLOBES = (25900+((41129-25900)*2/6))/25900;
-	const ARROW_SIGHT_RANGER = 1.10; // Stand at-least 30 meters away talent. Go get a default 10% boost.
-
-
-	var mageData = {
-		attackTypes : {
-			// Default boost of class
-			'X'    : new Attack(0.00,		0, true,												0, 0, 0,			SELFISH_STREAK_BOOST_MAGE*STR_INT_BOOST-1, 999, 3, 	0, 3,"",""),
-			// Fireball
-			'b'    : new Attack(0.43,		15140*NORMAL_BOOST_MAGE, true,							0, 0, 0,			0.00, 0, 0, 	1, 0,"B",""),
-			// Fireball empowered
-			'B'    : new Attack(0.43,		15140*AFFINITY_FIRE_BOOST_MAGE*NORMAL_BOOST_MAGE, true,	0, 0, 0,			0.00, 0, 0, 	1, 0,"B",""),
-			// Frost boosted by fireball
-			'f'    : new Attack(0.43,		9460*AFFINITY_FIRE_BOOST_MAGE*NORMAL_BOOST_MAGE, true,	0, 0, 0,			0.00, 0, 0, 	1, 0,"F",""),
-			// Frost boosted by runic diversity (3th spell)
-			'F'    : new Attack(0.43,		9460*RUNIC_DIVERSITY_MAGE*NORMAL_BOOST_MAGE, true,		0, 0, 0,			0.00, 0, 0, 	1, 0,"F",""),
-			// Frost boosted by runic diversity and fireball.
-			'V'    : new Attack(0.43,		9460*RUNIC_DIVERSITY_MAGE*AFFINITY_FIRE_BOOST_MAGE*NORMAL_BOOST_MAGE, true,	0, 0, 0,		0.00, 0, 0, 	1, 0,"F",""),
-
-			// Affliction affinity fireball
-			'a'    : new Attack(0.55,		3542*AFFINITY_FIRE_BOOST_MAGE*NORMAL_BOOST_MAGE, true,	3442, 12, 3,		0.05, 8, 2, 	1, 1,"A",""),
-			// Affliction runic diversity and frost boosted
-			'A'    : new Attack(0.55,		3542*RUNIC_DIVERSITY_MAGE*NORMAL_BOOST_MAGE, true,		3442, 15, 3,		0.05, 8, 2, 	1, 1,"A",""),
-			// Renew (constant heal tile)
-			'h'    : new Attack(0.0,		0, true,												0, 20, 1,			0.00, 0, 0, 	0, 0,"","H"),
-			// Time spacing (doing nothing)
-			'#'    : new Attack(0.1,		0, true,												0, 0, 0,			0.00, 0, 0, 	0, 0,"",""), 
-		},
-		critChance : CRIT_CHANCE_MAGE,
-		critDamage : CRIT_AMOUNT_MAGE
-	};
-
 	// rank V (71.897% increase) Most scoundrel damage is pre-calculated to have the rank V dps increase.
 	var scoundrelData = {
 		attackTypes : {
@@ -307,7 +360,7 @@ function initializeAllClassData(){
 
 			// Normal bullet with rank V boost
 			'B'    : new Attack(0.22,  		5851*1.718*NORMAL_BOOST_SCOUNDREL, true, 							0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", increaseCritChance, updateCritChance),
-			
+
 			// Charged shot (2 bullet charge) with rank V boost
 			'c'    : new Attack(1.21,  		5851*1.718*2.14*NORMAL_BOOST_SCOUNDREL, true,  						0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", increaseCritChance, useCard),
 			// Charged shot (full 3 bullet charge) without a rank as first shot taking no time.
@@ -329,46 +382,22 @@ function initializeAllClassData(){
 		critDamage : CRIT_AMOUNT_SCOUNDREL,
 		critTalentList : []
 	};
+	return scoundrelData;
 
-	var shamanData = {
-		attackTypes : {
-			// Default boost of class
-			'X'    : new Attack(0.00,  							0, true,  													0, 0, 0, 		STR_INT_BOOST-1, 999, 3, 	0, 3,"",""),
+}
 
-			// Place totem. (triggers a tile)
-			'T'    : new Attack(0,  							0, true,  													0, 0, 0, 		0.00, 0, 0, 	0, 0,"T",""),
-
-			// Lava pulse (very first placement relative to fight start no time passed)
-			'p'    : new Attack(0.00,  							8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
-			// Lava pulse default timing.
-			'P'    : new Attack(SHAMAN_PULSE_ATTACK_TIME,  		8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
-			// Lava pulse next time replaced (a shorter timeframe between lava pulses because it got replaced)
-			'A'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
-
-			// Stun default timing
-			's'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		6257*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0,		0.00, 0, 0, 	1, 0,"S",""),
-			// Stun after replacing totems (auto crit + faster timing)
-			'S'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	6257*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"S",""),
-
-			// Lightning (with shorter timeframe because spawned relative to previous lightning crit, used as spawn for new lightnings)
-			'i'    : NEW_SPAWNED_LIGHTNING,
-			// Lightning which can have a chance to spawn a new lightning with default time spacing.
-			'L'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		19711*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"X","", lightningSpawnMoreAttacks),
-			// First lightning after replacing totems (auto crit + faster timing)
-			'I'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	19711*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"X",""),
-			
-			// Fire default timing.
-			'F'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		33165*NORMAL_BOOST_SHAMAN, true,  							2347, 3, 1, 	0.00, 0, 0, 	1, 2,"B",""),
-			// Fire after placing totems again (auto crit + faster timing)
-			'V'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	33165*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		2347, 3, 1, 	0.00, 0, 0, 	1, 2,"B",""),
-
-			// # small timing used to offset the orb throwing between the different totems. @ is a bigger jump in time.
-			'#'    : new Attack(0.1,  							0, true,  													0, 0, 0, 		0.00, 0, 0, 	0, 0,"",""),
-			'@'    : new Attack(0.5,  							0, true,  													0, 0, 0, 		0.00, 0, 0, 	0, 0,"",""),
-		},
-		critChance : CRIT_CHANCE_SHAMAN,
-		critDamage : CRIT_AMOUNT_SHAMAN
-	};
+function getRangerData() {
+	// ####################################################################################
+	// Ranger
+	const PROJECTILE_BOOST_RANGER = 1+MAX_ADDED_PROJECTILE_DMG_FROM_ARMOUR;
+	const CRIT_AMOUNT_RANGER = BASE_CRIT_AMOUNT+MAX_ADDED_CRIT_DMG_FROM_ARMOUR;
+	const CRIT_CHANCE_RANGER = BASE_CRIT_CHANCE;
+	const CRIT_DMG_INC_RANGER = 1+CRIT_CHANCE_RANGER*(CRIT_AMOUNT_RANGER-1);
+	const BLEED_BOOST_RANGER = 1+BLEED_ACTUAL_DMG_INC*CRIT_DMG_INC_RANGER;
+	const NORMAL_BOOST_RANGER = BLEED_BOOST_RANGER * PROJECTILE_BOOST_RANGER;
+	const RANGER_6_GLOBES = 41129/25900;
+	const RANGER_2_GLOBES = (25900+((41129-25900)*2/6))/25900;
+	const ARROW_SIGHT_RANGER = 1.10; // Stand at-least 30 meters away talent. Go get a default 10% boost.
 
 	const ARROW_8 = 0.817;
 	const ARROW_9 = 0.92; // People are less good in timing 0.9 arrows exactly, so adding +0.02 for the perfect human.
@@ -385,7 +414,7 @@ function initializeAllClassData(){
 			'e'    : new Attack(ARROW_8,  			11633*NORMAL_BOOST_RANGER, true,  									0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Normal 0.8 second arrow
 			's'    : new Attack(ARROW_8,  			11633*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
-			// Weakspot 0.8 second arrow (1.5x) 
+			// Weakspot 0.8 second arrow (1.5x)
 			'S'    : new Attack(ARROW_8,  			11633*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// 0.9 second arrow
 			'z'    : new Attack(ARROW_9,  			12734*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
@@ -401,7 +430,7 @@ function initializeAllClassData(){
 			'd'    : new Attack(ARROW_8-0.1,  		11633*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Normal 0.8 second arrow (time decreased by prev arrow)(1.5x crit spot)
 			'D'    : new Attack(ARROW_8-0.1,		11633*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
-			
+
 			//@@ Charged shots. @@//
 			// 0.8 charged piercing on weakspot (2x damage)
 			'a'    : new Attack(1.1+ARROW_9,  		30304*1.825*NORMAL_BOOST_RANGER*RANGER_2_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
@@ -442,116 +471,79 @@ function initializeAllClassData(){
 		critChance : CRIT_CHANCE_RANGER,
 		critDamage : CRIT_AMOUNT_RANGER
 	};
+	return rangerData;
+}
 
-	var myTimeout;
-
-	// Pre init the chart data.
-	if(dpsChart == undefined){
-		dpsChart = new Chart(document.getElementById("line_chart"), {
-			type: 'line',
-			data: undefined,
-			options: {
-				responsive: true,
-				legend: {
-					display: false
-				},
-				scales: {
-					xAxes: [{
-						distribution: 'linear'
-					}],
-					yAxes: [{
-						afterFit: function(scaleInstance) {
-							scaleInstance.width = 100; // sets the width to 100px
-						}
-					}]
+function loadChartDatasets(orbusClass, calcCount, name) {
+	// TODO: The colors wont work as it currently is color per class
+	switch (orbusClass) {
+		case MAGE_VALUE:
+			dpsChart.data.datasets.push(
+				{
+					data: [],
+					label: name,
+					borderColor: "#3e95cd",
+					fill: false,
+					usedTilesets: [],
+					classData: getMageData(),
+					calcCount: calcCount,
+					chargedStrikes: false,
+					randomizedChargedStrikes: true,
+					otherBoost: ICEHEART_BOOST,
 				}
-			}
-		});
+			);
+			break;
+		case SCOUNDREL_VALUE:
+			dpsChart.data.datasets.push(
+				{
+					data: [],
+					label: name,
+					borderColor: "#9e954d",
+					fill: false,
+					usedTilesets: [],
+					classData: getScoundrelData(),
+					calcCount: calcCount,
+					chargedStrikes: false,
+					randomizedChargedStrikes: true,
+					// To add to the realistic view of iceheart, alot of non-boss enemies are not frosted and alot of boss fights without a mage are not
+					// frosted either. This is why I remove 2%, even though it might be even more on the average situation...
+					// Although in theory this is the only number that isn't fully correct, but in practice it proves to be almost impossible to always
+					// have frost on enemies, and the full 5% boost credit should be taken with a grain of salt for every non-mage class.
+					otherBoost: ICEHEART_BOOST - 0.02,
+				}
+			);
+			break;
+		case SHAMAN_VALUE:
+			dpsChart.data.datasets.push(
+				{
+					data: [],
+					label: name,
+					borderColor: "#000000",
+					fill: false,
+					usedTilesets: [],
+					classData: getShamanData(),
+					calcCount: calcCount,
+					chargedStrikes: true,
+					randomizedChargedStrikes: true,
+					otherBoost: 1,
+				}
+			);
+			break;
+		case RANGER_VALUE:
+			dpsChart.data.datasets.push(
+				{
+					data: [],
+					label: name,
+					borderColor: "#5eD54d",
+					fill: false,
+					usedTilesets: [],
+					classData: getRangerData(),
+					calcCount: calcCount,
+					chargedStrikes: false,
+					randomizedChargedStrikes: true,
+					otherBoost: ICEHEART_BOOST - 0.02,
+				}
+			);
+			break;
 	}
-	dpsChart.data = {
-		labels: labelsAxisX,
-		datasets: [{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 1 ? false : true),
-			label: "1: mage",
-			borderColor: "#3e95cd",
-			fill: false,
-			usedTilesets : [],
-			classData : mageData,
-			calcCount : 100,
-			chargedStrikes: false,
-			randomizedChargedStrikes: true,
-			otherBoost: ICEHEART_BOOST,
-		},
-		{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 2 ? false : true),
-			label: "2: scoundrel",
-			borderColor: "#9e954d",
-			fill: false,
-			usedTilesets : [],
-			classData : scoundrelData,
-			calcCount : 100,
-			chargedStrikes: false,
-			randomizedChargedStrikes: true,
-			// To add to the realistic view of iceheart, alot of non-boss enemies are not frosted and alot of boss fights without a mage are not 
-			// frosted either. This is why I remove 2%, even though it might be even more on the average situation...
-			// Although in theory this is the only number that isn't fully correct, but in practice it proves to be almost impossible to always
-			// have frost on enemies, and the full 5% boost credit should be taken with a grain of salt for every non-mage class.
-			otherBoost: ICEHEART_BOOST - 0.02,
-		},
-		{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 3 ? false : true),
-			label: "3: shaman",
-			borderColor: "#000000",
-			fill: false,
-			usedTilesets : [],
-			classData : shamanData,
-			calcCount : 50,
-			chargedStrikes: true,
-			randomizedChargedStrikes: true,
-			otherBoost: 1,
-		},
-		{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 4 ? false : true),
-			label: "4: ranger",
-			borderColor: "#5eD54d",
-			fill: false,
-			usedTilesets : [],
-			classData : rangerData,
-			calcCount : 200,
-			chargedStrikes: false,
-			randomizedChargedStrikes: true,
-			otherBoost: ICEHEART_BOOST - 0.02,
-		},
-		{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 5 ? false : true),
-			label: "5: fire mage",
-			borderColor: "#9e0000",
-			fill: false,
-			usedTilesets : [],
-			classData : mageData,
-			calcCount : 200,
-			chargedStrikes: false,
-			randomizedChargedStrikes: true,
-			otherBoost: 1,
-		},
-		{ 
-			data: [],
-			hidden: (parseInt($("#chartnum").val()) == 6 ? false : true),
-			label: "6: manip_ranger",
-			borderColor: "#9e9e9e",
-			fill: false,
-			usedTilesets : [],
-			calcCount : 100,
-			classData : rangerData,
-			chargedStrikes: false,
-			randomizedChargedStrikes: true,
-			otherBoost: ICEHEART_BOOST - 0.02,
-		},
-		]
-	};
 }
