@@ -389,22 +389,29 @@ function getScoundrelData() {
 function getRangerData() {
 	// ####################################################################################
 	// Ranger
+
+	// DPS Constants
+	const PREC_ARROW_08 = 11633;
+	const PREC_ARROW_09 = 12734
+	const PREC_CHARG_ARROW_08 = 25900;
+	const PREC_CHARG_ARROW_6_GLOBES_08 = 41129;
+	const PREC_CHARG_ARROW_09 = 27001;
+
+	const PREC_CHARG_PIERCING_ARROW_08 = 35364;
+	const PREC_CHARG_PIERCING_ARROW_09 = 36465;
+
+	const PREC_CHARG_ARROW_WEAKSPOT_30_METER_08 = 47267;
+
 	const PROJECTILE_BOOST_RANGER = 1+MAX_ADDED_PROJECTILE_DMG_FROM_ARMOUR;
 	const CRIT_AMOUNT_RANGER = BASE_CRIT_AMOUNT+MAX_ADDED_CRIT_DMG_FROM_ARMOUR;
 	const CRIT_CHANCE_RANGER = BASE_CRIT_CHANCE;
 	const CRIT_DMG_INC_RANGER = 1+CRIT_CHANCE_RANGER*(CRIT_AMOUNT_RANGER-1);
 	const BLEED_BOOST_RANGER = 1+BLEED_ACTUAL_DMG_INC*CRIT_DMG_INC_RANGER;
 	const NORMAL_BOOST_RANGER = BLEED_BOOST_RANGER * PROJECTILE_BOOST_RANGER;
-	const RANGER_6_GLOBES = 41129/25900; // Not sure these numbers but are correct? Its about 9.8% each globe.
-	const RANGER_2_GLOBES = (25900+((41129-25900)*2/6))/25900;
-	const WEAK_SPOT_MULT_RANGER = 1.825;
+	const RANGER_6_GLOBES = PREC_CHARG_ARROW_6_GLOBES_08/PREC_CHARG_ARROW_08; // Not sure these numbers but are correct? Its about 9.8% each globe.
+	const RANGER_2_GLOBES = (PREC_CHARG_ARROW_08+((PREC_CHARG_ARROW_6_GLOBES_08-PREC_CHARG_ARROW_08)*2/6))/PREC_CHARG_ARROW_08;
+	const WEAK_SPOT_MULT_RANGER = PREC_CHARG_ARROW_WEAKSPOT_30_METER_08/PREC_CHARG_ARROW_08;
 	const ARROW_SIGHT_RANGER = 1.10; // Stand at-least 30 meters away talent. Go get a default 10% boost.
-
-	// DPS Constants
-	const PREC_ARROW_08 = 11633;
-	const PREC_ARROW_09 = 12734
-	const PREC_CHARG_PERC_ARROW_08 = 35364;
-	const PREC_CHARG_PREC_ARROW_09 = 36465;
 
 	const ARROW_8 = 0.817;
 	const ARROW_9 = 0.92; // People are less good in timing 0.9 arrows exactly, so adding +0.02 for the perfect human.
@@ -440,15 +447,15 @@ function getRangerData() {
 
 			//@@ Charged shots. @@//
 			// 0.9 charged piercing on weakspot
-			'a'    : new Attack(1.1+ARROW_9,  		PREC_CHARG_PREC_ARROW_09*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_2_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
+			'a'    : new Attack(1.1+ARROW_9,  		PREC_CHARG_PIERCING_ARROW_09*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_2_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
 			// 0.9 charged piercing on weakspot
-			'A'    : new Attack(1.1+ARROW_9,  		PREC_CHARG_PREC_ARROW_09*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
+			'A'    : new Attack(1.1+ARROW_9,  		PREC_CHARG_PIERCING_ARROW_09*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
 			// 0.8 charged piercing on weakspot
-			'O'    : new Attack(1+ARROW_8,  		PREC_CHARG_PERC_ARROW_08*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_2_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
+			'O'    : new Attack(1+ARROW_8,  		PREC_CHARG_PIERCING_ARROW_08*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_2_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
 			// 0.8 charged piercing
-			'T'    : new Attack(1+ARROW_8,  		PREC_CHARG_PERC_ARROW_08*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	1, 1,"F",""),
+			'T'    : new Attack(1+ARROW_8,  		PREC_CHARG_PIERCING_ARROW_08*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	1, 1,"F",""),
 			// 0.8 charged piercing on weakspot
-			'V'    : new Attack(1+ARROW_8,  		PREC_CHARG_PERC_ARROW_08*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
+			'V'    : new Attack(1+ARROW_8,  		PREC_CHARG_PIERCING_ARROW_08*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
 
 			//@@ Poison stuff @@//
 			// Poison arrow shot at 0.8 seconds
@@ -462,7 +469,7 @@ function getRangerData() {
 			// Super 0.8 arrow on weakspot 1.5x
 			'W'    : new Attack(ARROW_8,  			(PREC_ARROW_08+12014)*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Super charged piercing weakspot hit
-			'Y'    : new Attack(1+ARROW_8,  		(PREC_CHARG_PERC_ARROW_08+12014)*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	2, 0,"F",""),
+			'Y'    : new Attack(1+ARROW_8,  		(PREC_CHARG_PIERCING_ARROW_08+12014)*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	2, 0,"F",""),
 			// Super 0.8 arrow -- uhh I dont know what this one is.
 			'p'    : new Attack(ARROW_8,  			(15362+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 
