@@ -395,9 +395,16 @@ function getRangerData() {
 	const CRIT_DMG_INC_RANGER = 1+CRIT_CHANCE_RANGER*(CRIT_AMOUNT_RANGER-1);
 	const BLEED_BOOST_RANGER = 1+BLEED_ACTUAL_DMG_INC*CRIT_DMG_INC_RANGER;
 	const NORMAL_BOOST_RANGER = BLEED_BOOST_RANGER * PROJECTILE_BOOST_RANGER;
-	const RANGER_6_GLOBES = 41129/25900;
+	const RANGER_6_GLOBES = 41129/25900; // Not sure these numbers but are correct? Its about 9.8% each globe.
 	const RANGER_2_GLOBES = (25900+((41129-25900)*2/6))/25900;
+	const WEAK_SPOT_MULT_RANGER = 1.825;
 	const ARROW_SIGHT_RANGER = 1.10; // Stand at-least 30 meters away talent. Go get a default 10% boost.
+
+	// DPS Constants
+	const PREC_ARROW_08 = 11633;
+	const PREC_ARROW_09 = 12734
+	const PREC_CHARG_PERC_ARROW_08 = 35364;
+	const PREC_CHARG_PREC_ARROW_09 = 36465;
 
 	const ARROW_8 = 0.817;
 	const ARROW_9 = 0.92; // People are less good in timing 0.9 arrows exactly, so adding +0.02 for the perfect human.
@@ -411,62 +418,62 @@ function getRangerData() {
 
 			//@@ Normal arrows @@//
 			// Normal 0.8 second arrow (before full globes)
-			'e'    : new Attack(ARROW_8,  			11633*NORMAL_BOOST_RANGER, true,  									0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'e'    : new Attack(ARROW_8,  			PREC_ARROW_08*NORMAL_BOOST_RANGER, true,  									0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Normal 0.8 second arrow
-			's'    : new Attack(ARROW_8,  			11633*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			's'    : new Attack(ARROW_8,  			PREC_ARROW_08*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Weakspot 0.8 second arrow (1.5x)
-			'S'    : new Attack(ARROW_8,  			11633*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'S'    : new Attack(ARROW_8,  			PREC_ARROW_08*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// 0.9 second arrow
-			'z'    : new Attack(ARROW_9,  			12734*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'z'    : new Attack(ARROW_9,  			PREC_ARROW_09*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// 0.9 second arrow on weakspot (1.5x)
-			'Z'    : new Attack(ARROW_9,  			12734*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'Z'    : new Attack(ARROW_9,  			PREC_ARROW_09*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 
 			//@@ (Time bended normal arrows with curves) @@//
 			// 0.9 second arrow affected by the previous curved charged shot. (this arrow is not curved itself)
-			'b'    : new Attack(ARROW_9-0.1,		12734*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'b'    : new Attack(ARROW_9-0.1,		PREC_ARROW_09*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// 0.9 second arrow time increased by a curved shot.
-			'c'    : new Attack(ARROW_9+0.1,		12734*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'c'    : new Attack(ARROW_9+0.1,		PREC_ARROW_09*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Normal 0.8 second arrow (time decreased by prev arrow)
-			'd'    : new Attack(ARROW_8-0.1,  		11633*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'd'    : new Attack(ARROW_8-0.1,  		PREC_ARROW_08*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Normal 0.8 second arrow (time decreased by prev arrow)(1.5x crit spot)
-			'D'    : new Attack(ARROW_8-0.1,		11633*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'D'    : new Attack(ARROW_8-0.1,		PREC_ARROW_08*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 
 			//@@ Charged shots. @@//
-			// 0.8 charged piercing on weakspot (2x damage)
-			'a'    : new Attack(1.1+ARROW_9,  		30304*1.825*NORMAL_BOOST_RANGER*RANGER_2_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
-			// 0.8 charged piercing on weakspot (2x damage)
-			'A'    : new Attack(1.1+ARROW_9,  		30304*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
-			// 0.8 charged piercing on weakspot (2x damage)
-			'O'    : new Attack(1+ARROW_8,  		29629*1.825*NORMAL_BOOST_RANGER*RANGER_2_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
-			// 0.8 second charged piercing
-			'T'    : new Attack(1+ARROW_8,  		29629*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	1, 1,"F",""),
-			// 0.8 charged piercing on weakspot (2x damage)
-			'V'    : new Attack(1+ARROW_8,  		29629*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
+			// 0.9 charged piercing on weakspot
+			'a'    : new Attack(1.1+ARROW_9,  		PREC_CHARG_PREC_ARROW_09*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_2_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
+			// 0.9 charged piercing on weakspot
+			'A'    : new Attack(1.1+ARROW_9,  		PREC_CHARG_PREC_ARROW_09*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
+			// 0.8 charged piercing on weakspot
+			'O'    : new Attack(1+ARROW_8,  		PREC_CHARG_PERC_ARROW_08*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_2_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
+			// 0.8 charged piercing
+			'T'    : new Attack(1+ARROW_8,  		PREC_CHARG_PERC_ARROW_08*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	1, 1,"F",""),
+			// 0.8 charged piercing on weakspot
+			'V'    : new Attack(1+ARROW_8,  		PREC_CHARG_PERC_ARROW_08*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.05, 30, 1, 	2, 1,"F",""),
 
 			//@@ Poison stuff @@//
 			// Poison arrow shot at 0.8 seconds
-			'u'    : new Attack(ARROW_8,  			11633*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					4380*RANGER_6_GLOBES, 			8, 10, 			0.00, 0, 0, 	2, 2,"A",""),
+			'u'    : new Attack(ARROW_8,  			PREC_ARROW_08*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					4380*RANGER_6_GLOBES, 			8, 10, 			0.00, 0, 0, 	2, 2,"A",""),
 			// Poison arrow shot at 0.8 seconds but used as 0 timeframe shot that stays the whole fight (This was used to proof the dps decrease amount on not shot on cooldown directly)
-			'U'    : new Attack(0.00,  				11633*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					4380*8/12.5*RANGER_6_GLOBES, 	999, 10, 		0.00, 0, 0, 	0, 0,"",""),
+			'U'    : new Attack(0.00,  				PREC_ARROW_08*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					4380*8/12.5*RANGER_6_GLOBES, 	999, 10, 		0.00, 0, 0, 	0, 0,"",""),
 
 			//@@ Super arrows. @@//
 			// Super 0.8 arrow
-			'w'    : new Attack(ARROW_8,  			(11633+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'w'    : new Attack(ARROW_8,  			(PREC_ARROW_08+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Super 0.8 arrow on weakspot 1.5x
-			'W'    : new Attack(ARROW_8,  			(11633+12014)*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'W'    : new Attack(ARROW_8,  			(PREC_ARROW_08+12014)*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Super charged piercing weakspot hit
-			'Y'    : new Attack(1+ARROW_8,  		(29629+12014)*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	2, 0,"F",""),
-			// Super 0.8 arrow
+			'Y'    : new Attack(1+ARROW_8,  		(PREC_CHARG_PERC_ARROW_08+12014)*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	2, 0,"F",""),
+			// Super 0.8 arrow -- uhh I dont know what this one is.
 			'p'    : new Attack(ARROW_8,  			(15362+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 
 			// Super charged piercing weakspot hit with a curve.
 			'G'    : new Attack(1.1+ARROW_9,  		(30304+12014)*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	2, 0,"F",""),
 			// 0.9 second arrow affected by the previous curved charged shot.
-			'h'    : new Attack(ARROW_9-0.1,		(12734+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'h'    : new Attack(ARROW_9-0.1,		(PREC_ARROW_09+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// 0.9 second arrow time increased by a curved shot.
-			'i'    : new Attack(ARROW_9+0.1,		(12734+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'i'    : new Attack(ARROW_9+0.1,		(PREC_ARROW_09+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Normal 0.8 second arrow (time decreased by prev arrow)
-			'j'    : new Attack(ARROW_8-0.1,  		(11633+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'j'    : new Attack(ARROW_8-0.1,  		(PREC_ARROW_08+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 		},
 		critChance : CRIT_CHANCE_RANGER,
 		critDamage : CRIT_AMOUNT_RANGER

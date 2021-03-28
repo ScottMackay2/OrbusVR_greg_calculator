@@ -189,7 +189,7 @@ function updateTilesetProcChart(chartName){
 	var canvas = document.getElementById("tiles_something");
 	var you = document.getElementById("line_chart");
 	var ctx = canvas.getContext("2d");
-	ctx.canvas.width = you.width-100;
+	ctx.canvas.width = (you.width/2)-100;
 	ctx.canvas.height = 100;
 	ctx.stokeStyle = "#FF0000";
 	ctx.fillStyle = graphSpecificData.borderColor;
