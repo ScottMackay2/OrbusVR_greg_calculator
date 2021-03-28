@@ -133,21 +133,21 @@ function getShamanData(){
 			'A'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
 
 			// Stun default timing
-			's'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		6257*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0,		0.00, 0, 0, 	1, 0,"S",""),
+			's'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		8416*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0,		0.00, 0, 0, 	1, 0,"S",""),
 			// Stun after replacing totems (auto crit + faster timing)
-			'S'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	6257*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"S",""),
+			'S'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	8416*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"S",""),
 
 			// Lightning (with shorter timeframe because spawned relative to previous lightning crit, used as spawn for new lightnings)
 			'i'    : NEW_SPAWNED_LIGHTNING,
 			// Lightning which can have a chance to spawn a new lightning with default time spacing.
-			'L'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		19711*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"X","", lightningSpawnMoreAttacks),
+			'L'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		20180*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"X","", lightningSpawnMoreAttacks),
 			// First lightning after replacing totems (auto crit + faster timing)
-			'I'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	19711*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"X",""),
+			'I'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	20180*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"X",""),
 
 			// Fire default timing.
-			'F'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		33165*NORMAL_BOOST_SHAMAN, true,  							2347, 3, 1, 	0.00, 0, 0, 	1, 2,"B",""),
+			'F'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		34103*NORMAL_BOOST_SHAMAN, true,  							2347, 3, 1, 	0.00, 0, 0, 	1, 2,"B",""),
 			// Fire after placing totems again (auto crit + faster timing)
-			'V'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	33165*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		2347, 3, 1, 	0.00, 0, 0, 	1, 2,"B",""),
+			'V'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	34103*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		2347, 3, 1, 	0.00, 0, 0, 	1, 2,"B",""),
 
 			// # small timing used to offset the orb throwing between the different totems. @ is a bigger jump in time.
 			'#'    : new Attack(0.1,  							0, true,  													0, 0, 0, 		0.00, 0, 0, 	0, 0,"",""),
