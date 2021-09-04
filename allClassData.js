@@ -108,7 +108,7 @@ function getShamanData(){
 	// of timeframe inbetween the hits.
 	const SHAMAN_RETHROW_LIGHTING_TIME = 0.4;
 
-	const NEW_SPAWNED_LIGHTNING = new Attack(SHAMAN_RETHROW_LIGHTING_TIME,  	19711*NORMAL_BOOST_SHAMAN, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"X","", lightningSpawnMoreAttacks);
+	const NEW_SPAWNED_LIGHTNING = new Attack(SHAMAN_RETHROW_LIGHTING_TIME,  	19711*NORMAL_BOOST_SHAMAN, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"X","", false, lightningSpawnMoreAttacks);
 	function lightningSpawnMoreAttacks(attack, targetPatternData, graphSpecificData, timePassed) {
 		if(attack.isCritting) {
 			var newAttack = clone(NEW_SPAWNED_LIGHTNING);
@@ -140,7 +140,7 @@ function getShamanData(){
 			// Lightning (with shorter timeframe because spawned relative to previous lightning crit, used as spawn for new lightnings)
 			'i'    : NEW_SPAWNED_LIGHTNING,
 			// Lightning which can have a chance to spawn a new lightning with default time spacing.
-			'L'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		20180*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"X","", lightningSpawnMoreAttacks),
+			'L'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		20180*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"X","", false, lightningSpawnMoreAttacks),
 			// First lightning after replacing totems (auto crit + faster timing)
 			'I'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	20180*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"X",""),
 
@@ -356,27 +356,27 @@ function getScoundrelData() {
 	var scoundrelData = {
 		attackTypes : {
 			// Default boost of class
-			'X'    : new Attack(0.00,  		0, true,															0, 0, 0, 		STR_INT_BOOST-1, 999, 3, 	0, 3,"","", resetScoundrel),
+			'X'    : new Attack(0.00,  		0, true,															0, 0, 0, 		STR_INT_BOOST-1, 999, 3, 	0, 3,"","", false, resetScoundrel),
 
 			// Normal bullet with rank V boost
-			'B'    : new Attack(0.22,  		5851*1.718*NORMAL_BOOST_SCOUNDREL, true, 							0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", increaseCritChance, updateCritChance),
+			'B'    : new Attack(0.22,  		5851*1.718*NORMAL_BOOST_SCOUNDREL, true, 							0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", false, increaseCritChance, updateCritChance),
 
 			// Charged shot (2 bullet charge) with rank V boost
-			'c'    : new Attack(1.21,  		5851*1.718*2.14*NORMAL_BOOST_SCOUNDREL, true,  						0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", increaseCritChance, useCard),
+			'c'    : new Attack(1.21,  		5851*1.718*2.14*NORMAL_BOOST_SCOUNDREL, true,  						0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", false, increaseCritChance, useCard),
 			// Charged shot (full 3 bullet charge) without a rank as first shot taking no time.
-			'f'    : new Attack(0.00,  		5851*3*NORMAL_BOOST_SCOUNDREL, true,  								0, 0, 0, 		0.08, 10, 1, 	1, 0,"","", increaseCritChance, useCard),
+			'f'    : new Attack(0.00,  		5851*3*NORMAL_BOOST_SCOUNDREL, true,  								0, 0, 0, 		0.08, 10, 1, 	1, 0,"","", false, increaseCritChance, useCard),
 			// Charged shot (full 3 bullet charge) with rank V boost
-			'C'    : new Attack(1.71,  		5851*1.718*3.53*NORMAL_BOOST_SCOUNDREL, true,  						0, 0, 0, 		0.08, 10, 1, 	1, 0,"","", increaseCritChance, useCard),
+			'C'    : new Attack(1.71,  		5851*1.718*3.53*NORMAL_BOOST_SCOUNDREL, true,  						0, 0, 0, 		0.08, 10, 1, 	1, 0,"","", false, increaseCritChance, useCard),
 			// Charged shot (delayed 3 bullet charge for tileset testing) with rank V boost
-			'F'    : new Attack(2.11,  		5851*1.718*3.53*NORMAL_BOOST_SCOUNDREL, true,  						0, 0, 0, 		0.08, 10, 1, 	1, 0,"","", increaseCritChance, useCard),
+			'F'    : new Attack(2.11,  		5851*1.718*3.53*NORMAL_BOOST_SCOUNDREL, true,  						0, 0, 0, 		0.08, 10, 1, 	1, 0,"","", false, increaseCritChance, useCard),
 
 			// Normal bullet while having the super activated. With rank V boost
-			's'    : new Attack(0.22,  		SUPER_BOOST_SCOUNDREL*5851*1.718*NORMAL_BOOST_SCOUNDREL, true, 	0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", increaseCritChance, updateCritChance),
+			's'    : new Attack(0.22,  		SUPER_BOOST_SCOUNDREL*5851*1.718*NORMAL_BOOST_SCOUNDREL, true, 	0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", false, increaseCritChance, updateCritChance),
 			// Charged shot while having the super activated. With rank V boost
-			'S'    : new Attack(1.71,  		SUPER_BOOST_SCOUNDREL*5851*1.718*3.53*NORMAL_BOOST_SCOUNDREL, true, 	0, 0, 0, 	0.08, 10, 1, 	1, 0,"","", increaseCritChance, useCard),
+			'S'    : new Attack(1.71,  		SUPER_BOOST_SCOUNDREL*5851*1.718*3.53*NORMAL_BOOST_SCOUNDREL, true, 	0, 0, 0, 	0.08, 10, 1, 	1, 0,"","", false, increaseCritChance, useCard),
 
 			// (D)eck (action that spawns a new card and do something with it. Then it will be used on the charged shot)
-			'D'    : new Attack(SCOUNDREL_CARD_TIME,  		0, true,  									0.00, 0, 0, 	0.00, 0, 0, 	0, 0,"","", spawnNewCard), // Nothing card
+			'D'    : new Attack(SCOUNDREL_CARD_TIME,  		0, true,  									0.00, 0, 0, 	0.00, 0, 0, 	0, 0,"","", false, spawnNewCard), // Nothing card
 		},
 		critChance : CRIT_CHANCE_SCOUNDREL,
 		critDamage : CRIT_AMOUNT_SCOUNDREL,
@@ -469,18 +469,21 @@ function getRangerData() {
 			// Super 0.8 arrow on weakspot 1.5x
 			'W'    : new Attack(ARROW_8,  			(PREC_ARROW_08+12014)*1.5*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Super charged piercing weakspot hit
-			'Y'    : new Attack(1+ARROW_8,  		(PREC_CHARG_PIERCING_ARROW_08+12014)*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	2, 0,"F",""),
+			'Y'    : new Attack(1+ARROW_8,  		(PREC_CHARG_PIERCING_ARROW_08+12014)*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	2, 0,"F",""),
 			// Super 0.8 arrow -- uhh I dont know what this one is.
-			'p'    : new Attack(ARROW_8,  			(15362+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'p'    : new Attack(ARROW_8,  			(15362+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  					0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 
 			// Super charged piercing weakspot hit with a curve.
-			'G'    : new Attack(1.1+ARROW_9,  		(30304+12014)*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  		0, 0, 0, 			0.00, 0, 0, 	2, 0,"F",""),
+			'G'    : new Attack(1.1+ARROW_9,  		(30304+12014)*1.825*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	2, 0,"F",""),
 			// 0.9 second arrow affected by the previous curved charged shot.
 			'h'    : new Attack(ARROW_9-0.1,		(PREC_ARROW_09+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// 0.9 second arrow time increased by a curved shot.
 			'i'    : new Attack(ARROW_9+0.1,		(PREC_ARROW_09+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
 			// Normal 0.8 second arrow (time decreased by prev arrow)
 			'j'    : new Attack(ARROW_8-0.1,  		(PREC_ARROW_08+12014)*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+
+			// Fire rain
+			'F'    : new Attack(ARROW_8,  			PREC_CHARG_ARROW_09*WEAK_SPOT_MULT_RANGER*NORMAL_BOOST_RANGER*RANGER_6_GLOBES, true,  5788*RANGER_6_GLOBES, 6, 10, 		0.00, 0, 0, 	2, 2,"P","P", true),
 		},
 		critChance : CRIT_CHANCE_RANGER,
 		critDamage : CRIT_AMOUNT_RANGER

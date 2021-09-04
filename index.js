@@ -11,7 +11,6 @@ const BASE_CRIT_CHANCE = (150+RING_ADDED_CRIT_DMG+(usingPotsFlag ? 250 : 0))/150
 
 const STR_INT_BOOST = 1+(165 + (usingPotsFlag ? 250 : 0))/150*0.05; // 150 = 0.05x = 5% more damage from the str/int stat.
 
-
 // Very special very laggy feature. This feature will make all charts not draw the average dps. But dps on all individual runs
 // will be drawn. Which will give alot more drawing time. Recommended to keep most graphs disabled when enabling this feature.
 var multiDrawEnabled = false;
@@ -66,7 +65,7 @@ for(var i=0;i<MAX_TIME_SECONDS/STEP_SIZE;i+=1){
 
 initializeAllClassData();
 
-function Attack(time, damage, canCrit, dotDamage, dotTimes, dotMaxActive, dmgBoostAmount, dmgBoostStayTime, dmgBoostMaxActive, hitCount, attackID, tiles, dotTiles, modifierFunc, preModifierFunc){
+function Attack(time, damage, canCrit, dotDamage, dotTimes, dotMaxActive, dmgBoostAmount, dmgBoostStayTime, dmgBoostMaxActive, hitCount, attackID, tiles, dotTiles, spawnsNormalAttack, modifierFunc, preModifierFunc){
 	this.time = time;
 	this.damage = damage;
 	this.canCrit = canCrit;
@@ -86,6 +85,8 @@ function Attack(time, damage, canCrit, dotDamage, dotTimes, dotMaxActive, dmgBoo
 
 	this.tiles = tiles;
 	this.dotTiles = dotTiles;
+
+	this.spawnsNormalAttack = spawnsNormalAttack;
 
 	this.type = ATTACK_NORMAL;
 
@@ -590,9 +591,16 @@ function fillChart(){
 				attackPatternsData[ROW_OF_DOT] = {patternTimePassed:timePassed, patternIdx:0};
 				var attackDotPattern = [];
 				for(var i2=0;i2<attack.dotTimes;i2++){
-					var newDotAttack = new Attack(TIME_SPACING_DOTS, attack.dotDamage, true, 0, 0, 0,  0, 0, 0,  0, attack.attackID, attack.dotTiles, copyTilesetStats);
-					newDotAttack.type = ATTACK_DOT;
-					newDotAttack.dotID = activeDots[attack.attackID].currentTarget;
+					var newDotAttack;
+					if(attack.spawnsNormalAttack === true){
+						newDotAttack = new Attack(TIME_SPACING_DOTS, attack.dotDamage, true, 0, 0, 0,  0, 0, 0,  1, attack.attackID, attack.dotTiles, copyTilesetStats);
+						newDotAttack.type = ATTACK_NORMAL;
+					} else{
+						newDotAttack = new Attack(TIME_SPACING_DOTS, attack.dotDamage, true, 0, 0, 0,  0, 0, 0,  0, attack.attackID, attack.dotTiles, copyTilesetStats);
+						newDotAttack.type = ATTACK_DOT;
+						newDotAttack.dotID = activeDots[attack.attackID].currentTarget;
+					}
+					
 					attackDotPattern.push(newDotAttack);
 				}
 				attackPatternsData[ROW_OF_DOT].pattern = attackDotPattern;
