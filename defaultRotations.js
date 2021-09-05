@@ -51,8 +51,8 @@ if (needsDefaultValues || debug) {
 	};
 	res[RANGER_VALUE] = {
 		'default': {
-			lsKeyAttacks: "X e (O z z s s u s s V z Z s s s s s)(V z z s s u s s V z Z z s s s s)*6 Y w w w w p w w w w (V z z s s u s s V z Z s s s s s)*7",
-			lsKeyTilesets: ['6F2', '26F', 'F2A', 'A26F', '6F2A'],
+			lsKeyAttacks: "X e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*6 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*7",
+			lsKeyTilesets: ['6F2', 'F26', 'F2A', 'A26F', '6F2A'],
 			lsKeyPotsFlag: true,
 			lsKeyTilesetsFlag: true,
 		},
