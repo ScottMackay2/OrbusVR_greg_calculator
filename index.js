@@ -4,20 +4,9 @@ const MAX_TIME_SECONDS = 230;
 // if that is still the case... No need to change this anyway.
 const STEP_SIZE = 0.1; 
 
-// Default off flags that can toggle if the dps classes are using pots and tilesets.
-var usingPotsFlag = true;
-var tilesetsEnabledFlag = true;
-const BASE_CRIT_CHANCE = (150+RING_ADDED_CRIT_DMG+(usingPotsFlag ? 250 : 0))/150*0.1; // 150 = 0.1 = 10% more crit chance.
-
-const STR_INT_BOOST = 1+(165 + (usingPotsFlag ? 250 : 0))/150*0.05; // 150 = 0.05x = 5% more damage from the str/int stat.
-
 // Very special very laggy feature. This feature will make all charts not draw the average dps. But dps on all individual runs
 // will be drawn. Which will give alot more drawing time. Recommended to keep most graphs disabled when enabling this feature.
 var multiDrawEnabled = false;
-
-// This is the dps from lvl 30+0 to lvl 30+6 weapon without intellect and strength boost.
-const PLUS_6_PLUS_0_WEAPON_RATIO = Math.pow(1.0495, 6); // About 1.3362x a.k.a. 33.6% dps boost.
-const STATIC_BOOST = PLUS_6_PLUS_0_WEAPON_RATIO;
 
 // Block any tilesets that are shorter than 3.
 const MINIMUM_TILESET_LENGTH = 3;
@@ -62,8 +51,6 @@ var labelsAxisX = [];
 for(var i=0;i<MAX_TIME_SECONDS/STEP_SIZE;i+=1){
 	labelsAxisX.push((STEP_SIZE*i).toFixed(STEP_SIZE.countDecimals()));
 }
-
-initializeAllClassData();
 
 function Attack(time, damage, canCrit, dotDamage, dotTimes, dotMaxActive, dmgBoostAmount, dmgBoostStayTime, dmgBoostMaxActive, hitCount, attackID, tiles, dotTiles, spawnsNormalAttack, modifierFunc, preModifierFunc){
 	this.time = time;
@@ -131,21 +118,9 @@ function loadAllCharts(){
 	}
 }
 
-function togglePots(e){
-	if(chartFilling == false){
-		if(usingPotsFlag){
-			$("#togglePots").html('Enable pots');
-		} else{
-			$("#togglePots").html('Disable pots');
-		}
-		usingPotsFlag = !usingPotsFlag;
-		initializeAllClassData();
-		loadAllCharts();
-	}
-}
+
 
 function  updateTilesetPercentages(chartName){
-
 	// Clear to empty boosts.
 	$("#tileset_percent_total").val(0);
 	for(var i=1;i<=5;i++){
@@ -160,7 +135,7 @@ function  updateTilesetPercentages(chartName){
 	}
 
 	$("#triggered_tiles").val("");
-	if(graphSpecificData != undefined && tilesetsEnabledFlag){
+	if(graphSpecificData != undefined && globalTilesetsEnabledFlag){
 		var totalNonTilesetDmg = graphSpecificData.addedTotalDamage-graphSpecificData.addedDmgTilesets;
 		for(var i=0;i<graphSpecificData.usedTilesets.length;i++){
 			var tileset = graphSpecificData.usedTilesets[i];
@@ -187,10 +162,10 @@ function updateTilesetProcChart(chartName){
 	}
 
 	// Prepare the canvas to draw on.
-	var canvas = document.getElementById("tiles_something");
+	var canvas = document.getElementById("tiles_graph");
 	var you = document.getElementById("line_chart");
 	var ctx = canvas.getContext("2d");
-	ctx.canvas.width = (you.width/2)-100;
+	ctx.canvas.width = (you.width)-100;
 	ctx.canvas.height = 100;
 	ctx.stokeStyle = "#FF0000";
 	ctx.fillStyle = graphSpecificData.borderColor;
@@ -210,8 +185,6 @@ function updateTilesetProcChart(chartName){
 	}
 
 }
-
-loadAllCharts();
 
 function updateLocalDataToNew(e){
 	//TODO Ask Scott why I don't Use this and if I should. Whoops! XD
@@ -251,8 +224,7 @@ function fillChart(){
 	// TODO: This will have to be moved to load for all the datasets when multiple allowed. COMPARISON
 	loadChartDatasets(
 		$("#classData").val(), // Class
-		parseInt($("#calcCount").val()),
-		$("#nameLoadOut").val()
+		$("#loadoutName").val()
 	);
 
 	// TODO: This will have to be changed when making a comparison to load both atasets. COMPARISON
@@ -271,7 +243,7 @@ function fillChart(){
 	graphSpecificData.numFireBoosts = 0;
 	graphSpecificData.numBurnCards = 0;
 	graphSpecificData.numPoisonCards = 0;
-	if(tilesetsEnabledFlag){
+	if(globalTilesetsEnabledFlag){
 		for(var i=1;i<MAX_AVAILABLE_TILESETS+1;i++){
 			var tilesetData = $("#tileset"+i).val()
 			if(tilesetData != undefined){
@@ -286,14 +258,21 @@ function fillChart(){
 	
 	var allTotalDamageDataPoints = [];
 	var totalDamageDataPoints = [];
-	var calculateAttacksAmount = graphSpecificData.calcCount != undefined ? graphSpecificData.calcCount : 1;
+	let calcCount = parseInt($("#calcCount").val());
+	var calculateAttacksAmount = calcCount != undefined ? calcCount : 1;
 	for(var i10=0;i10<calculateAttacksAmount;i10++){
 		if(multiDrawEnabled){
 			totalDamageDataPoints = [];
 		}
 
 		// Set charged strikes start count. If randomized a random rotation can not be influenced
-		graphSpecificData.chargedStrikesCount = graphSpecificData.randomizedChargedStrikes ? parseInt(Math.random()*11-1) : -1;
+		graphSpecificData.chargedStrikesCount = globalRandomizedStartLocationChargedStrikes ? parseInt(Math.random()*11-1) : -1;
+
+		const DAMAGE_MULTIPLIER = globalWeaponAffixBoosts;
+		const DOT_MULTIPLIER = globalWeaponAffixBoosts;
+
+		graphSpecificData.critChance = globalArmourCritChance;
+		graphSpecificData.dpsMultiplierFromCritting = globalDpsMultiplierFromCritting;
 
 		// Convert the raw string of actions to actual data.
 		var attackPatternsData = [];
@@ -309,7 +288,10 @@ function fillChart(){
 				var chr = attackPattStr.charAt(i);
 				var newAttack = graphSpecificData.classData.attackTypes[chr];
 				if(newAttack != undefined){
-					attackPattern.push(clone(newAttack));
+					newAttack = clone(newAttack);
+					newAttack.damage*=DAMAGE_MULTIPLIER;
+					newAttack.dotDamage*=DOT_MULTIPLIER;
+					attackPattern.push(newAttack);
 				}
 				if(chr == '('){
 					lastBracketOpenIdx = i;
@@ -434,7 +416,7 @@ function fillChart(){
 			}
 
 			// Only attacks that are hitting add to the charged strikes counter. (only when charged strikes is enabled though)
-			if(graphSpecificData.chargedStrikes && attack.hitCount > 0){
+			if(globalUsingChargedStrikes && attack.hitCount > 0){
 				graphSpecificData.chargedStrikesCount++;
 			}
 
@@ -442,11 +424,15 @@ function fillChart(){
 			var critBoostPercent = 1;
 			if(attack.canCrit){
 				// Is crit
-				if(Math.random() <= graphSpecificData.classData.critChance || chargedStrikesWillCrit){
+				if(Math.random() <= graphSpecificData.critChance || chargedStrikesWillCrit){
 					attack.isCritting = true;
-					critBoostPercent = graphSpecificData.classData.critDamage;
+					critBoostPercent = globalArmourCritDamage;
 				} else{
 					attack.isCritting = false;
+				}
+				// This removes all the randomizer of dps from critting itself. This way the dps is more accurate on average.
+				if(globalAveragingCritsFlag && !chargedStrikesWillCrit){
+					critBoostPercent = graphSpecificData.dpsMultiplierFromCritting;
 				}
 			}
 
@@ -485,11 +471,9 @@ function fillChart(){
 				// 3 long = 4 seconds
 				// 4 long = 6 seconds
 				// 5 long = 8 seconds
-				var test = "MMH:";
 				for(var i3=graphSpecificData.activeTilesets.length-1;i3>=0;i3--){
 					var tilesetTimePassed = timePassed-graphSpecificData.activeTilesets[i3].time;
 					var totalTilesetUptime = (graphSpecificData.activeTilesets[i3].tileset.condition.length-1)*2;
-					test += " "+graphSpecificData.activeTilesets[i3].tileset.condition + " = " + (tilesetTimePassed-totalTilesetUptime);
 					if(tilesetTimePassed > totalTilesetUptime-TILESET_HUMAN_UPTIME_CORRECTION){ // Seems to still count even over 4 secs. Like 4.1ish	
 						var goneOne = graphSpecificData.activeTilesets.splice(i3, 1);
 					}
@@ -497,15 +481,11 @@ function fillChart(){
 
 			}
 
-			// Calculate the current boost in damage relative to the base damage.
-			// This includes tilesets, any external boosting factors (e.g. weakness) and a 
-			// default upscaling of damage (e.g. higher lvl weapon).
-			var CURRENT_DAMAGE_BOOST = STATIC_BOOST*addedDmgBoostPercent*modifierFuncBoostPercent*critBoostPercent*graphSpecificData.otherBoost;
+			// Calculate the added damage by doing most boosts time the default damage of the attack.
+			const BLEED_BOOST = (globalUsingBleed) ? 1+BLEED_ACTUAL_DMG_INC*globalDpsMultiplierFromCritting : 1;
+			const NO_TILESET_DMG = attack.damage * addedDmgBoostPercent*critBoostPercent*modifierFuncBoostPercent*BLEED_BOOST;
 
-			// Calculate the added damage by doing boosts time the default damage of the attack.
-			var ADDED_DMG = CURRENT_DAMAGE_BOOST*attack.damage;
-
-			if(tilesetsEnabledFlag){
+			if(globalTilesetsEnabledFlag){
 				var targetTilesets = graphSpecificData.activeTilesets;
 				if(attack.type == ATTACK_DOT){
 					targetTilesets = attack.dotTiles; // Hitchhiked variable for active tilesets variable.
@@ -516,9 +496,9 @@ function fillChart(){
 				var tilesetBoostAmt = 0;
 				for(var i3=targetTilesets.length-1;i3>=0;i3--){
 					addedTilesetDamagePercent += targetTilesets[i3].tilesetBoostAmount;
-					targetTilesets[i3].tileset.addedDmg += ADDED_DMG * targetTilesets[i3].tilesetBoostAmount;
-					graphSpecificData.addedDmgTilesets += ADDED_DMG * targetTilesets[i3].tilesetBoostAmount;
-					tilesetBoost += ADDED_DMG * targetTilesets[i3].tilesetBoostAmount;
+					targetTilesets[i3].tileset.addedDmg += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
+					graphSpecificData.addedDmgTilesets += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
+					tilesetBoost += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
 					tilesetBoostAmt += targetTilesets[i3].tilesetBoostAmount;
 				}
 
@@ -537,7 +517,7 @@ function fillChart(){
 			}
 
 			// Add to total damage.
-			ADDED_DMG*=addedTilesetDamagePercent;
+			const ADDED_DMG = NO_TILESET_DMG*addedTilesetDamagePercent;
 			totalDamage += ADDED_DMG;
 
 			// Draw dps graph, but only when either time or damage is going forward.
@@ -773,8 +753,8 @@ function fillChart(){
 	graphSpecificData.addedTotalDamage = totalTotalDamage;
 	graphSpecificData.triggeredTiles = stringStoringAllTiles;
 
-	updateTilesetPercentages($("#nameLoadOut").val());
-	updateTilesetProcChart($("#nameLoadOut").val());
+	updateTilesetPercentages($("#loadoutName").val());
+	updateTilesetProcChart($("#loadoutName").val());
 
 	dpsChart.update();
 }
@@ -813,3 +793,9 @@ function clone(obj) {
 
 	throw new Error("Unable to copy obj! Its type isn't supported.");
 }
+
+
+
+
+initializeAllClassData();
+loadAllCharts();
