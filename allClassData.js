@@ -1,5 +1,9 @@
 var dpsChart;
 
+function getCurrentWeaponMultiplier(){
+	return Math.pow(1.0495, globalWeaponLvl*2 + globalWeaponPlusLvl);
+}
+
 function initializeAllClassData(){
 	// Set the classes in the UI.
 	var classOptions = document.getElementById('classData');
@@ -152,9 +156,9 @@ function getMageData(){
 			'A'    : mage.getAttackFromInfo({type:"Affliction2",time:AFFLICTION_CAST_SPEED,diversity:true,dotIncrease:true}),
 			// 'A'    : new Attack(0.55,		3542*RUNIC_DIVERSITY_MAGE*NORMAL_BOOST_MAGE, true,		3442, 15, 3,		0.05, 8, 2, 	1, 1,"A",""),
 			// Renew (constant heal tile)
-			'h'    : new Attack(0.0,		0, true,												0, 20, 1,			0.00, 0, 0, 	0, 0,"","H"),
+			'h'    : new Attack(0.0,		0, true,	0, 20, 1,	0.00, 0, 0, 	0, 0,"","H"),
 			// Time spacing (doing nothing)
-			'#'    : new Attack(0.1,		0, true,												0, 0, 0,			0.00, 0, 0, 	0, 0,"",""),
+			'#'    : new Attack(0.1,		0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"",""),
 		},
 	};
 	return mageData;
@@ -311,20 +315,23 @@ function getShamanData(){
 	return shamanData;
 }
 
+var savedScoundrel;
 function Scoundrel(data){
 	for (const [key, value] of Object.entries(data)) {
 		this[key] = value;
 	}
 
-	const RANK_V = 1.718;
+	const RANK_V = (1 + 0.1436*5);
 	const SUPER_BOOST_SCOUNDREL = 1.1454;
 
 	const SCOUNDREL_HUMAN_THINKING_TIME = 0.3;
 	const SCOUNDREL_CARD_TIME = 3.05+SCOUNDREL_HUMAN_THINKING_TIME;
 
+	const EFFECT_NONE = -1;
 	const EFFECT_BOOST = 1;
 	const EFFECT_CHEAT = 2;
 
+	const CARD_NONE = -1;
 	const CARD_FROST = 1;
 	const CARD_POISON = 2;
 	const CARD_ASH = 3;
@@ -345,7 +352,11 @@ function Scoundrel(data){
 	}
 
 	function generateRandomDeck(){
-		return shuffleArray([CARD_FROST, CARD_POISON, CARD_ASH, CARD_WEAKNESS, CARD_FLAME, CARD_HEAL]);
+		var newDeck = shuffleArray([CARD_FROST, CARD_POISON, CARD_ASH, CARD_WEAKNESS, CARD_FLAME, CARD_HEAL]);
+		if(savedScoundrel.talentlvl10 == "Stack the Deck"){
+			newDeck.unshift(CARD_FLAME);
+		}
+		return newDeck;
 	}
 
 	function addToDeckRandom(deck, card){
@@ -358,8 +369,8 @@ function Scoundrel(data){
 		// Choose to place a poison card at start of fight in the belt, because it is a very
 		// common scenario.
 		graphSpecificData.storedCard = CARD_POISON;
-		graphSpecificData.shootCard = -1;
-		graphSpecificData.burnEffect = -1;
+		graphSpecificData.shootCard = CARD_NONE;
+		graphSpecificData.burnEffect = EFFECT_NONE;
 
 		// Reset the crit talent remembering.
 		graphSpecificData.classData.critTalentList = [];
@@ -367,49 +378,59 @@ function Scoundrel(data){
 	}
 
 	const BURN_CARD_TILE = "F";
-	function spawnNewCard(attack, targetPatternData, graphSpecificData, timePassed) {
-		// Grab first card from the deck and remove it from the deck.	var card = graphSpecificData.deck.shift();
-		var card = graphSpecificData.deck.shift();
+	function handleNewSpawnedCard(attack, targetPatternData, graphSpecificData, timePassed) {
+		// Grab first card from the deck and remove it from the deck.
+		var cardInHand = graphSpecificData.deck.shift();
 		attack.tiles = "";
 
-		// Place the card in the most optimal position depending on what card and what state the deck is.
-		if(card == CARD_FROST || card == CARD_HEAL){
-			if(graphSpecificData.burnEffect == EFFECT_BOOST){
-				graphSpecificData.shootCard = card;
-			} else{
-				graphSpecificData.burnEffect = EFFECT_BOOST;
-				attack.tiles = BURN_CARD_TILE;
+		// Always burn the frost and heal card for more tilesets dps. (worth more than the extra boost of getting an potency card hit)
+		if(cardInHand == CARD_FROST || cardInHand == CARD_HEAL){
+			graphSpecificData.burnEffect = EFFECT_BOOST;
+			attack.tiles = BURN_CARD_TILE;
+			if(graphSpecificData.storedCard == CARD_POISON){
+				graphSpecificData.shootCard = CARD_POISON;
+				graphSpecificData.storedCard = CARD_NONE;
 			}
 		}
-		else if(card == CARD_POISON){
-			if(graphSpecificData.storedCard == CARD_ASH || graphSpecificData.storedCard == CARD_WEAKNESS){
-				graphSpecificData.shootCard = card;
-				graphSpecificData.storedCard = -1;
+		// Always shoot flame cards because they do more damage.
+		else if(cardInHand == CARD_FLAME){
+			graphSpecificData.shootCard = cardInHand;
+		}
+		else if(cardInHand == CARD_POISON){
+			// Just shoot the card on already stored poison.
+			if(graphSpecificData.burnEffect == EFFECT_CHEAT){
+				graphSpecificData.shootCard = cardInHand;
+			}
+			else if(graphSpecificData.storedCard == CARD_POISON){
+				graphSpecificData.shootCard = cardInHand;
+			}
+			// Shoot the card and also burn the already stored ash or weakness to spawn more poisons.
+			else if(graphSpecificData.storedCard == CARD_ASH || graphSpecificData.storedCard == CARD_WEAKNESS){
+				graphSpecificData.shootCard = cardInHand;
+				graphSpecificData.storedCard = CARD_NONE;
 				graphSpecificData.burnEffect = EFFECT_CHEAT;
 				attack.tiles = BURN_CARD_TILE;
-			} else if(graphSpecificData.storedCard == CARD_POISON){
-				graphSpecificData.shootCard = card;
 			}
+			// Just store the card for later use
 			else{
-				graphSpecificData.storedCard = card;
+				graphSpecificData.storedCard = cardInHand;
 			}
 		}
-		else if(card == CARD_ASH || card == CARD_WEAKNESS){
+		else if(cardInHand == CARD_ASH || cardInHand == CARD_WEAKNESS){
 			if(graphSpecificData.storedCard == CARD_ASH || graphSpecificData.storedCard == CARD_WEAKNESS){
-				graphSpecificData.shootCard = card;
+				graphSpecificData.burnEffect = EFFECT_CHEAT;
+				attack.tiles = BURN_CARD_TILE;
+				// graphSpecificData.shootCard = cardInHand;
 			}
 			else if(graphSpecificData.storedCard == CARD_POISON){
 				graphSpecificData.shootCard = CARD_POISON;
-				graphSpecificData.storedCard = -1;
+				graphSpecificData.storedCard = CARD_NONE;
 				graphSpecificData.burnEffect = EFFECT_CHEAT;
 				attack.tiles = BURN_CARD_TILE;
 			}
 			else{
-				graphSpecificData.storedCard = card;
+				graphSpecificData.storedCard = cardInHand;
 			}
-		}
-		else if(card == CARD_FLAME){
-			graphSpecificData.shootCard = card;
 		}
 
 		// Make a new deck if there are no cards left in the deck.
@@ -446,18 +467,24 @@ function Scoundrel(data){
 	}
 
 	var SCOUNDREL_NEW_SPAWNED_CARD = new Attack(0,  		0, true,  	0, 0, 0, 	0.00, 0, 0, 	0, 4,"","");
-	var SCOUNDREL_NEW_SPAWNED_POISON = new Attack(0,  		0, true,  	3911*RANK_V, 10, 10, 	0.00, 0, 0, 	0, 3,"A","");
+	var SCOUNDREL_NEW_SPAWNED_POISON = new Attack(0,  		0, true,  	getCurrentWeaponMultiplier()*215.447*RANK_V, 10, 10, 	0.00, 0, 0, 	0, 3,"A","");
 	function useCard(attack, targetPatternData, graphSpecificData, timePassed) {
-		var boost = updateCritChance(attack, targetPatternData, graphSpecificData, timePassed);
+		updateCritChance(attack, targetPatternData, graphSpecificData, timePassed);
+
+		var boost = 1;
 
 		// Add damage to the rotation when a card is being used to shoot.
-		if(graphSpecificData.shootCard != -1){
-			// Add a new poison DoT right after the attack of the
+		if(graphSpecificData.shootCard != CARD_NONE){
+			if(graphSpecificData.burnEffect == EFFECT_BOOST){
+				boost += 0.22725;
+			}
+			else if(graphSpecificData.burnEffect == EFFECT_CHEAT){
+				addToDeckRandom(graphSpecificData.deck, graphSpecificData.shootCard);
+			}
+
+			// Add a new poison DoT right after the attack with the poison card.
 			if(graphSpecificData.shootCard == CARD_POISON){
-				if(graphSpecificData.burnEffect == EFFECT_CHEAT){
-					addToDeckRandom(graphSpecificData.deck, CARD_POISON);
-				}
-				else if(graphSpecificData.burnEffect == EFFECT_BOOST){
+				if(graphSpecificData.burnEffect == EFFECT_BOOST){
 					SCOUNDREL_NEW_SPAWNED_POISON.dotTimes = 14;
 				} else{
 					SCOUNDREL_NEW_SPAWNED_POISON.dotTimes = 10;
@@ -467,7 +494,7 @@ function Scoundrel(data){
 			}
 			// Add the flame damage to the card.
 			else if(graphSpecificData.shootCard == CARD_FLAME){
-				boost *= 1.5; // Increase total damage from flame itself.d
+				boost += 0.5; // Increase total damage from flame itself.
 				SCOUNDREL_NEW_SPAWNED_CARD.tiles = "B";
 				var newAttack = clone(SCOUNDREL_NEW_SPAWNED_CARD);
 				targetPatternData.pattern.splice(targetPatternData.patternIdx+1, 0, newAttack);
@@ -476,15 +503,15 @@ function Scoundrel(data){
 				var newAttack = clone(SCOUNDREL_NEW_SPAWNED_CARD);
 				targetPatternData.pattern.splice(targetPatternData.patternIdx+1, 0, newAttack);
 			}
-			graphSpecificData.burnEffect = -1;
+			graphSpecificData.burnEffect = EFFECT_NONE;
 		}
-		graphSpecificData.shootCard = -1;
+		graphSpecificData.shootCard = CARD_NONE;
 		return boost;
 	}
 
 
 	this.getAttackFromInfo = function(attackData){
-		let time = attackData.time || 0;
+		let time = attackData.time;
 		let damage = 0;
 		let CAN_CRIT = attackData.autoCrit == true ? false : true;
 		let dotDamage = 0;
@@ -502,24 +529,41 @@ function Scoundrel(data){
 		let preModifierFuncs=undefined;
 		let endRank = attackData.rank || 0;
 
+		if(attackData.bulletCount == "MAX"){
+			if(this.talentlvl20 == "One Basket"){
+				attackData.bulletCount = 4;
+			} else{
+				attackData.bulletCount = 3;
+			}
+		}
+
 		if(attackData.bulletCount > 0){
 			damage = 322.3172;//5851;
 			damage*=(1+this.projectileIncrease);
 
 			if(attackData.bulletCount == 2){
-				damage *= 2.14;
+				damage *= 2.1436;
+				if(time == undefined){
+					time = 1.21;
+				}
 			}
 			if(attackData.bulletCount == 3){
-				damage *= 3.53;
+				damage *= 3.5375;
+				if(time == undefined){
+					time = 1.71;
+				}
 				if(this.talentlvl20 == "Break Shot"){
 					dmgBoostAmount = 0.08;
 					dmgBoostStayTime = 10;
 					dmgBoostMaxActive = 1;
 				}
 			}
-			// if(attackData.bulletCount == 4){
-			// 	damage *= 5?;
-			// }
+			if(attackData.bulletCount == 4){
+				damage *= 5.2780;
+				if(time == undefined){
+					time = 2.21;
+				}
+			}
 			modifierFuncs=increaseCritChance.bind({});
 			if(attackData.bulletCount > 0){
 				preModifierFuncs=useCard.bind({});
@@ -529,6 +573,9 @@ function Scoundrel(data){
 		} else{
 			hitCount = 0;
 		}
+		if(time == undefined){
+			time = 0;
+		}
 		if(attackData.reset === true){
 			preModifierFuncs = resetScoundrel.bind({});
 			attackID = 3;
@@ -536,10 +583,11 @@ function Scoundrel(data){
 		if(attackData.tryGrabCard === true){
 			if(time < SCOUNDREL_CARD_TIME){
 				time = SCOUNDREL_CARD_TIME;
-				preModifierFuncs = spawnNewCard.bind({});
 			}
+			preModifierFuncs = handleNewSpawnedCard.bind({});
 		}
-		damage *= (1 + 0.1436*endRank);
+		const RANK_MULT = (1 + 0.1436*endRank);
+		damage *= RANK_MULT;
 
 		if(attackData.super === true){
 			damage *= SUPER_BOOST_SCOUNDREL;
@@ -580,6 +628,7 @@ function getScoundrelData() {
 		talentlvl5:"Slow Burn",talentlvl10:"Quick Draw",talentlvl15:"On the Line",talentlvl20:"Break Shot",talentlvl30:"True Gambler",
 		strBoost:globalStrengthBoost, intBoost:globalIntellectBoost,projectileIncrease:globalArmourProjectileDamage
 	});
+	savedScoundrel = scoundrel;
 
 	// rank V (71.897% increase) Most scoundrel damage is pre-calculated to have the rank V dps increase.
 	var scoundrelData = {
@@ -593,28 +642,28 @@ function getScoundrelData() {
 			// 'B'    : new Attack(0.22,  		5851*RANK_V*NORMAL_BOOST_SCOUNDREL, true, 			0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", false, increaseCritChance, updateCritChance),
 
 			// Charged shot (2 bullet charge) with rank V boost
-			'c'    : scoundrel.getAttackFromInfo({time:1.21,bulletCount:2,rank:5}),
+			'c'    : scoundrel.getAttackFromInfo({bulletCount:2,rank:5}),
 			// 'c'    : new Attack(1.21,  		5851*RANK_V*2.14*NORMAL_BOOST_SCOUNDREL, true,  	0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", false, increaseCritChance, useCard),
 			// Charged shot (full 3 bullet charge) without a rank as first shot taking no time.
-			'f'    : scoundrel.getAttackFromInfo({time:0,bulletCount:3,rank:5}),
+			'f'    : scoundrel.getAttackFromInfo({time:0,bulletCount:"MAX",rank:5}),
 			// 'f'    : new Attack(0.00,  		5851*3*NORMAL_BOOST_SCOUNDREL, true,  				0, 0, 0, 		0.08, 10, 1, 	1, 0,"","", false, increaseCritChance, useCard),
 			// Charged shot (full 3 bullet charge) with rank V boost
-			'C'    : scoundrel.getAttackFromInfo({time:1.71,bulletCount:3,rank:5}),
+			'C'    : scoundrel.getAttackFromInfo({bulletCount:"MAX",rank:5}),
 			// 'C'    : new Attack(1.71,  		5851*RANK_V*3.53*NORMAL_BOOST_SCOUNDREL, true,  	0, 0, 0, 		0.08, 10, 1, 	1, 0,"","", false, increaseCritChance, useCard),
 			// Charged shot (delayed 3 bullet charge for tileset testing) with rank V boost
-			'F'    : scoundrel.getAttackFromInfo({time:2.11,bulletCount:3,rank:5}),
+			// 'F'    : scoundrel.getAttackFromInfo({time:2.11,bulletCount:3,rank:5}),
 			// 'F'    : new Attack(2.11,  		5851*RANK_V*3.53*NORMAL_BOOST_SCOUNDREL, true,  	0, 0, 0, 		0.08, 10, 1, 	1, 0,"","", false, increaseCritChance, useCard),
 
 			// Normal bullet while having the super activated. With rank V boost
 			'B'    : scoundrel.getAttackFromInfo({time:0.22,bulletCount:1,rank:5,super:true}),
 			// 's'    : new Attack(0.22,  		SUPER_BOOST_SCOUNDREL*5851*RANK_V*NORMAL_BOOST_SCOUNDREL, true, 		0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", false, increaseCritChance, updateCritChance),
 			// Charged shot while having the super activated. With rank V boost
-			'S'    : scoundrel.getAttackFromInfo({time:1.71,bulletCount:3,rank:5,super:true}),
+			'S'    : scoundrel.getAttackFromInfo({bulletCount:"MAX",rank:5,super:true}),
 			// 'S'    : new Attack(1.71,  		SUPER_BOOST_SCOUNDREL*5851*RANK_V*3.53*NORMAL_BOOST_SCOUNDREL, true, 	0, 0, 0, 	0.08, 10, 1, 	1, 0,"","", false, increaseCritChance, useCard),
 
 			// (D)eck (action that spawns a new card and do something with it. Then it will be used on the charged shot)
 			'D'    : scoundrel.getAttackFromInfo({tryGrabCard:true}),
-			// 'D'    : new Attack(SCOUNDREL_CARD_TIME,  		0, true,  							0.00, 0, 0, 	0.00, 0, 0, 	0, 0,"","", false, spawnNewCard), // Nothing card
+			// 'D'    : new Attack(SCOUNDREL_CARD_TIME,  		0, true,  							0.00, 0, 0, 	0.00, 0, 0, 	0, 0,"","", false, handleNewSpawnedCard), // Nothing card
 		},
 		critTalentList : []
 	};
@@ -773,12 +822,13 @@ function getRangerData() {
 	var rangerData = {
 		attackTypes : {
 			// Default boost of class
-			'X'    : new Attack(0.00,  				0, true,															0, 0, 0, 			STR_INT_BOOST-1, 999, 3, 	0, 3,"",""),
+			// 'X'    : new Attack(0.00,  				0, true,															0, 0, 0, 			STR_INT_BOOST-1, 999, 3, 	0, 3,"",""),
 
 			// ranger.getAttackFromInfo({time:0,arrowBar:0.1,globes:6,charge:"No",weakCircle:"Yes",type:"Normal",super:"No"});
 
 			// The nothing arrow (shot as fast as possible to trigger tilesets and ofset hits for charged strikes)
-			'o'    : new Attack(0.02,  				1, true,															0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			// 'o'    : new Attack(0.02,  				1, true,															0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+			'o'    : ranger.getAttackFromInfo({time:0.02,arrowBar:0,globes:"MAX"}),
 
 			//@@ Normal arrows @@//
 			// Normal 0.8 second arrow (before full globes)
@@ -872,16 +922,13 @@ function getRangerData() {
 }
 
 function convertClassData(classData){
-	const BLEED_BOOST = 1+(globalUsingBleed ? BLEED_ACTUAL_DMG_INC*globalDpsMultiplierFromCritting : 0);
-	
-	// This is the dps from lvl 30+0 to lvl 30+6 weapon without intellect and strength boost.
-	const PLUS_X_PLUS_0_WEAPON_RATIO = Math.pow(1.0495, globalWeaponLvl*2 + globalWeaponPlusLvl); // About 1.3362x a.k.a. 33.6% dps boost.
+	// This is the dps from lvl 0 to lvl X+Y weapon without intellect and strength boost.
+	const PLUS_X_PLUS_Y_WEAPON_RATIO = getCurrentWeaponMultiplier(); // About 1.3362x a.k.a. 33.6% dps boost.
 
-	const DAMAGE_MULTIPLIER = PLUS_X_PLUS_0_WEAPON_RATIO;
-	const DOT_MULTIPLIER = PLUS_X_PLUS_0_WEAPON_RATIO;
+	const DAMAGE_MULTIPLIER = PLUS_X_PLUS_Y_WEAPON_RATIO;
+	const DOT_MULTIPLIER = PLUS_X_PLUS_Y_WEAPON_RATIO;
 	for (const [key, attack] of Object.entries(classData.attackTypes)){
 		attack.damage*=DAMAGE_MULTIPLIER;
-		console.log(key + " " + attack.damage);
 		attack.dotDamage*=DOT_MULTIPLIER;
 	}
 	return classData;
