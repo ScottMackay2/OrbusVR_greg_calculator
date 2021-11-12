@@ -126,8 +126,8 @@ function getMageData(){
 	// const CRIT_CHANCE_MAGE = BASE_CRIT_CHANCE;
 	// const NORMAL_BOOST_MAGE = PROJECTILE_BOOST_MAGE;
 
-	const FIRE_CAST_SPEED = 0.55;
-	const FROST_CAST_SPEED = 0.55;
+	const FIRE_CAST_SPEED = 0.45;
+	const FROST_CAST_SPEED = 0.45;
 	const AFFLICTION_CAST_SPEED = 1.10; // Affliction travels as fast as frost and fire, contrary to popular believe xD
 	var mageData = {
 		attackTypes : {
