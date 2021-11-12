@@ -43,7 +43,6 @@ if (needsDefaultValues || debug) {
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: true,
-			averagingCrits: true,
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:100,

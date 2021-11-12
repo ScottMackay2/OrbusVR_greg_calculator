@@ -126,11 +126,9 @@ function getMageData(){
 	// const CRIT_CHANCE_MAGE = BASE_CRIT_CHANCE;
 	// const NORMAL_BOOST_MAGE = PROJECTILE_BOOST_MAGE;
 
-	const FIRE_CAST_SPEED = 0.43;
-	const FROST_CAST_SPEED = 0.43;
-	const AFFLICTION_CAST_SPEED = 0.55;
-	const AFFLICTION_TRAVEL_SPEED = AFFLICTION_CAST_SPEED + 0.2;
-	const FROST_CAST_SPEED_AFTER = 0.43 - (AFFLICTION_TRAVEL_SPEED-AFFLICTION_CAST_SPEED);
+	const FIRE_CAST_SPEED = 0.55;
+	const FROST_CAST_SPEED = 0.55;
+	const AFFLICTION_CAST_SPEED = 1.10; // Affliction travels as fast as frost and fire, contrary to popular believe xD
 	var mageData = {
 		attackTypes : {
 			// Default boost of class
@@ -145,7 +143,7 @@ function getMageData(){
 			'f'    : mage.getAttackFromInfo({type:"Frost2",time:FROST_CAST_SPEED,empowered:true}),
 			// 'f'    : new Attack(0.43,		9460*AFFINITY_FIRE_BOOST_MAGE*NORMAL_BOOST_MAGE, true,	0, 0, 0,			0.00, 0, 0, 	1, 0,"F",""),
 			// Frost boosted by runic diversity (3th spell)
-			'F'    : mage.getAttackFromInfo({type:"Frost2",time:FROST_CAST_SPEED_AFTER,diversity:true}),
+			'F'    : mage.getAttackFromInfo({type:"Frost2",time:FROST_CAST_SPEED,diversity:true}),
 			// 'F'    : new Attack(0.43,		9460*RUNIC_DIVERSITY_MAGE*NORMAL_BOOST_MAGE, true,		0, 0, 0,			0.00, 0, 0, 	1, 0,"F",""),
 			// Frost boosted by runic diversity and fireball.
 			'V'    : mage.getAttackFromInfo({type:"Frost2",time:FROST_CAST_SPEED,empowered:true,diversity:true}),
@@ -153,9 +151,9 @@ function getMageData(){
 
 			// Affliction affinity fireball
 			// 'a'    : new Attack(0.55,		3542*AFFINITY_FIRE_BOOST_MAGE*NORMAL_BOOST_MAGE, true,	3442, 12, 3,		0.05, 8, 2, 	1, 1,"A",""),
-			'a'    : mage.getAttackFromInfo({type:"Affliction2",time:AFFLICTION_TRAVEL_SPEED,empowered:true}),
+			'a'    : mage.getAttackFromInfo({type:"Affliction2",time:AFFLICTION_CAST_SPEED,empowered:true}),
 			// Affliction runic diversity and frost boosted
-			'A'    : mage.getAttackFromInfo({type:"Affliction2",time:AFFLICTION_TRAVEL_SPEED,diversity:true,dotIncrease:true}),
+			'A'    : mage.getAttackFromInfo({type:"Affliction2",time:AFFLICTION_CAST_SPEED,diversity:true,dotIncrease:true}),
 			// 'A'    : new Attack(0.55,		3542*RUNIC_DIVERSITY_MAGE*NORMAL_BOOST_MAGE, true,		3442, 15, 3,		0.05, 8, 2, 	1, 1,"A",""),
 			// Renew (constant heal tile)
 			'h'    : new Attack(0.0,		0, true,	0, 20, 1,	0.00, 0, 0, 	0, 0,"","H"),
