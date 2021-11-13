@@ -1,6 +1,7 @@
 var needsDefaultValues = true;
 
 // Default off flags that can toggle if the dps classes are using pots and tilesets.
+var globalLoadout;
 var globalUsingPotsFlag;
 var globalTilesetsEnabledFlag;
 var globalAveragingCritsFlag;
@@ -37,17 +38,33 @@ if (needsDefaultValues || debug) {
      */
 
 	res[MAGE_VALUE] = {
-		'default': {
-			savedAttacks: "b a(F b B B B B B B A) x 100",
-			savedTilesets: ['AFB', 'AF2', 'AFB2', '0BAF', '0BA'],
+		'rotation mage': {
+			savedAttacks: "b a(F b B B B B B A) x 100",
+			savedTilesets: ['6AFB', '6AF2', 'AFB2', '0BAF', '0BA'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: true,
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:100,
+			FIRE_HITS_PER_SECOND: 1.82,
+			FROST_HITS_PER_SECOND: 1.82,
+			AFFLICTION_HITS_PER_SECOND: 0.77,
 		},
-		'firemage': {
+		'speedy rotation mage': {
+			savedAttacks: "b a(F b B B B B B B B A) x 100",
+			savedTilesets: ['AFB', 'AF2B', 'AFB2', '3B2', '0BA'],
+			usingPotsFlag: true,
+			usingTilesetsFlag: true,
+			averagingCrits: true,
+			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
+			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
+			calcCount:100,
+			FIRE_CAST_SPEED: 0.44,
+			FROST_CAST_SPEED: 0.44,
+			AFFLICTION_CAST_SPEED: 0.66,
+		},
+		'firespam heal mage': {
 			savedAttacks: "b (hBBBBBBBBBBBBBBBBBBBBB)x32",
 			savedTilesets: ['2BH', '3BH', '3HB'],
 			usingPotsFlag: true,
@@ -116,6 +133,7 @@ function injectLoadout(loadoutName){
 	var loadoutsOfClass = JSON.parse(localStorage[loadoutsKey])[currentClass];
 
 	let targetLoadout = loadoutsOfClass[loadoutName];
+	globalLoadout = targetLoadout;
 
 	// Load the attacks of the loadout.
 	$("#attacks").val(targetLoadout.savedAttacks);
