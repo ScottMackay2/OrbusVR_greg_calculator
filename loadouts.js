@@ -40,13 +40,13 @@ if (needsDefaultValues || debug) {
 	res[MAGE_VALUE] = {
 		'rotation mage': {
 			savedAttacks: "b a(F b B B B B B A) x 100",
-			savedTilesets: ['6AFB', '6AF2', 'AFB2', '0BAF', '0BA'],
+			savedTilesets: ['6AFB', '6AF2', 'AFB2', '0B6A', '0B6'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: true,
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
-			calcCount:100,
+			calcCount:500,
 			FIRE_HITS_PER_SECOND: 1.82,
 			FROST_HITS_PER_SECOND: 1.82,
 			AFFLICTION_HITS_PER_SECOND: 0.77,
@@ -59,10 +59,23 @@ if (needsDefaultValues || debug) {
 			averagingCrits: true,
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
-			calcCount:100,
+			calcCount:500,
 			FIRE_HITS_PER_SECOND: 2.28,
 			FROST_HITS_PER_SECOND: 2.28,
-			AFFLICTION_HITS_PER_SECOND: 1.51,
+			AFFLICTION_HITS_PER_SECOND: 1.40,
+		},
+		'firespam mage': {
+			savedAttacks: "b (hBBBBBBBBBBBBBBBBBBBBB)x32",
+			savedTilesets: ['3B2', '32B', '2B3'],
+			usingPotsFlag: true,
+			usingTilesetsFlag: true,
+			averagingCrits: true,
+			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
+			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
+			calcCount:500,
+			FIRE_HITS_PER_SECOND: 2.28,
+			FROST_HITS_PER_SECOND: 2.28,
+			AFFLICTION_HITS_PER_SECOND: 1.40,
 		},
 		'firespam heal mage': {
 			savedAttacks: "b (hBBBBBBBBBBBBBBBBBBBBB)x32",
@@ -72,11 +85,11 @@ if (needsDefaultValues || debug) {
 			averagingCrits: true,
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
-			calcCount:100,
+			calcCount:500,
 			FIRE_HITS_PER_SECOND: 2.28,
 			FROST_HITS_PER_SECOND: 2.28,
 			AFFLICTION_HITS_PER_SECOND: 1.51,
-		}
+		},
 	};
 	res[SHAMAN_VALUE] = {
 		'default': {
