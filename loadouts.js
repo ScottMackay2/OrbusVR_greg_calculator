@@ -60,9 +60,9 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:100,
-			FIRE_CAST_SPEED: 0.44,
-			FROST_CAST_SPEED: 0.44,
-			AFFLICTION_CAST_SPEED: 0.66,
+			FIRE_HITS_PER_SECOND: 2.28,
+			FROST_HITS_PER_SECOND: 2.28,
+			AFFLICTION_HITS_PER_SECOND: 1.51,
 		},
 		'firespam heal mage': {
 			savedAttacks: "b (hBBBBBBBBBBBBBBBBBBBBB)x32",
@@ -73,6 +73,9 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:100,
+			FIRE_HITS_PER_SECOND: 2.28,
+			FROST_HITS_PER_SECOND: 2.28,
+			AFFLICTION_HITS_PER_SECOND: 1.51,
 		}
 	};
 	res[SHAMAN_VALUE] = {
