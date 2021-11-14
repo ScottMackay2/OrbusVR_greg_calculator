@@ -53,7 +53,7 @@ if (needsDefaultValues || debug) {
 		},
 		'best rotation mage': {
 			savedAttacks: "b a(F b B B B B B B B A) x 100",
-			savedTilesets: ['AFB', 'AF2B', 'AFB2', '3B2', '0BA'],
+			savedTilesets: ['AFB', 'AF2B', 'AFB3', '3B2', '0BA'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: true,
