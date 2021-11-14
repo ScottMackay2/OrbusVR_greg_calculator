@@ -159,6 +159,8 @@ function getMageData(){
 			'h'    : new Attack(0.0,		0, true,	0, 20, 1,	0.00, 0, 0, 	0, 0,"","H"),
 			// Time spacing (doing nothing)
 			'#'    : new Attack(0.1,		0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"",""),
+			// Time spacing (renew)
+			'@'    : new Attack(14,		0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"",""),
 		},
 	};
 	return mageData;
