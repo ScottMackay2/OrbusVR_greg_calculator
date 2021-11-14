@@ -41,7 +41,7 @@ if (needsDefaultValues || debug) {
     const MAGE_ARMOUR_STATS = {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04};
 
 	res[MAGE_VALUE] = {
-		'rotation mage - normal-affliction fast-fire (viable: affliction: <1, fire/frost: 1.5-2.5)': {
+		'rotation mage - normal-affliction fast-fire (viable: affliction: 0.5-1.0, fire/frost: 1.2-2.5)': {
 			savedAttacks: "b a(F b B B B B B B A) x 100",
 			savedTilesets: ['6AFB', '6AF2', 'AFB2', '0B6A', '0B6'],
 			usingPotsFlag: true,
@@ -50,11 +50,11 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: MAGE_WEAPON_STATS,
 			armourAffixes: MAGE_ARMOUR_STATS,
 			calcCount:400,
-			FIRE_HITS_PER_SECOND: 2.2,
-			FROST_HITS_PER_SECOND: 2.2,
+			FIRE_HITS_PER_SECOND: 1.88,
+			FROST_HITS_PER_SECOND: 1.88,
 			AFFLICTION_HITS_PER_SECOND: 0.8,
 		},
-		'rotation mage - normal-affliction insane-fire (viable: affliction: <1, fire/frost: 2.6-3.5)': {
+		'rotation mage - normal-affliction insane-fire (viable: affliction: 0.5-1.0, fire/frost: 2.6-3.5)': {
 			savedAttacks: "b a(F b B B B B B B B A) x 100",
 			savedTilesets: ['6AFB', '6AF2', 'AFB3', '0B6A', '0B6'],
 			usingPotsFlag: true,
@@ -67,7 +67,7 @@ if (needsDefaultValues || debug) {
 			FROST_HITS_PER_SECOND: 2.6,
 			AFFLICTION_HITS_PER_SECOND: 0.8,
 		},
-		'rotation mage - insane-affliction fast-fire (viable: affliction: <1, fire/frost: 2.1-2.5)': {
+		'rotation mage - insane-affliction fast-fire (viable: affliction: >1.0, fire/frost: 2.1-2.5)': {
 			savedAttacks: "b a(F b B B B B B B B A) x 100",
 			savedTilesets: ['AFB', 'AF2B', 'AFB2', '3B2', '0BA'],
 			usingPotsFlag: true,
@@ -80,7 +80,7 @@ if (needsDefaultValues || debug) {
 			FROST_HITS_PER_SECOND: 2.2,
 			AFFLICTION_HITS_PER_SECOND: 1.50,
 		},
-		'rotation mage - insane-affliction insane-fire (viable: affliction: <1, fire/frost: 2.6-3.5)': {
+		'rotation mage - insane-affliction insane-fire (viable: affliction: >1.0, fire/frost: 2.6-3.5)': {
 			savedAttacks: "b a(F b B B B B B B B B A) x 100",
 			savedTilesets: ['AFB', 'AF2B', 'AFB3', '3B2', '0BA'],
 			usingPotsFlag: true,
@@ -132,7 +132,20 @@ if (needsDefaultValues || debug) {
 			FROST_HITS_PER_SECOND: 0.00,
 			AFFLICTION_HITS_PER_SECOND: 0.00,
 		},
-		'Frost fire mage (viable: fire/frost: 1.5-2.2)': {
+		'Frost fire mage - beginner (viable: fire/frost: 0.7-1.0)': {
+			savedAttacks: "b (fbBB)x80",
+			savedTilesets: ['FB6', 'F6B', 'BF6', '0BF'],
+			usingPotsFlag: true,
+			usingTilesetsFlag: true,
+			averagingCrits: true,
+			weaponAffixes: MAGE_WEAPON_STATS,
+			armourAffixes: MAGE_ARMOUR_STATS,
+			calcCount:400,
+			FIRE_HITS_PER_SECOND: 0.85,
+			FROST_HITS_PER_SECOND: 0.85,
+			AFFLICTION_HITS_PER_SECOND: 0.00,
+		},
+		'Frost fire mage - fast (viable: fire/frost: 1.5-2.2)': {
 			savedAttacks: "b (fbBBBBBB)x80",
 			savedTilesets: ['FB2', 'F2B', 'BF2', '0BF'],
 			usingPotsFlag: true,
@@ -143,7 +156,7 @@ if (needsDefaultValues || debug) {
 			calcCount:400,
 			FIRE_HITS_PER_SECOND: 2.0,
 			FROST_HITS_PER_SECOND: 2.0,
-			AFFLICTION_HITS_PER_SECOND: 1.51,
+			AFFLICTION_HITS_PER_SECOND: 0.00,
 		},
 	};
 	res[SHAMAN_VALUE] = {
