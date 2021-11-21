@@ -52,7 +52,7 @@ for(var i=0;i<MAX_TIME_SECONDS/STEP_SIZE;i+=1){
 	labelsAxisX.push((STEP_SIZE*i).toFixed(STEP_SIZE.countDecimals()));
 }
 
-function Attack(time, damage, canCrit, dotDamage, dotTimes, dotMaxActive, dmgBoostAmount, dmgBoostStayTime, dmgBoostMaxActive, hitCount, attackID, tiles, dotTiles, spawnsNormalAttack, modifierFunc, preModifierFunc){
+function Attack(time, damage, canCrit, dotDamage, dotTimes, dotMaxActive, dmgBoostAmount, dmgBoostStayTime, dmgBoostMaxActive, hitCount, attackID, tiles, dotTiles, spawnsNormalAttack, modifierFunc, preModifierFunc, prePreModifierFunc){
 	this.time = time;
 	this.damage = damage;
 	this.canCrit = canCrit;
@@ -79,6 +79,7 @@ function Attack(time, damage, canCrit, dotDamage, dotTimes, dotMaxActive, dmgBoo
 
 	this.modifierFunc = modifierFunc;
 	this.preModifierFunc = preModifierFunc;
+	this.prePreModifierFunc = prePreModifierFunc;
 };
 
 var updateEditTimemout = null;
@@ -291,6 +292,9 @@ function fillChart(){
 					newAttack = clone(newAttack);
 					newAttack.damage*=DAMAGE_MULTIPLIER;
 					newAttack.dotDamage*=DOT_MULTIPLIER;
+					if(newAttack.prePreModifierFunc != undefined){
+						newAttack.prePreModifierFunc(newAttack);
+					}
 					attackPattern.push(newAttack);
 				}
 				if(chr == '('){

@@ -712,7 +712,11 @@ function Ranger(data){
 
 		const BASE_DAMAGE = 189.6;
 		let damage = 1;
+		let prePreModifierFunc = undefined;
 		if(TIME > 0.3){
+			prePreModifierFunc = function(attack){
+				attack.time = attack.time + (Math.random()*0.1)-0.1/2;
+			};
 			damage = 
 				BASE_DAMAGE*
 				(
@@ -779,7 +783,7 @@ function Ranger(data){
 			spawnsNormalAttack = true;
 		}
 
-		return new Attack(TIME, damage, CAN_CRIT, dotDamage, dotTimes, dotMaxActive, dmgBoostAmount, dmgBoostStayTime, dmgBoostMaxActive, hitCount, attackID, tiles, dotTiles, spawnsNormalAttack)
+		return new Attack(TIME, damage, CAN_CRIT, dotDamage, dotTimes, dotMaxActive, dmgBoostAmount, dmgBoostStayTime, dmgBoostMaxActive, hitCount, attackID, tiles, dotTiles, spawnsNormalAttack, null, null, prePreModifierFunc)
 	};
 };
 
@@ -865,6 +869,10 @@ function getRangerData() {
 			// Normal 0.8 second arrow (time decreased by prev arrow)(1.5x crit spot)
 			'D'    : ranger.getAttackFromInfo({time:TIME_08-0.1,arrowBar:0.8,globes:"MAX",charge:"No",weakCircle:"Yes",type:"Normal",super:"No"}),
 			// 'D'    : new Attack(TIME_08-0.1,		19077*RANGER_6_GLOBES, true,  				0, 0, 0, 			0.00, 0, 0, 	1, 0,"",""),
+
+			'f'    : ranger.getAttackFromInfo({time:TIME_08,arrowBar:0.8,globes:6,charge:"No",weakCircle:"No",type:"Piercing",super:"No"}),
+			'r'    : ranger.getAttackFromInfo({time:1.0+TIME_08,arrowBar:0.8,globes:6,charge:"Yes",weakCircle:"No",type:"Normal",super:"No"}),
+			'C'    : ranger.getAttackFromInfo({time:1.0+TIME_08,arrowBar:0.8,globes:6,charge:"Yes",weakCircle:"Yes",type:"Poison",super:"No"}),
 
 			//@@ Charged shots. @@//
 			// 0.9 charged piercing on weakspot with 2 globes

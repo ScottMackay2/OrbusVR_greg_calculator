@@ -12,7 +12,7 @@ const SCOUNDREL_VALUE = 'scoundrel';
 const SHAMAN_VALUE = 'shaman';
 const RANGER_VALUE = 'ranger';
 
-const CONST_CLASSES = [MAGE_VALUE, SCOUNDREL_VALUE, RANGER_VALUE, SHAMAN_VALUE];
+const CONST_CLASSES = [RANGER_VALUE, MAGE_VALUE, SCOUNDREL_VALUE, SHAMAN_VALUE];
 
 const loadoutsKey = "class_loadouts";
 
@@ -34,13 +34,11 @@ const BLEED_ACTUAL_DMG_INC = BLEED_DEFAULT_DMG_INC*BLEED_CHANCE_PERCENT;
 const BASE_BASE_CRIT_CHANCE = 0.1;
 const BASE_BASE_CRIT_AMOUNT = 1.5;
 
-let BASE_CRIT_CHANCE;
-let STR_INT_BOOST;
-
 $("#togglePots").click(function(){
 	if(chartFilling == false){
 		globalUsingPotsFlag = !globalUsingPotsFlag;
-		updatePots(globalUsingPotsFlag);
+		updatePotsHtml(globalUsingPotsFlag);
+		refreshLoadout();
 		loadAllCharts();
 	}
 });
@@ -53,15 +51,12 @@ $("#toggleTilesets").click(function(){
 	}
 });
 
-function updatePots(usingPotsFlag){
+function updatePotsHtml(usingPotsFlag){
 	if(usingPotsFlag == false){
 		$("#togglePots").html('Enable pots');
 	} else{
 		$("#togglePots").html('Disable pots');
 	}
-
-	// BASE_CRIT_CHANCE = (150+RING_ADDED_CRIT_DMG+(usingPotsFlag ? 250 : 0))/150*0.1; // 150 = 0.1 = 10% more crit chance.
-	STR_INT_BOOST = 1+(165 + (usingPotsFlag ? 250 : 0))/150*0.05; // 150 = 0.05x = 5% more damage from the str/int stat.
 }
 
 function updateTilesets(tilesetsEnabledFlag){

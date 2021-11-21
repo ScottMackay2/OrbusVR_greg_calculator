@@ -76,9 +76,9 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: MAGE_WEAPON_STATS,
 			armourAffixes: MAGE_ARMOUR_STATS,
 			calcCount:400,
-			FIRE_HITS_PER_SECOND: 2.2,
-			FROST_HITS_PER_SECOND: 2.2,
-			AFFLICTION_HITS_PER_SECOND: 1.50,
+			FIRE_HITS_PER_SECOND: 2.32,
+			FROST_HITS_PER_SECOND: 2.32,
+			AFFLICTION_HITS_PER_SECOND: 1.3,
 		},
 		'rotation mage - insane-affliction insane-fire (viable: affliction: >1.0, fire/frost: 2.6-3.5)': {
 			savedAttacks: "b a(F b B B B B B B B B A) x 100",
@@ -91,7 +91,7 @@ if (needsDefaultValues || debug) {
 			calcCount:400,
 			FIRE_HITS_PER_SECOND: 2.6,
 			FROST_HITS_PER_SECOND: 2.6,
-			AFFLICTION_HITS_PER_SECOND: 1.50,
+			AFFLICTION_HITS_PER_SECOND: 1.4,
 		},
 		'Frost fire mage - beginner (viable: fire/frost: 0.7-1.0)': {
 			savedAttacks: "b (fbBB)x80",
@@ -128,13 +128,13 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: MAGE_WEAPON_STATS,
 			armourAffixes: MAGE_ARMOUR_STATS,
 			calcCount:400,
-			FIRE_HITS_PER_SECOND: 2.25,
+			FIRE_HITS_PER_SECOND: 2.4,
 			FROST_HITS_PER_SECOND: 0.00,
 			AFFLICTION_HITS_PER_SECOND: 0.00,
 		},
 		'firespam mage - insane (viable: fire: 2.6-2.9)': {
 			savedAttacks: "b Bx600",
-			savedTilesets: ['2B3', '23B', '3B2', '4B2' /*The 4 hits a second procs by Orbus lagg sometimes*/],
+			savedTilesets: ['2B3', '23B', '3B2', '4B3', '5B4' /*The 4 hits a second procs by Orbus lagg sometimes*/],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: true,
@@ -154,7 +154,7 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: MAGE_WEAPON_STATS,
 			armourAffixes: MAGE_ARMOUR_STATS,
 			calcCount:400,
-			FIRE_HITS_PER_SECOND: 1.70,
+			FIRE_HITS_PER_SECOND: 2.00,
 			FROST_HITS_PER_SECOND: 0.00,
 			AFFLICTION_HITS_PER_SECOND: 0.00,
 		},
@@ -185,8 +185,20 @@ if (needsDefaultValues || debug) {
 	};
 	res[RANGER_VALUE] = {
 		'default': {
-			savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*5 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
-			savedTilesets: ['6F2', 'F26', 'F2A', 'A26F', '6F2A'],
+			savedAttacks: "e (f s s s C s s s s f s s s r s s s s)*20",
+			// savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*5 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
+			savedTilesets: ['F26', 'F62', 'A3F', 'A2F', 'F6A'],
+			usingPotsFlag: true,
+			usingTilesetsFlag: true,
+			averagingCrits: false,
+			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"CHARGED_STRIKES":{"randomize":true}},{"BLEED":{}}],
+			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
+			calcCount:300,
+		},
+		'default2': {
+			savedAttacks: "e (v z s s s u s s V z s s S s s s)(V z z z z u z z V z z z Z z z z)*20 Y w w w w p w w w w (V z s s s u s s V z s s S s s s)*5 Y w w w w p w w w w (V z s s s u s s V z s s S s s s)*4",
+			// savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*5 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
+			savedTilesets: ['F26', 'F62', 'F26A', 'F6A', 'F2A'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: false,
@@ -231,7 +243,7 @@ function injectLoadout(loadoutName){
 
 	// Load the flags of the loadout
 	globalUsingPotsFlag = targetLoadout.usingPotsFlag;
-	updatePots(globalUsingPotsFlag);
+	updatePotsHtml(globalUsingPotsFlag);
 
 	globalTilesetsEnabledFlag = targetLoadout.usingTilesetsFlag;
 	globalAveragingCritsFlag = targetLoadout.averagingCrits;
@@ -239,8 +251,12 @@ function injectLoadout(loadoutName){
 
 	$("#calcCount").val(targetLoadout.calcCount);
 
-	const ADDED_POTS_STAT = (globalUsingPotsFlag ? 250 : 0);
+	refreshLoadout();
+}
 
+function refreshLoadout(){
+	const ADDED_POTS_STAT = (globalUsingPotsFlag ? 250 : 0);
+	
 	globalWeaponLvl = 30; // Default
 	globalWeaponPlusLvl = 0; // Default
 	globalWeaponAffixBoosts = 1;
@@ -248,8 +264,8 @@ function injectLoadout(loadoutName){
 	globalUsingBleed = false;
 	var strength = ADDED_POTS_STAT;
 	var intellect = ADDED_POTS_STAT;
-	for(let i=0;i<targetLoadout.weaponAffixes.length;i++){
-		const AFFIX = targetLoadout.weaponAffixes[i];
+	for(let i=0;i<globalLoadout.weaponAffixes.length;i++){
+		const AFFIX = globalLoadout.weaponAffixes[i];
 		const AFFIX_NAME = Object.keys(AFFIX)[0];
 		if(AFFIX_NAME == "lvl"){
 			globalWeaponLvl = AFFIX[AFFIX_NAME];
@@ -283,10 +299,10 @@ function injectLoadout(loadoutName){
 	globalArmourCritChance = BASE_BASE_CRIT_CHANCE + ADDED_POTS_STAT/150*0.1;
 	globalArmourCritDamage = BASE_BASE_CRIT_AMOUNT;
 	globalArmourProjectileDamage = 0;
-	const ARMOUR_AFFIXES = Object.keys(targetLoadout.armourAffixes);
+	const ARMOUR_AFFIXES = Object.keys(globalLoadout.armourAffixes);
 	for(let i=0;i<ARMOUR_AFFIXES.length;i++){
 		const AFFIX = ARMOUR_AFFIXES[i];
-		const VALUE = targetLoadout.armourAffixes[ARMOUR_AFFIXES[i]];
+		const VALUE = globalLoadout.armourAffixes[ARMOUR_AFFIXES[i]];
 		if(AFFIX == "critChance"){globalArmourCritChance += VALUE;}
 		if(AFFIX == "critDamage"){globalArmourCritDamage += VALUE;}
 		if(AFFIX == "projectileDamage"){globalArmourProjectileDamage = VALUE;}
