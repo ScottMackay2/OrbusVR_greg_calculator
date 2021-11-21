@@ -187,7 +187,7 @@ if (needsDefaultValues || debug) {
 		'default': {
 			savedAttacks: "e (f s s s C s s s s f s s s r s s s s)*20",
 			// savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*5 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
-			savedTilesets: ['F26', 'F62', 'A3F', 'F6A3', 'F6A'],
+			savedTilesets: ['F26', 'F6A', 'F6A3', 'A32', 'A3F'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: false,
