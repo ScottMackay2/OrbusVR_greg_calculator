@@ -184,10 +184,10 @@ if (needsDefaultValues || debug) {
 		}
 	};
 	res[RANGER_VALUE] = {
-		'default': {
-			savedAttacks: "e (f s s s C s s s s f s s s r s s s s)*20",
+		'reliable tilesets': {
+			savedAttacks: "e (f s s s k s s s s f s s s r s s s s)*20",
 			// savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*5 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
-			savedTilesets: ['F26', 'F6A', 'F6A3', 'A32', 'A3F'],
+			savedTilesets: ['F26', 'F6A', 'F6A3', 'A32', 'F62'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: false,
@@ -196,9 +196,9 @@ if (needsDefaultValues || debug) {
 			calcCount:300,
 		},
 		'default2': {
-			savedAttacks: "e (v z s s s u s s V z s s S s s s)(V z z z z u z z V z z z Z z z z)*20 Y w w w w p w w w w (V z s s s u s s V z s s S s s s)*5 Y w w w w p w w w w (V z s s s u s s V z s s S s s s)*4",
+			savedAttacks: "e (v s s s s s u s s v s s s s s s s s)*20",
 			// savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*5 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
-			savedTilesets: ['F26', 'F62', 'F26A', 'F6A', 'F2A'],
+			savedTilesets: ['F26', 'F6A', 'F6A3', 'A32', 'F62'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: false,

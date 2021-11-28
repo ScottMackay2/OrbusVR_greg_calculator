@@ -715,7 +715,7 @@ function Ranger(data){
 		let prePreModifierFunc = undefined;
 		if(TIME > 0.3){
 			prePreModifierFunc = function(attack){
-				attack.time = attack.time + (Math.random()*0.1)-0.1/2;
+				attack.time = attack.time + (Math.random()*0.02)-0.02/2;
 			};
 			damage = 
 				BASE_DAMAGE*
@@ -872,7 +872,7 @@ function getRangerData() {
 
 			'f'    : ranger.getAttackFromInfo({time:TIME_08,arrowBar:0.8,globes:6,charge:"No",weakCircle:"No",type:"Piercing",super:"No"}),
 			'r'    : ranger.getAttackFromInfo({time:1.0+TIME_08,arrowBar:0.8,globes:6,charge:"Yes",weakCircle:"No",type:"Normal",super:"No"}),
-			'C'    : ranger.getAttackFromInfo({time:1.0+TIME_08,arrowBar:0.8,globes:6,charge:"Yes",weakCircle:"Yes",type:"Poison",super:"No"}),
+			'k'    : ranger.getAttackFromInfo({time:1.0+TIME_08,arrowBar:0.8,globes:6,charge:"Yes",weakCircle:"No",type:"Poison",super:"No"}),
 
 			//@@ Charged shots. @@//
 			// 0.9 charged piercing on weakspot with 2 globes
