@@ -145,8 +145,21 @@ if (needsDefaultValues || debug) {
 			FROST_HITS_PER_SECOND: 0.00,
 			AFFLICTION_HITS_PER_SECOND: 0.00,
 		},
-		'firespam heal mage - needs renew (viable: 1.7 - 4.1 hits per second)': {
+		'firespam musky mage - needs musky renew (viable: 1.7 - 4.1 hits per second)': {
 			savedAttacks: "b Bx1000\n(h@)x20",
+			savedTilesets: ['0BH', '0HB', '2BH', '3BH', '4BH'],
+			usingPotsFlag: true,
+			usingTilesetsFlag: true,
+			averagingCrits: true,
+			weaponAffixes: MAGE_WEAPON_STATS,
+			armourAffixes: MAGE_ARMOUR_STATS,
+			calcCount:400,
+			FIRE_HITS_PER_SECOND: 2.00,
+			FROST_HITS_PER_SECOND: 0.00,
+			AFFLICTION_HITS_PER_SECOND: 0.00,
+		},
+		'firespam bard mage - needs bard heals (viable: 1.7 - 4.1 hits per second)': {
+			savedAttacks: "b Bx1000\n(H)x20",
 			savedTilesets: ['0BH', '0HB', '2BH', '3BH', '4BH'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
