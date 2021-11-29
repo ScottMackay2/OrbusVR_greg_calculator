@@ -12,7 +12,7 @@ const SCOUNDREL_VALUE = 'scoundrel';
 const SHAMAN_VALUE = 'shaman';
 const RANGER_VALUE = 'ranger';
 
-const CONST_CLASSES = [RANGER_VALUE, MAGE_VALUE, SCOUNDREL_VALUE, SHAMAN_VALUE];
+const CONST_CLASSES = [MAGE_VALUE, RANGER_VALUE, SCOUNDREL_VALUE, SHAMAN_VALUE];
 
 const loadoutsKey = "class_loadouts";
 

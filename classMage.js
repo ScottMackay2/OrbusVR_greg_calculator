@@ -113,11 +113,11 @@ var ClassMage = {
 				// Renew (constant heal tile)
 				'h'    : new Attack(0.0,		0, true,	0, 20, 1,	0.00, 0, 0, 	0, 0,"","H"),
 				// Bard passive (constant heal tile)
-				'H'    : new Attack(3.172,		0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"","H"),
+				'H'    : new Attack(3.1725,		0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"H",""),
 				// Time spacing (doing nothing)
 				'#'    : new Attack(0.1,		0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"",""),
 				// Time spacing (renew)
-				'@'    : new Attack(14,		0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"",""),
+				'@'    : new Attack(14,			0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"",""),
 			},
 		};
 		return mageData;
