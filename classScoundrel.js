@@ -348,6 +348,14 @@ var ClassScoundrel = {
 				// (D)eck (action that spawns a new card and do something with it. Then it will be used on the charged shot)
 				'D'    : scoundrel.getAttackFromInfo({tryGrabCard:true}),
 				// 'D'    : new Attack(SCOUNDREL_CARD_TIME,  		0, true,  							0.00, 0, 0, 	0.00, 0, 0, 	0, 0,"","", false, handleNewSpawnedCard), // Nothing card
+				// Renew (constant heal tile)
+				'h'    : new Attack(0.0,		0, true,	0, 20, 1,	0.00, 0, 0, 	0, 0,"","H"),
+				// Bard passive (constant heal tile)
+				'H'    : new Attack(3.1725,		0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"H",""),
+				// Time spacing (doing nothing)
+				'#'    : new Attack(0.1,		0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"",""),
+				// Time spacing (renew)
+				'@'    : new Attack(14,			0, true,	0, 0, 0,	0.00, 0, 0, 	0, 0,"",""),
 			},
 			critTalentList : []
 		};
