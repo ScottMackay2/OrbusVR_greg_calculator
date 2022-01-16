@@ -108,13 +108,13 @@ var ClassShaman = {
 				// 'T'    : new Attack(0,  							0, true,  													0, 0, 0, 		0.00, 0, 0, 	0, 0,"T",""),
 
 				// Lava pulse (very first placement relative to fight start no time passed)
-				'p'    : shaman.getAttackFromInfo({type:"Lava", time:0}),
+				'p'    : shaman.getAttackFromInfo({type:"Lava", time:SHAMAN_REPLACE_ATTACK_TIME}),
 				// 'p'    : new Attack(0.00,  							8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
 				// Lava pulse default timing.
-				'p'    : shaman.getAttackFromInfo({type:"Lava", time:SHAMAN_PULSE_ATTACK_TIME}),
+				'P'    : shaman.getAttackFromInfo({type:"Lava", time:SHAMAN_PULSE_ATTACK_TIME}),
 				// 'P'    : new Attack(SHAMAN_PULSE_ATTACK_TIME,  		8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
 				// Lava pulse next time replaced (a shorter timeframe between lava pulses because it got replaced)
-				'A'    : shaman.getAttackFromInfo({type:"Lava", time:SHAMAN_REPLACE_ATTACK_TIME}),
+				'A'    : shaman.getAttackFromInfo({type:"Lava", time:0}),
 				// 'A'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
 
 				// Stun default timing

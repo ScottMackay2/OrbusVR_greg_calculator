@@ -169,14 +169,40 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: MAGE_WEAPON_STATS,
 			armourAffixes: MAGE_ARMOUR_STATS,
 			calcCount:300,
-			FIRE_HITS_PER_SECOND: 3.5,
-			FROST_HITS_PER_SECOND: 3.5,
+			FIRE_HITS_PER_SECOND: 2.5,
+			FROST_HITS_PER_SECOND: 2.5,
 			AFFLICTION_HITS_PER_SECOND: 1.95,
+		},
+		'no frost rotation mage - fast-affliction insane-fire (viable: affliction: <1.0, fire: 2.1-2.5)': {
+			savedAttacks: "b a(b B B B B B B B a) x 100",
+			savedTilesets: ['6AB2', '6A2B', '6AB', '0B6', '0B6A'],
+			usingPotsFlag: true,
+			usingTilesetsFlag: true,
+			averagingCrits: true,
+			weaponAffixes: MAGE_WEAPON_STATS,
+			armourAffixes: MAGE_ARMOUR_STATS,
+			calcCount:300,
+			FIRE_HITS_PER_SECOND: 2.1,
+			FROST_HITS_PER_SECOND: 2.1,
+			AFFLICTION_HITS_PER_SECOND: 0.95,
+		},
+		'no frost rotation mage - insane-affliction insane-fire (viable: affliction: >1.0, fire: 2.6-3.5)': {
+			savedAttacks: "b a(b B B B B B B B B a) x 100",
+			savedTilesets: ['AB2', 'A2B', 'A2B3', 'AB3', '0BA'],
+			usingPotsFlag: true,
+			usingTilesetsFlag: true,
+			averagingCrits: true,
+			weaponAffixes: MAGE_WEAPON_STATS,
+			armourAffixes: MAGE_ARMOUR_STATS,
+			calcCount:300,
+			FIRE_HITS_PER_SECOND: 2.5,
+			FROST_HITS_PER_SECOND: 2.5,
+			AFFLICTION_HITS_PER_SECOND: 1.45,
 		},
 	};
 	res[SHAMAN_VALUE] = {
 		'default': {
-			savedAttacks: "@T(APPPP@@T@@@pPPPPP@@@T@pPPPP) (@@T@@#pPPPPP)*100 \n@@T@####(SssT)*100 \n@@##T@####(VFFT)*100 \n@@####T@####(IiLLT)*100",
+			savedAttacks: "@T(APPPP@T@@@pPPPPP@@@T@@@pPPPP) (@@T@@@pPPPPP)*100 \n@@T@@@(SssT)*100 \n@@##T@@@(VFFT)*100 \n@@####T@####(IiLLT)*100",
 			savedTilesets: ['SBP', 'PSB', 'SBX', '0PSB', '0PS'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
@@ -189,7 +215,7 @@ if (needsDefaultValues || debug) {
 	res[SCOUNDREL_VALUE] = {
 		'default': {
 			savedAttacks: "X f BBBB(CCB CBB CB)*15 SssSsC BBBB(CCB CBB CB)*15 \nD*150",
-			savedTilesets: ['A26', '362', '326', 'F62', 'F6A2'],
+			savedTilesets: ['A26', '26F', '2F6', 'F62', 'F6A2'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: true,
@@ -199,10 +225,9 @@ if (needsDefaultValues || debug) {
 		}
 	};
 	res[RANGER_VALUE] = {
-		'reliable tilesets': {
-			savedAttacks: "e (f s s s k s s s s f s s s r s s s s)*20",
-			// savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*5 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
-			savedTilesets: ['F26', 'F6A', 'F6A3', 'A32', 'F62'],
+		'default': {
+			savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*5 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
+			savedTilesets: ['6F2', '26F', 'F2A', 'A26F', '6F2A'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: false,
@@ -210,8 +235,8 @@ if (needsDefaultValues || debug) {
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:300,
 		},
-		'default2': {
-			savedAttacks: "e (v s s s s s u s s v s s s s s s s s)*20",
+		'reliable tilesets': {
+			savedAttacks: "e (f s s s k s s s s f s s s r s s s s)*20",
 			// savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*5 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
 			savedTilesets: ['F26', 'F6A', 'F6A3', 'A32', 'F62'],
 			usingPotsFlag: true,
