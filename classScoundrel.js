@@ -339,7 +339,7 @@ var ClassScoundrel = {
 				// 'F'    : new Attack(2.11,  		5851*RANK_V*3.53*NORMAL_BOOST_SCOUNDREL, true,  	0, 0, 0, 		0.08, 10, 1, 	1, 0,"","", false, increaseCritChance, useCard),
 
 				// Normal bullet while having the super activated. With rank V boost
-				'B'    : scoundrel.getAttackFromInfo({time:0.22,bulletCount:1,rank:5,super:true}),
+				's'    : scoundrel.getAttackFromInfo({time:0.22,bulletCount:1,rank:5,super:true}),
 				// 's'    : new Attack(0.22,  		SUPER_BOOST_SCOUNDREL*5851*RANK_V*NORMAL_BOOST_SCOUNDREL, true, 		0, 0, 0, 		0.00, 0, 0, 	1, 0,"","", false, increaseCritChance, updateCritChance),
 				// Charged shot while having the super activated. With rank V boost
 				'S'    : scoundrel.getAttackFromInfo({bulletCount:"MAX",rank:5,super:true}),
