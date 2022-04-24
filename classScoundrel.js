@@ -4,7 +4,8 @@ function Scoundrel(data){
 		this[key] = value;
 	}
 
-	const RANK_V = (1 + 0.1436*5);
+	const SINGLE_RANK_MULT = 0.1436;
+	const RANK_V = (1 + SINGLE_RANK_MULT*5);
 	const SUPER_BOOST_SCOUNDREL = 1.1454;
 
 	const SCOUNDREL_HUMAN_THINKING_TIME = 0.3;
@@ -269,7 +270,7 @@ function Scoundrel(data){
 			}
 			preModifierFuncs = handleNewSpawnedCard.bind({});
 		}
-		const RANK_MULT = (1 + 0.1436*endRank);
+		const RANK_MULT = (1 + SINGLE_RANK_MULT*endRank);
 		damage *= RANK_MULT;
 
 		if(attackData.super === true){

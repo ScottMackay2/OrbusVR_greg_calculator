@@ -26,6 +26,7 @@ function Ranger(data){
 		}
 		const I2 = arrow.globes || 0;
 		const J2 = arrow.charge || 0;
+		const CHARGED = J2 == "Yes";
 		const K2 = arrow.type || 0;
 		const L2 = arrow.weakCircle || 0;
 		const N2 = arrow.arrowBar || (this.talentlvl5 == "Precision" ? 0.8 : (this.talentlvl5 == "Rapidity"? 1 : -1));
@@ -48,11 +49,11 @@ function Ranger(data){
 				(
 				IF(M2=="Precision",IF(N2>=0.9,3.7,IF(N2>=0.8,3.38,IF(N2>=0.4,1.5,0.75))), IF(M2=="Rapidity",1.35+N2*0.19 ,1))
 				*IF(T2=="Yes",1.818,1)*strBoost
-				+( IF(J2=="Yes",4.145,0)+IF(K2=="Piercing",2.5*IF(J2=="Yes",1.1,1),0) )*intBoost+IF(O2=="Multishot",1*MULTISHOT_CHANCE,0)
+				+( IF(CHARGED,4.145,0)+IF(K2=="Piercing",2.5*IF(CHARGED,1.1,1),0) )*intBoost+IF(O2=="Multishot",1*MULTISHOT_CHANCE,0)
 				)
 				*(1+GLOBE_BOOST)+IF(P2=="Overcharge",0.1742*I2,0)*intBoost
 				)
-				*(1+IF(O2=="Arrow Sight",0.1,0) + IF(L2=="Yes",(0.2+IF(Q2=="Critical Aim",0.3,IF(Q2=="Needler",0.15,0)))*IF(J2=="Yes",1.65,1),0) + projectileIncrease);
+				*(1+IF(O2=="Arrow Sight",0.1,0) + IF(L2=="Yes",(0.2+IF(Q2=="Critical Aim",0.3,IF(Q2=="Needler",0.15,0)))*IF(CHARGED,1.65,1),0) + projectileIncrease);
 		}
 
 		let tiles = "";
@@ -78,7 +79,7 @@ function Ranger(data){
 
 		if(arrow.type == "Poison"){
 			hitCount++;
-			dotDamage = 241.3*GLOBE_BOOST*intBoost*(1+dotIncrease);
+			dotDamage = 241.3*(1+GLOBE_BOOST)*intBoost*(1+dotIncrease);
 			dotTimes = 8 + (arrow.charge == "Yes" ? 4 : 0);
 			dotMaxActive = 10;
 			attackID = 1;
@@ -89,7 +90,7 @@ function Ranger(data){
 		}
 		else if(arrow.type == "Spread"){
 			hitCount+=5;
-			let addedDmg = BASE_DAMAGE*5*GLOBE_BOOST*strBoost*(1+projectileIncrease);
+			let addedDmg = BASE_DAMAGE*5*(1+GLOBE_BOOST)*strBoost*(1+projectileIncrease);
 			if(ARROW_CHARGED){
 				addedDmg*=1.20;
 			}
@@ -97,7 +98,7 @@ function Ranger(data){
 		}
 		else if(arrow.type == "Fire Rain"){
 			hitCount++;
-			dotDamage = 172.35*GLOBE_BOOST*intBoost;
+			dotDamage = 172.35*(1+GLOBE_BOOST)*intBoost;
 			if(ARROW_CHARGED){
 				dotDamage*=1.85;
 			}
@@ -224,7 +225,6 @@ var ClassRanger = {
 				// 'F'    : new Attack(TIME_08,  			46887, true,  5788*RANGER_6_GLOBES, 6, 10, 		0.00, 0, 0, 	2, 2,"P","P", true),
 			},
 		};
-		console.log(rangerData);
 		return rangerData;
 	}
 };
