@@ -6,6 +6,7 @@ function Shaman(data){
 		const TIME = attackData.time;
 		let damage = 0;
 		let CAN_CRIT = attackData.autoCrit == true ? false : true;
+		let WEAKNESS_COUNT = attackData.weaknessCount || 0;
 		let dotDamage = 0;
 		let dotTimes = 0;
 		let dotMaxActive = 0;
@@ -19,19 +20,35 @@ function Shaman(data){
 		let spawnsNormalAttack = false;
 		let modifierFuncs = undefined;
 
+		let usesProjectile = true;
 		if(attackData.type == "Place"){
 			tiles = "T";
 		}
 		if(attackData.type == "Lava"){
-			damage = 465.3795;//8448;
+			usesProjectile = false;
+			damage = 465.35301;
+			if(this.dotIncrease !== undefined){
+				damage *= (1+this.dotIncrease);
+			}
+			// 30 = 8416; 
+			// 30+6 = 11902
 			tiles = "P";
 		}
 		if(attackData.type == "Stun"){
-			damage = 463.6167;//8416;
+			damage = 344.6892824640674 * (1+0.1725*WEAKNESS_COUNT);
+
+			// 30 (2 weakness) = 8416; 
+			// 30+6 (no weakness) = 8816
+			// 30+6 (1 weakness) = 10337
+			// 30+6 (2 weakness) = 11858
 			tiles = "S";
 		}
 		if(attackData.type == "Lightning"){
-			damage = 1111.6666;//20180;
+			damage = 517.0632489711107 * (1+0.5750*WEAKNESS_COUNT);
+			// 30 (2 weakness) = 20180; 
+			// 30+6 (no weakness) = 13224
+			// 30+6 (1 weakness) = 20828
+			// 30+6 (2 weakness) = 28432
 			tiles = "X";
 			if(attackData.autoCrit != true && this.talentlvl20 == "Strikes Twice"){
 				modifierFuncs=this.extraFunc.bind({});
@@ -39,10 +56,19 @@ function Shaman(data){
 			attackID = 2;
 		}
 		if(attackData.type == "Fire"){
-			damage = 1878.6505;//34103;
+			damage = 689.4176652948144 * (1+0.8625*WEAKNESS_COUNT);
+			// 30 (2 weakness) = 34103; 
+			// 30+6 (no weakness) = 17632
+			// 30+6 (1 weakness) = 32840
+			// 30+6 (2 weakness) = 48047
 			tiles = "B";
 			if(this.talentlvl10 == "Fire Consumes"){
-				dotDamage = 129.2904;//2347;
+				dotDamage = 129.265812;
+				if(this.dotIncrease !== undefined){
+					dotDamage *= (1+this.dotIncrease);
+				}
+				// 30 = 2347;
+				// 30+6 = 3306
 				dotTimes = 3;
 				dotMaxActive = 1;
 			}
@@ -51,7 +77,7 @@ function Shaman(data){
 		if(attackData.autoCrit == true){
 			damage*=globalArmourCritDamage;
 		}
-		damage*=this.intBoost*(1+this.projectileIncrease);
+		damage*=this.intBoost*(1+(usesProjectile ? this.projectileIncrease : 0));
 		dotDamage*=this.intBoost;
 
 		return new Attack(TIME, damage, CAN_CRIT, dotDamage, dotTimes, dotMaxActive, dmgBoostAmount, dmgBoostStayTime, dmgBoostMaxActive, hitCount, attackID, tiles, dotTiles, spawnsNormalAttack, modifierFuncs);
@@ -94,7 +120,7 @@ var ClassShaman = {
 			return 1;
 		}
 		shaman.extraFunc = lightningSpawnMoreAttacks;
-		const NEW_SPAWNED_LIGHTNING = shaman.getAttackFromInfo({type:"Lightning", time:SHAMAN_RETHROW_LIGHTING_TIME});
+		const NEW_SPAWNED_LIGHTNING = shaman.getAttackFromInfo({type:"Lightning", weaknessCount:2, time:SHAMAN_RETHROW_LIGHTING_TIME});
 		// const NEW_SPAWNED_LIGHTNING = new Attack(SHAMAN_RETHROW_LIGHTING_TIME,  	19711*NORMAL_BOOST_SHAMAN, true,  			0, 0, 0, 			0.00, 0, 0, 	1, 0,"X","", false, lightningSpawnMoreAttacks);
 		
 
@@ -104,40 +130,40 @@ var ClassShaman = {
 				// 'X'    : new Attack(0.00,  							0, true,  													0, 0, 0, 		STR_INT_BOOST-1, 999, 3, 	0, 3,"",""),
 
 				// Place totem. (triggers a tile)
-				'T'    : shaman.getAttackFromInfo({type:"Place", time:0}),
+				'T'    : shaman.getAttackFromInfo({type:"Place", weaknessCount:2, time:0}),
 				// 'T'    : new Attack(0,  							0, true,  													0, 0, 0, 		0.00, 0, 0, 	0, 0,"T",""),
 
 				// Lava pulse (very first placement relative to fight start no time passed)
-				'p'    : shaman.getAttackFromInfo({type:"Lava", time:SHAMAN_REPLACE_ATTACK_TIME}),
+				'p'    : shaman.getAttackFromInfo({type:"Lava", weaknessCount:2, time:SHAMAN_REPLACE_ATTACK_TIME}),
 				// 'p'    : new Attack(0.00,  							8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
 				// Lava pulse default timing.
-				'P'    : shaman.getAttackFromInfo({type:"Lava", time:SHAMAN_PULSE_ATTACK_TIME}),
+				'P'    : shaman.getAttackFromInfo({type:"Lava", weaknessCount:2, time:SHAMAN_PULSE_ATTACK_TIME}),
 				// 'P'    : new Attack(SHAMAN_PULSE_ATTACK_TIME,  		8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
 				// Lava pulse next time replaced (a shorter timeframe between lava pulses because it got replaced)
-				'A'    : shaman.getAttackFromInfo({type:"Lava", time:0}),
+				'A'    : shaman.getAttackFromInfo({type:"Lava", weaknessCount:2, time:0}),
 				// 'A'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	8448*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"P",""),
 
 				// Stun default timing
-				's'    : shaman.getAttackFromInfo({type:"Stun", time:SHAMAN_ORB_ATTACK_TIME}),
+				's'    : shaman.getAttackFromInfo({type:"Stun", weaknessCount:2, time:SHAMAN_ORB_ATTACK_TIME}),
 				// 's'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		8416*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0,		0.00, 0, 0, 	1, 0,"S",""),
 				// Stun after replacing totems (auto crit + faster timing)
-				'S'    : shaman.getAttackFromInfo({type:"Stun", time:SHAMAN_REPLACE_ATTACK_TIME, autoCrit:true}),
+				'S'    : shaman.getAttackFromInfo({type:"Stun", weaknessCount:2, time:SHAMAN_REPLACE_ATTACK_TIME, autoCrit:true}),
 				// 'S'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	8416*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"S",""),
 
 				// Lightning (with shorter timeframe because spawned relative to previous lightning crit, used as spawn for new lightnings)
 				'i'    : NEW_SPAWNED_LIGHTNING,
 				// Lightning which can have a chance to spawn a new lightning with default time spacing.
-				'L'    : shaman.getAttackFromInfo({type:"Lightning", time:SHAMAN_ORB_ATTACK_TIME}),
+				'L'    : shaman.getAttackFromInfo({type:"Lightning", weaknessCount:2, time:SHAMAN_ORB_ATTACK_TIME}),
 				// 'L'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		20180*NORMAL_BOOST_SHAMAN, true,  							0, 0, 0, 		0.00, 0, 0, 	1, 0,"X","", false, lightningSpawnMoreAttacks),
 				// First lightning after replacing totems (auto crit + faster timing)
-				'I'    : shaman.getAttackFromInfo({type:"Lightning", time:SHAMAN_REPLACE_ATTACK_TIME, autoCrit:true}),
+				'I'    : shaman.getAttackFromInfo({type:"Lightning", weaknessCount:2, time:SHAMAN_REPLACE_ATTACK_TIME, autoCrit:true}),
 				// 'I'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	20180*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		0, 0, 0, 		0.00, 0, 0, 	1, 0,"X",""),
 
 				// Fire default timing.
-				'F'    : shaman.getAttackFromInfo({type:"Fire", time:SHAMAN_ORB_ATTACK_TIME}),
+				'F'    : shaman.getAttackFromInfo({type:"Fire", weaknessCount:2, time:SHAMAN_ORB_ATTACK_TIME}),
 				// 'F'    : new Attack(SHAMAN_ORB_ATTACK_TIME,  		34103*NORMAL_BOOST_SHAMAN, true,  							2347, 3, 1, 	0.00, 0, 0, 	1, 2,"B",""),
 				// Fire after placing totems again (auto crit + faster timing)
-				'V'    : shaman.getAttackFromInfo({type:"Fire", time:SHAMAN_REPLACE_ATTACK_TIME, autoCrit:true}),
+				'V'    : shaman.getAttackFromInfo({type:"Fire", weaknessCount:2, time:SHAMAN_REPLACE_ATTACK_TIME, autoCrit:true}),
 				// 'V'    : new Attack(SHAMAN_REPLACE_ATTACK_TIME,  	34103*CRIT_AMOUNT_SHAMAN*NORMAL_BOOST_SHAMAN, false,  		2347, 3, 1, 	0.00, 0, 0, 	1, 2,"B",""),
 
 				// # small timing used to offset the orb throwing between the different totems. @ is a bigger jump in time.

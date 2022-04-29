@@ -243,7 +243,7 @@ if (needsDefaultValues || debug) {
 			savedTilesets: ['6F2', '26F', 'F2A', 'A26F', '6F2A'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
-			averagingCrits: false,
+			averagingCrits: true,
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"CHARGED_STRIKES":{"randomize":true}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:300,

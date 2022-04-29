@@ -219,7 +219,9 @@ function updateLocalDataToNew(e){
 
 // Calculates all dps over the whole timeline of the chart.
 function fillChart(){
-
+	dotSpecificData.data = [];
+	dotSpecificData.pointBackgroundColor = [];
+	dotSpecificData.customLabels = [];
 	// Reset the data
 	dpsChart.data.datasets = [];
 	// TODO: This will have to be moved to load for all the datasets when multiple allowed. COMPARISON
@@ -523,6 +525,11 @@ function fillChart(){
 			// Add to total damage.
 			const ADDED_DMG = NO_TILESET_DMG*addedTilesetDamagePercent;
 			totalDamage += ADDED_DMG;
+			if(i10 == 0 && ADDED_DMG != 0){
+				dotSpecificData.data.push({x:timePassed, y:ADDED_DMG});
+				dotSpecificData.pointBackgroundColor.push("#118800");
+				dotSpecificData.customLabels.push(["DAMAGE:"+parseInt(ADDED_DMG), "tiles:"+attack.tiles]);
+			}
 
 			// Draw dps graph, but only when either time or damage is going forward.
 			if(attack.damage > 0 || (attack.time > 0 && attack.dotTimes > 0)){
@@ -739,9 +746,10 @@ function fillChart(){
 			if(singleTotalDamageDataPoints[i] != undefined){
 				totalDamage+=singleTotalDamageDataPoints[i];
 				var dps = Math.round(totalDamage/(multiDrawEnabled == false ? calculateAttacksAmount : 1) / (i/10));
+				var damage = Math.round(singleTotalDamageDataPoints[i]/(multiDrawEnabled == false ? calculateAttacksAmount : 1) / (i/10));
 				var timePassed = (i/10).toFixed(STEP_SIZE.countDecimals());
 				if(parseFloat(timePassed) >= START_DRAWING_AFTER_X_SECONDS){
-					graphSpecificData.data.push({x:(i/10).toFixed(STEP_SIZE.countDecimals()), y:dps});
+					graphSpecificData.data.push({x:timePassed, y:dps});
 				}
 			}
 		}
@@ -761,6 +769,7 @@ function fillChart(){
 	updateTilesetProcChart($("#loadoutName").val());
 
 	dpsChart.update();
+	dotChart.update();
 }
 
 

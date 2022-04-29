@@ -1,4 +1,6 @@
 var dpsChart;
+var dotChart;
+var dotSpecificData;
 
 function getCurrentWeaponMultiplier(){
 	return Math.pow(1.0495, globalWeaponLvl*2 + globalWeaponPlusLvl);
@@ -41,6 +43,44 @@ function initializeAllClassData(){
 		dpsChart.data = {
 			labels: labelsAxisX
 		};
+	}
+
+	if(dotChart == undefined){
+		dotChart = new Chart(document.getElementById("dot_chart"), {
+			type: 'scatter',
+			data: {
+		    datasets: [{
+		        label: 'Damage chart',
+		        data: [],
+		        borderColor: 'white',
+		        pointBackgroundColor: [],
+		        customLabels:[],
+		    }]
+		    },
+			options: {
+				scales: {
+			        x: {
+			        	type: 'linear',
+			            max: 230,
+			        }
+			    },
+				plugins: {
+		        tooltip: {
+		            callbacks: {
+		                label: function(context) {
+		                    let label = context.dataset.customLabels[context.dataIndex] || '';
+		                    return label;
+		                }
+		            }
+		        }
+		    },
+				responsive: true,
+				legend: { display: false },
+			}
+		});
+
+		dotSpecificData = dotChart.data.datasets[0];
+		dotSpecificData.backgroundColor = "#00FF00";
 	}
 }
 
