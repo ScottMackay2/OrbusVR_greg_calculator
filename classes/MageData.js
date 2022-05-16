@@ -1,75 +1,7 @@
-const SELFISH_STREAK_BOOST_MAGE = 1.08;
-const RUNIC_DIVERSITY_MAGE = 1.2727;
-const AFFINITY_FIRE_BOOST_MAGE = 1.136;
-function Mage(data){
-	for (const [key, value] of Object.entries(data)) {
-		this[key] = value;
-	}
-	this.getAttackFromInfo = function(spell){
-		const TIME = spell.time;
-		let damage = 0;
-		let CAN_CRIT = true;
-		let dotDamage = 0;
-		let dotTimes = 0;
-		let dotMaxActive = 0;
-		let dmgBoostAmount = 0.00;
-		let dmgBoostStayTime = 0;
-		let dmgBoostMaxActive = 0;
-		let hitCount = 1;
-		let attackID = 0;
-		let tiles = "";
-		let dotTiles = "";
-		let spawnsNormalAttack = false;
-
-		if(spell.type == "Fire2"){
-			damage = 834.0254;//15140;
-			tiles = "B";
-		}
-		if(spell.type == "Frost2"){
-			damage = 521.1281;//9460;
-			tiles = "F";
-		}
-		if(spell.type == "Affliction2"){
-			damage = 195.1200;//3542;
-			dotDamage = 189.6113;//3442;
-			dotTimes = 12;
-			dotMaxActive = 3;
-			dmgBoostAmount = 0.05; 
-			dmgBoostStayTime = 8; 
-			dmgBoostMaxActive = 2;
-			tiles = "A";
-			attackID = 1;
-		}
-		if(spell.talentlvl10 == "Selfish Streak"){
-			damage*=SELFISH_STREAK_BOOST_MAGE;
-			dotDamage*=SELFISH_STREAK_BOOST_MAGE;
-		}
-		damage*=this.intBoost;
-		dotDamage*=this.intBoost;
-		damage*=(1+this.projectileIncrease);
-		
-		if(this.talentlvl15 == "Runic Diversity"){
-			if(spell.diversity == true){
-				damage*=RUNIC_DIVERSITY_MAGE;
-			}
-		}
-
-		if(this.talentlvl20 == "Affinity"){
-			if(spell.empowered == true){
-				damage*=AFFINITY_FIRE_BOOST_MAGE;
-			}
-			if(spell.dotIncrease == true){
-				dotTimes += 3;
-			}
-		}
-
-		return new Attack(TIME, damage, CAN_CRIT, dotDamage, dotTimes, dotMaxActive, dmgBoostAmount, dmgBoostStayTime, dmgBoostMaxActive, hitCount, attackID, tiles, dotTiles, spawnsNormalAttack);
-	};
-}
-
-var ClassMage = {
+define(["./Mage"], function (Mage) {
+return {
 	getData: function(){
-		var mage = new Mage({
+		var mage = new Mage.Mage({
 			talentlvl10:"Selfish Streak",talentlvl15:"Runic Diversity",talentlvl20:"Affinity",
 			strBoost:globalStrengthBoost, intBoost:globalIntellectBoost,projectileIncrease:globalArmourProjectileDamage
 		});
@@ -123,3 +55,4 @@ var ClassMage = {
 		return mageData;
 	}
 };
+});

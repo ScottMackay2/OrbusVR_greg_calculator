@@ -1,5 +1,7 @@
 // File for global constants
-
+var dpsChart;
+var dotChart;
+var dotSpecificData;
 
 // Different attack types have different type of effect. The dps code will make some attacks do different things.
 const ATTACK_NORMAL = 0;

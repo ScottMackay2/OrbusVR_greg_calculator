@@ -53,6 +53,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 0.8,
 			FROST_HITS_PER_SECOND: 0.8,
 			AFFLICTION_HITS_PER_SECOND: 0.00,
+			borderColor : "#3e95cd",
 		},
 		'Frost fire mage - fast (viable: fire/frost: 1.5-2.125)': {
 			savedAttacks: "b (fbBBBBBB)x80",
@@ -66,6 +67,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 1.5,
 			FROST_HITS_PER_SECOND: 1.5,
 			AFFLICTION_HITS_PER_SECOND: 0.00,
+			borderColor : "#3e95cd",
 		},
 		'firespam mage - fast (viable: fire: 2.2-2.5)': {
 			savedAttacks: "b Bx600",
@@ -79,6 +81,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 2.5,
 			FROST_HITS_PER_SECOND: 0.00,
 			AFFLICTION_HITS_PER_SECOND: 0.00,
+			borderColor : "#3e95cd",
 		},
 		'firespam mage - insane (viable: fire: 2.6-2.7)': {
 			savedAttacks: "b Bx800",
@@ -92,6 +95,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 2.6,
 			FROST_HITS_PER_SECOND: 0.00,
 			AFFLICTION_HITS_PER_SECOND: 0.00,
+			borderColor : "#3e95cd",
 		},
 		'firespam musky mage - needs musky renew (viable: 1.5 - 4.25 hits per second)': {
 			savedAttacks: "b Bx1000\n(h@)x20",
@@ -105,6 +109,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 4.25,
 			FROST_HITS_PER_SECOND: 0.00,
 			AFFLICTION_HITS_PER_SECOND: 0.00,
+			borderColor : "#3e95cd",
 		},
 		// This mage type is used for having a bard around and the cast speed is not
 		// 
@@ -120,6 +125,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 2.3,
 			FROST_HITS_PER_SECOND: 0.00,
 			AFFLICTION_HITS_PER_SECOND: 0.00,
+			borderColor : "#3e95cd",
 		},
 		'rotation mage - normal-affliction fast-fire (viable: affliction: 0.51-1.0, fire/frost: 1.25-2.5)': {
 			savedAttacks: "b a(F b B B B B B B A) x 100",
@@ -133,6 +139,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 2.5,
 			FROST_HITS_PER_SECOND: 2.5,
 			AFFLICTION_HITS_PER_SECOND: 0.99,
+			borderColor : "#3e95cd",
 		},
 		'rotation mage - normal-affliction insane-fire (viable: affliction: 0.5-1.0, fire/frost: 2.6-3.5)': {
 			savedAttacks: "b a(F b B B B B B B B A) x 100",
@@ -146,6 +153,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 3.5,
 			FROST_HITS_PER_SECOND: 3.5,
 			AFFLICTION_HITS_PER_SECOND: 0.99,
+			borderColor : "#3e95cd",
 		},
 		'rotation mage - insane-affliction fast-fire (viable: affliction: >1.0, fire/frost: 2.1-2.5)': {
 			savedAttacks: "a(F b B B B B B B B A) x 100",
@@ -159,6 +167,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 2.5,
 			FROST_HITS_PER_SECOND: 2.5,
 			AFFLICTION_HITS_PER_SECOND: 1.95,
+			borderColor : "#3e95cd",
 		},
 		'rotation mage - insane-affliction insane-fire (viable: affliction: >1.0, fire/frost: 2.6-3.5)': {
 			savedAttacks: "a(F b B B B B B B B B A) x 100",
@@ -172,6 +181,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 2.6,
 			FROST_HITS_PER_SECOND: 2.6,
 			AFFLICTION_HITS_PER_SECOND: 1.95,
+			borderColor : "#3e95cd",
 		},
 		'heal rotation mage - insane-affliction insane-fire (viable: affliction: >1.0, fire/frost: 2.6-3.5)': {
 			savedAttacks: "a(F b B B B B B B B B A) x 100\n(h@)x20",
@@ -185,6 +195,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 2.9,
 			FROST_HITS_PER_SECOND: 2.9,
 			AFFLICTION_HITS_PER_SECOND: 1.95,
+			borderColor : "#3e95cd",
 		},
 		'no frost rotation mage - fast-affliction insane-fire (viable: affliction: <1.0, fire: 2.1-2.5)': {
 			savedAttacks: "b a(b B B B B B B B a) x 100",
@@ -198,6 +209,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 2.1,
 			FROST_HITS_PER_SECOND: 2.1,
 			AFFLICTION_HITS_PER_SECOND: 0.95,
+			borderColor : "#3e95cd",
 		},
 		'no frost rotation mage - insane-affliction insane-fire (viable: affliction: >1.0, fire: 2.6-3.5)': {
 			savedAttacks: "b a(b B B B B B B B B a) x 100",
@@ -211,6 +223,7 @@ if (needsDefaultValues || debug) {
 			FIRE_HITS_PER_SECOND: 2.5,
 			FROST_HITS_PER_SECOND: 2.5,
 			AFFLICTION_HITS_PER_SECOND: 1.45,
+			borderColor : "#3e95cd",
 		},
 	};
 	res[SHAMAN_VALUE] = {
@@ -223,6 +236,7 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"CHARGED_STRIKES":{}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:100,
+			borderColor : "#000000",
 		}
 	};
 	res[SCOUNDREL_VALUE] = {
@@ -235,6 +249,7 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:100,
+			borderColor : "#9e954d",
 		}
 	};
 	res[RANGER_VALUE] = {
@@ -246,7 +261,8 @@ if (needsDefaultValues || debug) {
 			averagingCrits: true,
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"CHARGED_STRIKES":{"randomize":true}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
-			calcCount:300,
+			calcCount:100,
+			borderColor : "#5eD54d",
 		},
 		'reliable tilesets': {
 			savedAttacks: "e (f s s s k s s s s f s s s r s s s s)*20",
@@ -258,6 +274,7 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"CHARGED_STRIKES":{"randomize":true}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:300,
+			borderColor : "#5eD54d",
 		},
 		'manip_ranger': {
 			savedAttacks: "e (a b s c d s s u A b s c D s s s)(A b s c d s s u A b s c D s s s)*4 G h w i j p w W w w (u A b s c D s s s A b s c d s s)*5 G h w i j p w W w w (u A b s c D s s s A b s c d s s)*4",
@@ -268,6 +285,7 @@ if (needsDefaultValues || debug) {
 			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"CHARGED_STRIKES":{"randomize":false}},{"BLEED":{}}],
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:100,
+			borderColor : "#5eD54d",
 		}
 	}
 }
