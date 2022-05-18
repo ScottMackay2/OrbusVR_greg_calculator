@@ -1,7 +1,13 @@
 // File for global constants
 var dpsChart;
-var dotChart;
-var dotSpecificData;
+var minDpsChart;
+var maxDpsChart;
+var minHitChart;
+var minHitSpecificData;
+var minStringStoringAllTiles;
+var maxHitChart;
+var maxHitSpecificData;
+var maxStringStoringAllTiles;
 
 // Different attack types have different type of effect. The dps code will make some attacks do different things.
 const ATTACK_NORMAL = 0;

@@ -15,65 +15,83 @@ return{
 
 		// Pre init the chart data.
 		if(dpsChart == undefined){
-			dpsChart = new Chart(document.getElementById("line_chart"), {
-				type: 'line',
-				data: undefined,
-				options: {
-					responsive: true,
-					legend: {
-						display: false
-					},
-					scales: {
-						x: {
-				        	type: 'linear',
-				            min: 0,
-				            max: 230,
-				        },
-					}
-				}
-			});
-			dpsChart.data = {
-				labels: labelsAxisX
-			};
+			dpsChart = this.initDpsChart('line_chart');
 		}
+		if(minDpsChart == undefined) {
+			minDpsChart = this.initDpsChart('min_line_chart');
+		}
+		if(maxDpsChart == undefined) {
+			maxDpsChart = this.initDpsChart('max_line_chart');
+		}
+		if(minHitChart == undefined){
+			minHitChart = this.initHitChart('min_hit_chart');
+			minHitSpecificData = minHitChart.data.datasets[0];
+		}
+		if(maxHitChart == undefined){
+			maxHitChart = this.initHitChart('max_hit_chart');
+			maxHitSpecificData = maxHitChart.data.datasets[0];
+		}
+	},
 
-		if(dotChart == undefined){
-			dotChart = new Chart(document.getElementById("dot_chart"), {
-				type: 'scatter',
-				data: {
-			    datasets: [{
-			        label: 'Damage chart',
-			        data: [],
-			        borderColor: 'white',
-			        pointBackgroundColor: [],
-			        customLabels:[],
-			    }]
+	initDpsChart: function(elementId) {
+		let dpsChart = new Chart(document.getElementById(elementId), {
+			type: 'line',
+			data: undefined,
+			options: {
+				responsive: true,
+				legend: {
+					display: false
+				},
+				scales: {
+					x: {
+			        	type: 'linear',
+			            min: 0,
+			            max: 230,
+			        },
+				}
+			}
+		});
+		dpsChart.data = {
+			labels: labelsAxisX
+		};
+		return dpsChart;
+	},
+
+	initHitChart: function(elementId) {
+		let hitChart = new Chart(document.getElementById(elementId), {
+			type: 'scatter',
+			data: {
+		    datasets: [{
+		        label: 'Damage chart',
+		        data: [],
+		        borderColor: 'white',
+		        pointBackgroundColor: [],
+		        customLabels:[],
+		    }]
+		    },
+			options: {
+				scales: {
+			        x: {
+			        	type: 'linear',
+			            max: 230,
+			        }
 			    },
-				options: {
-					scales: {
-				        x: {
-				        	type: 'linear',
-				            max: 230,
-				        }
-				    },
-					plugins: {
-				        tooltip: {
-				            callbacks: {
-				                label: function(context) {
-				                    let label = context.dataset.customLabels[context.dataIndex] || '';
-				                    return label;
-				                }
-				            }
-				        }
-				    },
-					responsive: true,
-					legend: { display: false },
-				}
-			});
-
-			dotSpecificData = dotChart.data.datasets[0];
-			dotSpecificData.backgroundColor = "#00FF00";
-		}
+				plugins: {
+			        tooltip: {
+			            callbacks: {
+			                label: function(context) {
+			                    let label = context.dataset.customLabels[context.dataIndex] || '';
+			                    return label;
+			                }
+			            }
+			        }
+			    },
+				responsive: true,
+				legend: { display: false },
+			}
+		});
+		hitChart.data.datasets[0].backgroundColor = "#00FF00";
+		return hitChart;
 	},
 
 	loadChartDatasets: function(orbusClass, name) {

@@ -50,45 +50,49 @@
 						<thead>
 						<tr>
 							<th scope="col" class="headerText">Tileset</th>
-							<th scope="col" class="headerText">Boost %</th>
-							<th scope="col" class="headerText">Num Procs</th>
+							<th scope="col" class="headerText" colspan="2">Boost %</th>
+							<th scope="col" class="headerText" colspan="2">Num Procs</th>
 							<th scope="col" class="headerText">Avg Int</th>
 						</tr>
 						</thead>
 						<tbody>
 						<tr>
 							<td><input type="text" id="tileset1" placeholder="tileset1"></td>
-							<td><input type="text" id="tileset_percent_1" placeholder="boost %" disabled></td>
-							<td><input type="text" id="tileset_numprocs_1"  disabled></td>
+							<td colspan="2"><input type="text" id="tileset_percent_1" placeholder="boost %" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_numprocs_1"  disabled></td>
 							<td><input type="text" id="tileset_avgint_1" disabled></td>
 						</tr>
 						<tr>
 							<td><input type="text" id="tileset2" placeholder="tileset2"></td>
-							<td><input type="text" id="tileset_percent_2" placeholder="boost %" disabled></td>
-							<td><input type="text" id="tileset_numprocs_2"  disabled></td>
+							<td colspan="2"><input type="text" id="tileset_percent_2" placeholder="boost %" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_numprocs_2"  disabled></td>
 							<td><input type="text" id="tileset_avgint_2"  disabled></td>
 						</tr>
 						<tr>
 							<td><input type="text" id="tileset3" placeholder="tileset3"></td>
-							<td><input type="text" id="tileset_percent_3" placeholder="boost %" disabled></td>
-							<td><input type="text" id="tileset_numprocs_3"  disabled></td>
+							<td colspan="2"><input type="text" id="tileset_percent_3" placeholder="boost %" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_numprocs_3"  disabled></td>
 							<td><input type="text" id="tileset_avgint_3"  disabled></td>
 						</tr>
 						<tr>
 							<td><input type="text" id="tileset4" placeholder="tileset4"></td>
-							<td><input type="text" id="tileset_percent_4" placeholder="boost %" disabled></td>
-							<td><input type="text" id="tileset_numprocs_4"  disabled></td>
+							<td colspan="2"><input type="text" id="tileset_percent_4" placeholder="boost %" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_numprocs_4"  disabled></td>
 							<td><input type="text" id="tileset_avgint_4"  disabled></td>
 						</tr>
 						<tr>
 							<td><input type="text" id="tileset5" placeholder="tileset5"></td>
-							<td><input type="text" id="tileset_percent_5" placeholder="boost %" disabled></td>
-							<td><input type="text" id="tileset_numprocs_5" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_percent_5" placeholder="boost %" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_numprocs_5" disabled></td>
 							<td><input type="text" id="tileset_avgint_5"  disabled></td>
 						</tr>
 						<tr class="bg-info">
-							<td>Total Boost</td>
+							<td>Avg. Total Boost</td>
 							<td><input type="text" id="tileset_percent_total" placeholder="boost % all" disabled></td>
+							<td>Low Run Total Boost</td>
+							<td><input type="text" id="min_tileset_percent_total" placeholder="boost % all" disabled></td>
+							<td>High Run Total Boost</td>
+							<td><input type="text" id="max_tileset_percent_total" placeholder="boost % all" disabled></td>
 						</tr>
 						</tbody>
 					</table>
@@ -97,8 +101,10 @@
 				<hr>
 				<div class="form-group">
 					<label for="calcCount" class="headerText">Calc Count</label>
-					<input type="number"  name="calcCount" id="calcCount" class="form-control" style="max-width:120px; margin-bottom:10px;">
-					<button id="updateChart" class="btn btn-info float-right" onclick="loadAllCharts()">Update Chart and Save Load Outs</button>
+					<div>
+						<input type="number"  name="calcCount" id="calcCount" class="form-control" style="max-width:120px; margin-bottom:10px; display: inline-block;">
+						<button id="updateChart" class="btn btn-info float-right" onclick="loadAllCharts()" style="display: inline-block;">Update Chart and Save Load Outs</button>
+					</div>				
 				</div>
 			</div>
 
@@ -111,20 +117,36 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col">
-				<canvas id="line_chart" width="1800" height="400"></canvas>
-				<canvas id="dot_chart" width="1800" height="400"></canvas>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col">
-				<canvas id="tiles_graph" width="1800" height="100" style="margin-left:100px"></canvas>
-			</div>
-		</div>
-		<br />
-		<div class="row">
-			<div class="col-sm-12">
-				<textarea class= "form-control" placeholder="No triggered tiles." id="triggered_tiles" rows="5" disabled></textarea>
+			<div class="container-fluid mt-3">
+				<ul class="nav nav-tabs">
+					<li class="nav-item">
+			  			<a class="nav-link active" data-toggle="tab" href="#avg">Avg. Data</a>
+					</li>
+					<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#min">Minimum Data</a>
+					</li>
+					<li class="nav-item">
+			  			<a class="nav-link" data-toggle="tab" href="#max">Maximum Data</a>
+					</li>
+				</ul>
+
+			  	<div class="tab-content">
+			    	<div id="avg" class="container-fluid tab-pane active"><br>
+			      		<canvas id="line_chart" width="1800" height="400"></canvas>
+					</div>
+					<div id="min" class="container-fluid tab-pane fade"><br>
+			      		<canvas id="min_line_chart" width="1800" height="400"></canvas>
+			      		<canvas id="min_hit_chart" width="1800" height="400"></canvas>
+			      		<canvas id="min_tiles_graph" width="1800" height="100"></canvas>
+			      		<textarea class= "form-control" placeholder="No triggered tiles." id="min_triggered_tiles" rows="5" disabled></textarea>
+			    	</div>
+					<div id="max" class="container-fluid tab-pane fade"><br>
+			      		<canvas id="max_line_chart" width="1800" height="400"></canvas>				
+						<canvas id="max_hit_chart" width="1800" height="400"></canvas>
+						<canvas id="max_tiles_graph" width="1800" height="100"></canvas>
+						<textarea class= "form-control" placeholder="No triggered tiles." id="max_triggered_tiles" rows="5" disabled></textarea>
+			    	</div>
+				</div>
 			</div>
 		</div>
 	</div>

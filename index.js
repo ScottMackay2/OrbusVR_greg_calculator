@@ -117,8 +117,13 @@ function  updateTilesetPercentages(chartName){
 			$("#tileset_avgint_"+tileset.idx).val((sumInt/ tileset.intList.length).toFixed(2))
 		}
 
+		var minGraphSpecificData = minDpsChart.data.datasets[0];
+		var maxGraphSpecificData = maxDpsChart.data.datasets[0];
 		$("#tileset_percent_total").val((graphSpecificData.addedDmgTilesets*100.0/totalNonTilesetDmg).toFixed(2));
-		$("#triggered_tiles").val(graphSpecificData.triggeredTiles);
+		$("#min_tileset_percent_total").val((minGraphSpecificData.addedDmgTilesets*100.0/(minGraphSpecificData.addedTotalDamage-minGraphSpecificData.addedDmgTilesets)).toFixed(2));
+		$("#max_tileset_percent_total").val((maxGraphSpecificData.addedDmgTilesets*100.0/(maxGraphSpecificData.addedTotalDamage-maxGraphSpecificData.addedDmgTilesets)).toFixed(2));
+		$("#min_triggered_tiles").val(minStringStoringAllTiles);
+		$("#max_triggered_tiles").val(maxStringStoringAllTiles);
 	}
 
 }
@@ -131,30 +136,51 @@ function updateTilesetProcChart(chartName){
 			graphSpecificData = dpsChart.data.datasets[j];
 		}
 	}
+	var you = document.getElementById("line_chart");
 
 	// Prepare the canvas to draw on.
-	var canvas = document.getElementById("tiles_graph");
-	var you = document.getElementById("line_chart");
-	var ctx = canvas.getContext("2d");
-	ctx.canvas.width = (you.width)-100;
-	ctx.canvas.height = 100;
-	ctx.stokeStyle = "#FF0000";
-	ctx.fillStyle = graphSpecificData.borderColor;
-	ctx.strokeRect(0, 0, ctx.canvas.width, 100);
+	var minCanvas = document.getElementById("min_tiles_graph");
+	var minCtx = minCanvas.getContext("2d");
+	minCtx.canvas.width = (you.width);
+	minCtx.canvas.height = 100;
+	minCtx.stokeStyle = "#FF0000";
+	minCtx.fillStyle = graphSpecificData.borderColor;
+	minCtx.strokeRect(0, 0, minCtx.canvas.width, 100);
 
 
 	// Draw all the tilesets their proc times
 	for(var i=0;i<graphSpecificData.usedTilesets.length;i++){
 		var tileset = graphSpecificData.usedTilesets[i];
 		var totalTilesetUptime = (tileset.condition.length-1)*2;
-		var widthTileset = totalTilesetUptime / MAX_TIME_SECONDS * ctx.canvas.width;
-		for(var i2=0;i2<tileset.proccedInfoList.length;i2++){
-			var startLocX = tileset.proccedInfoList[i2].time / MAX_TIME_SECONDS * ctx.canvas.width;
-			ctx.fillRect(startLocX, i*20, widthTileset, 20);
-			ctx.strokeRect(startLocX, i*20, widthTileset, 20);
+		var widthTileset = totalTilesetUptime / MAX_TIME_SECONDS * minCtx.canvas.width;
+		for(var i2=0;i2<tileset.minRunProccedInfoList.length;i2++){
+			var startLocX = tileset.minRunProccedInfoList[i2].time / MAX_TIME_SECONDS * minCtx.canvas.width;
+			minCtx.fillRect(startLocX, i*20, widthTileset, 20);
+			minCtx.strokeRect(startLocX, i*20, widthTileset, 20);
 		}
 	}
 
+	// Prepare the canvas to draw on.
+	var maxCanvas = document.getElementById("max_tiles_graph");
+	var maxCtx = maxCanvas.getContext("2d");
+	maxCtx.canvas.width = (you.width);
+	maxCtx.canvas.height = 100;
+	maxCtx.stokeStyle = "#FF0000";
+	maxCtx.fillStyle = graphSpecificData.borderColor;
+	maxCtx.strokeRect(0, 0, maxCtx.canvas.width, 100);
+
+
+	// Draw all the tilesets their proc times
+	for(var i=0;i<graphSpecificData.usedTilesets.length;i++){
+		var tileset = graphSpecificData.usedTilesets[i];
+		var totalTilesetUptime = (tileset.condition.length-1)*2;
+		var widthTileset = totalTilesetUptime / MAX_TIME_SECONDS * maxCtx.canvas.width;
+		for(var i2=0;i2<tileset.maxRunProccedInfoList.length;i2++){
+			var startLocX = tileset.maxRunProccedInfoList[i2].time / MAX_TIME_SECONDS * maxCtx.canvas.width;
+			maxCtx.fillRect(startLocX, i*20, widthTileset, 20);
+			maxCtx.strokeRect(startLocX, i*20, widthTileset, 20);
+		}
+	}
 }
 
 function updateLocalDataToNew(e){
@@ -249,8 +275,12 @@ function getAttackPatterns(graphSpecificData){
 	return attackPatternsData;
 }
 
-var stringStoringAllTiles;
-function calculateOneFight(graphSpecificData, dotSpecificData, allTotalDamageDataPoints, totalDamageDataPoints, REPEAT_FIGHT_COUNT, i10){
+function calculateOneFight(graphSpecificData, allTotalDamageDataPoints, totalDamageDataPoints, REPEAT_FIGHT_COUNT, i10, minMaxData){
+	let localStoringAllTiles = '';
+	let localHitChartData = {data: [], pointBackgroundColor: [], customLabels: []};
+	let localTotalDamageDataPoints = [];
+	let localAddedDmgTilesets = 0;
+
 	if(multiDrawEnabled){
 		totalDamageDataPoints = [];
 	}
@@ -296,11 +326,12 @@ function calculateOneFight(graphSpecificData, dotSpecificData, allTotalDamageDat
 	// Clear active tilesets from previous tileset calculation.
 	var usedTilesets = graphSpecificData.usedTilesets;
 	graphSpecificData.activeTilesets = [];
+	let localProccedInfoLists = [];
 	for (var i = 0; i < usedTilesets.length; i++) {
 		usedTilesets[i].conditionLeft = usedTilesets[i].condition;
 		usedTilesets[i].conditionStartTime = 0;
 		usedTilesets[i].interferenceCount = -1;
-		usedTilesets[i].proccedInfoList = [];
+		localProccedInfoLists[i] = [];
 	}
 
 	// Go through all individual attacks in chronological order.
@@ -433,31 +464,20 @@ function calculateOneFight(graphSpecificData, dotSpecificData, allTotalDamageDat
 				addedTilesetDamagePercent += targetTilesets[i3].tilesetBoostAmount;
 				targetTilesets[i3].tileset.addedDmg += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
 				graphSpecificData.addedDmgTilesets += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
+				localAddedDmgTilesets += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
 				tilesetBoost += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
 				tilesetBoostAmt += targetTilesets[i3].tilesetBoostAmount;
 			}
-
-			if(attack.type == ATTACK_DOT){
-				graphSpecificData.numAfflictions += 1;
-				var curtiles = attack.dotTiles;
-				for(var i4=curtiles.length-1;i4>=0;i4--) {
-					if (curtiles[i4].tileset.condition == "B26") {
-						graphSpecificData.numFireBoosts += 1;
-					}
-				}
-			}
-
-			// Add the damage to the total tileset damage boosting.
 			
 		}
 
 		// Add to total damage.
 		const ADDED_DMG = NO_TILESET_DMG*addedTilesetDamagePercent;
 		totalDamage += ADDED_DMG;
-		if(i10 == 0 && ADDED_DMG != 0){
-			dotSpecificData.data.push({x:timePassed, y:ADDED_DMG});
-			dotSpecificData.pointBackgroundColor.push("#118800");
-			dotSpecificData.customLabels.push(["DAMAGE:"+parseInt(ADDED_DMG), "tiles:"+attack.tiles]);
+		if(ADDED_DMG != 0){
+			localHitChartData.data.push({x:timePassed, y:ADDED_DMG});
+			localHitChartData.pointBackgroundColor.push("#118800");
+			localHitChartData.customLabels.push(["DAMAGE:"+parseInt(ADDED_DMG), "tiles:"+attack.tiles]);
 		}
 
 		// Draw dps graph, but only when either time or damage is going forward.
@@ -468,6 +488,10 @@ function calculateOneFight(graphSpecificData, dotSpecificData, allTotalDamageDat
 				totalDamageDataPoints[damageTimeLocX] = 0;
 			}
 			totalDamageDataPoints[damageTimeLocX]+=ADDED_DMG;
+			if(localTotalDamageDataPoints[damageTimeLocX] == undefined){
+				localTotalDamageDataPoints[damageTimeLocX] = 0;
+			}
+			localTotalDamageDataPoints[damageTimeLocX]+=ADDED_DMG;
 		}
 
 		// Attacks with DoT effect will affect the list of attacks were every second
@@ -586,9 +610,7 @@ function calculateOneFight(graphSpecificData, dotSpecificData, allTotalDamageDat
 			hitCount += attack.hitCount;
 		}
 
-		if(i10 == 0){
-			stringStoringAllTiles+=newTriggeredTiles;
-		}
+		localStoringAllTiles+=newTriggeredTiles;
 
 		// Check for all tilesets adding in the new tiles and see if they proc (and proc the tileset if 
 		// they do) 
@@ -643,11 +665,10 @@ function calculateOneFight(graphSpecificData, dotSpecificData, allTotalDamageDat
 							graphSpecificData.activeTilesets.shift();
 						}
 
-						if(i10 == REPEAT_FIGHT_COUNT-1){
-							tileset.proccedInfoList.push({
-								time: timePassed
-							});
-						}
+						
+						localProccedInfoLists[i2].push({
+							time: timePassed
+						});
 
 						break;
 					}
@@ -656,10 +677,61 @@ function calculateOneFight(graphSpecificData, dotSpecificData, allTotalDamageDat
 		}
 
 	} while(true);
+	if(minMaxData.lowestTotal === -1 || totalDamage < minMaxData.lowestTotal){
+		minMaxData.lowestTotal = totalDamage;
+		minHitSpecificData.data = localHitChartData.data;
+		minHitSpecificData.pointBackgroundColor = localHitChartData.pointBackgroundColor;
+		minHitSpecificData.customLabels = localHitChartData.customLabels;
+		minStringStoringAllTiles= localStoringAllTiles;
+		minMaxData.lowestRunDataPoints = localTotalDamageDataPoints;
+		minMaxData.lowestRunAddedTilesetDmg = localAddedDmgTilesets;
+		$.each(localProccedInfoLists, function(key, proccedInfoList){
+			graphSpecificData.usedTilesets[key].minRunProccedInfoList = proccedInfoList;
+		});
+	}
+	if(minMaxData.highestTotal === -1 || totalDamage > minMaxData.highestTotal){
+		minMaxData.highestTotal = totalDamage;
+		maxHitSpecificData.data = localHitChartData.data;
+		maxHitSpecificData.pointBackgroundColor = localHitChartData.pointBackgroundColor;
+		maxHitSpecificData.customLabels = localHitChartData.customLabels;
+		maxStringStoringAllTiles = localStoringAllTiles;
+		minMaxData.highestRunDataPoints = localTotalDamageDataPoints;
+		minMaxData.highestRunAddedTilesetDmg = localAddedDmgTilesets;
+		$.each(localProccedInfoLists, function(key, proccedInfoList){
+			graphSpecificData.usedTilesets[key].maxRunProccedInfoList = proccedInfoList;
+		});
+	}
 
 	if(multiDrawEnabled){
 		allTotalDamageDataPoints.push(totalDamageDataPoints);
 	}
+}
+
+function processDpsGraphData(graphData, allTotalDamageDataPoints, multiDrawEnabled, REPEAT_FIGHT_COUNT){
+	graphData.data = [];
+	var totalTotalDamage = 0;
+	for(var i0=0;i0<allTotalDamageDataPoints.length;i0++){
+		var totalDamage = 0;
+		var singleTotalDamageDataPoints = allTotalDamageDataPoints[i0];
+		for(var i=0;i<singleTotalDamageDataPoints.length;i++){
+			if(singleTotalDamageDataPoints[i] != undefined){
+				totalDamage+=singleTotalDamageDataPoints[i];
+				var dps = Math.round(totalDamage/(multiDrawEnabled == false ? REPEAT_FIGHT_COUNT : 1) / (i/10));
+				var timePassed = (i/10).toFixed(STEP_SIZE.countDecimals());
+				if(parseFloat(timePassed) >= START_DRAWING_AFTER_X_SECONDS){
+					graphData.data.push({x:timePassed, y:dps});
+				}
+			}
+		}
+		totalTotalDamage+=totalDamage;
+
+		// Used to loop back the graph to the beginning so the drawing can be repeated with the same graph.
+		if(multiDrawEnabled){
+			graphData.data.push({x:""+(MAX_TIME_SECONDS-0.1), y:0});
+			graphData.data.push({x:"0.0", y:0});
+		}
+	}
+	graphData.addedTotalDamage = totalTotalDamage;
 }
 
 // Calculates all dps over the whole timeline of the chart.
@@ -667,9 +739,7 @@ function fillChart(){
 // TODO: This will have to be moved to load for all the datasets when multiple allowed. COMPARISON
 require(["./ChartInitializer"], 
 function(ChartInitializer){
-	dotSpecificData.data = [];
-	dotSpecificData.pointBackgroundColor = [];
-	dotSpecificData.customLabels = [];
+
 	// Reset the data
 	dpsChart.data.datasets = [];
 	ChartInitializer.loadChartDatasets(
@@ -686,8 +756,6 @@ function(ChartInitializer){
 	
 	// Retrieve the current tilesets.
 	graphSpecificData.usedTilesets = [];
-	graphSpecificData.numAfflictions = 0;
-	graphSpecificData.numFireBoosts = 0;
 	graphSpecificData.numBurnCards = 0;
 	graphSpecificData.numPoisonCards = 0;
 	if(globalTilesetsEnabledFlag){
@@ -696,7 +764,7 @@ function(ChartInitializer){
 			if(tilesetData != undefined){
 				tilesetData = tilesetData.replace(/ /g,'');
 				if(tilesetData.length >= MINIMUM_TILESET_LENGTH){
-					graphSpecificData.usedTilesets.push({"idx":i,"condition":tilesetData,addedDmg:0, numProcs:0, intList: [] });
+					graphSpecificData.usedTilesets.push({"idx":i,"condition":tilesetData,addedDmg:0, numProcs:0, intList: [], minRunProccedInfoList: [], maxRunProccedInfoList: []});
 				}
 			}
 		}
@@ -709,50 +777,42 @@ function(ChartInitializer){
 	var totalDamageDataPoints = [];
 	let calcCount = parseInt($("#calcCount").val());
 	const REPEAT_FIGHT_COUNT = calcCount != undefined ? calcCount : 1;
-	stringStoringAllTiles = "";
+	minMaxData = {
+		lowestTotal: -1,
+		lowestRunDataPoints: {},
+		lowestRunAddedTilesetDmg: 0,
+		highestTotal: -1,
+		highestRunDataPoints: {},
+		highestRunAddedTilesetDmg: 0
+	};
 	for(var i10=0;i10<REPEAT_FIGHT_COUNT;i10++){
-		calculateOneFight(graphSpecificData, dotSpecificData, allTotalDamageDataPoints, totalDamageDataPoints, REPEAT_FIGHT_COUNT, i10);
+		calculateOneFight(graphSpecificData, allTotalDamageDataPoints, totalDamageDataPoints, REPEAT_FIGHT_COUNT, i10, minMaxData);
 	}
 
 	if(multiDrawEnabled == false){
 		allTotalDamageDataPoints.push(totalDamageDataPoints);
 	}
 
-
+	var minGraphSpecificData = JSON.parse(JSON.stringify(graphSpecificData));
+	var maxGraphSpecificData = JSON.parse(JSON.stringify(graphSpecificData));
 	// Make all draw points of the graph showing the dps over time. (the whole reason for all the above code xD)
-	graphSpecificData.data = [];
-	var totalTotalDamage = 0;
-	for(var i0=0;i0<allTotalDamageDataPoints.length;i0++){
-		var totalDamage = 0;
-		var singleTotalDamageDataPoints = allTotalDamageDataPoints[i0];
-		for(var i=0;i<singleTotalDamageDataPoints.length;i++){
-			if(singleTotalDamageDataPoints[i] != undefined){
-				totalDamage+=singleTotalDamageDataPoints[i];
-				var dps = Math.round(totalDamage/(multiDrawEnabled == false ? REPEAT_FIGHT_COUNT : 1) / (i/10));
-				var damage = Math.round(singleTotalDamageDataPoints[i]/(multiDrawEnabled == false ? REPEAT_FIGHT_COUNT : 1) / (i/10));
-				var timePassed = (i/10).toFixed(STEP_SIZE.countDecimals());
-				if(parseFloat(timePassed) >= START_DRAWING_AFTER_X_SECONDS){
-					graphSpecificData.data.push({x:timePassed, y:dps});
-				}
-			}
-		}
-		totalTotalDamage+=totalDamage;
-
-		// Used to loop back the graph to the beginning so the drawing can be repeated with the same graph.
-		if(multiDrawEnabled){
-			graphSpecificData.data.push({x:""+(MAX_TIME_SECONDS-0.1), y:0});
-			graphSpecificData.data.push({x:"0.0", y:0});
-		}
-	}
+	processDpsGraphData(graphSpecificData, allTotalDamageDataPoints, multiDrawEnabled, REPEAT_FIGHT_COUNT);
+	processDpsGraphData(minGraphSpecificData, [minMaxData.lowestRunDataPoints], multiDrawEnabled, 1);
+	processDpsGraphData(maxGraphSpecificData, [minMaxData.highestRunDataPoints], multiDrawEnabled, 1);
+	minGraphSpecificData.addedDmgTilesets = minMaxData.lowestRunAddedTilesetDmg;
+	maxGraphSpecificData.addedDmgTilesets = minMaxData.highestRunAddedTilesetDmg;
+	minDpsChart.data.datasets[0] = minGraphSpecificData;
+	maxDpsChart.data.datasets[0] = maxGraphSpecificData;
 	
-	graphSpecificData.addedTotalDamage = totalTotalDamage;
-	graphSpecificData.triggeredTiles = stringStoringAllTiles;
 
 	updateTilesetPercentages($("#loadoutName").val());
 	updateTilesetProcChart($("#loadoutName").val());
 
 	dpsChart.update();
-	dotChart.update();
+	minDpsChart.update();
+	maxDpsChart.update();
+	minHitChart.update();
+	maxHitChart.update();
 });
 }
 
