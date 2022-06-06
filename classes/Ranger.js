@@ -85,7 +85,6 @@ define(["./Attack"], function (Attack) {
 
 				if(arrow.type == "Poison"){
 					hitCount++;
-					189.6
 					dotDamage = 0.96714910*(1+GLOBE_BOOST)*intBoost*(1+dotIncrease);
 					dotTimes = 8 + (arrow.charge == "Yes" ? 4 : 0);
 					dotMaxActive = 10;
