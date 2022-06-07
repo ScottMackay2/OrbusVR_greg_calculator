@@ -254,7 +254,7 @@ if (needsDefaultValues || debug) {
 	};
 	res[RANGER_VALUE] = {
 		'default': {
-			savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*3 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
+			savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*3 Y w w w w w w w w (V z s c d u s s V z s c D s s s)*4 Y w w w w w w w w (V z s c d u s s V z s c D s s s)*4 Y w w w w w w w w (V z s c d u s s V z s c D s s s)*4",
 			savedTilesets: ['6F2', '26F', 'F2A', 'A26F', '6F2A'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
@@ -266,7 +266,6 @@ if (needsDefaultValues || debug) {
 		},
 		'reliable tilesets': {
 			savedAttacks: "e (f s s s k s s s s f s s s r s s s s)*20",
-			// savedAttacks: "e (v z s c d u s s V z s c D s s s)(V z s c d u s s V z s c D s s s)*4 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*5 Y w w w w p w w w w (V z s c d u s s V z s c D s s s)*4",
 			savedTilesets: ['F26', 'F6A', 'F6A3', 'A32', 'F62'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
@@ -277,7 +276,7 @@ if (needsDefaultValues || debug) {
 			borderColor : "#5eD54d",
 		},
 		'manip_ranger': {
-			savedAttacks: "e (a b s c d s s u A b s c D s s s)(A b s c d s s u A b s c D s s s)*3 G h w i j p w W w w (u A b s c D s s s A b s c d s s)*4 G h w i j p w W w w (u A b s c D s s s A b s c d s s)*4 G h w i j p w W w w (u A b s c D s s s A b s c d s s)*4",
+			savedAttacks: "e (a b s c d s s u A b s c D s s s)(A b s c d s s u A b s c D s s s)*3 G h w i j w W w w (u A b s c D s s s A b s c d s s)*4 G h w i j w W w w (u A b s c D s s s A b s c d s s)*4 G h w i j w W w w (u A b s c D s s s A b s c d s s)*4",
 			savedTilesets: ['7F62', '6A2', '7F2', '7F26', 'A7F26'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
