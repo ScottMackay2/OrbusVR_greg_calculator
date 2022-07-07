@@ -37,7 +37,8 @@ if (needsDefaultValues || debug) {
          - Tilesets --> Boolean
      */
 
-    const MAGE_WEAPON_STATS = [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}];
+// weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"CHARGED_STRIKES":{}},{"BLEED":{}}],
+    const MAGE_WEAPON_STATS = [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"CHARGED_STRIKES":{}},{"BLEED":{}}];
     const MAGE_ARMOUR_STATS = {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04};
 
 	res[MAGE_VALUE] = {

@@ -376,7 +376,7 @@ function calculateOneFight(graphSpecificData, allTotalDamageDataPoints, totalDam
 		// a crit after the 9th hit no matter if it is a normal hit or DoT.
 		// If "attack.damage > 0" would be replaced by "attack.hitCount > 0" then the bug would be fixed. If any dev ever reads this xD
 		var chargedStrikesWillCrit = false;
-		if(graphSpecificData.chargedStrikesCount >= 9 && attack.damage > 0){
+		if(graphSpecificData.chargedStrikesCount >= 9 && attack.hitCount > 0){
 			graphSpecificData.chargedStrikesCount = -1;
 			chargedStrikesWillCrit = true;
 		}
@@ -458,15 +458,14 @@ function calculateOneFight(graphSpecificData, allTotalDamageDataPoints, totalDam
 			}
 
 			// Calculate total tileset added damage.
-			var tilesetBoost = 0;
-			var tilesetBoostAmt = 0;
+			// var tilesetBoost = 0;
 			for(var i3=targetTilesets.length-1;i3>=0;i3--){
-				addedTilesetDamagePercent += targetTilesets[i3].tilesetBoostAmount;
-				targetTilesets[i3].tileset.addedDmg += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
-				graphSpecificData.addedDmgTilesets += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
-				localAddedDmgTilesets += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
-				tilesetBoost += NO_TILESET_DMG * targetTilesets[i3].tilesetBoostAmount;
-				tilesetBoostAmt += targetTilesets[i3].tilesetBoostAmount;
+				const tilesetBoostAmount = targetTilesets[i3].tilesetBoostAmount;
+				addedTilesetDamagePercent += tilesetBoostAmount;
+				targetTilesets[i3].tileset.addedDmg += NO_TILESET_DMG * tilesetBoostAmount;
+				graphSpecificData.addedDmgTilesets += NO_TILESET_DMG * tilesetBoostAmount;
+				localAddedDmgTilesets += NO_TILESET_DMG * tilesetBoostAmount;
+				// tilesetBoost += NO_TILESET_DMG * tilesetBoostAmount;
 			}
 			
 		}
