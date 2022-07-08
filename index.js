@@ -214,9 +214,6 @@ function updateLocalDataToNew(e){
 }
 
 function getAttackPatterns(graphSpecificData){
-	const DAMAGE_MULTIPLIER = globalWeaponAffixBoosts;
-	const DOT_MULTIPLIER = globalWeaponAffixBoosts;
-	
 	var attackPatternsData = [];
 	var attackPatternStr = $("#attacks").val();
 	attackPatternStr = attackPatternStr.replace(/ /g,''); // Remove spaces
@@ -232,8 +229,6 @@ function getAttackPatterns(graphSpecificData){
 			var newAttack = graphSpecificData.classData.attackTypes[chr];
 			if(newAttack != undefined){
 				newAttack = clone(newAttack);
-				newAttack.damage*=DAMAGE_MULTIPLIER;
-				newAttack.dotDamage*=DOT_MULTIPLIER;
 				if(newAttack.prePreModifierFunc != undefined){
 					newAttack.prePreModifierFunc(newAttack);
 				}
@@ -449,7 +444,8 @@ function calculateOneFight(graphSpecificData, allTotalDamageDataPoints, totalDam
 
 		// Calculate the added damage by doing most boosts time the default damage of the attack.
 		const BLEED_BOOST = (globalUsingBleed) ? 1+BLEED_ACTUAL_DMG_INC*globalDpsMultiplierFromCritting : 1;
-		const NO_TILESET_DMG = attack.damage * addedDmgBoostPercent*critBoostPercent*modifierFuncBoostPercent*BLEED_BOOST;
+		const NO_CRIT_DMG = attack.damage * addedDmgBoostPercent*modifierFuncBoostPercent*BLEED_BOOST;
+		const NO_TILESET_DMG = NO_CRIT_DMG*globalWeaponAffixBoosts + NO_CRIT_DMG*(critBoostPercent-1);
 
 		if(globalTilesetsEnabledFlag){
 			var targetTilesets = graphSpecificData.activeTilesets;
