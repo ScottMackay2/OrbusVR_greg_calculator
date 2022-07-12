@@ -364,12 +364,6 @@ function calculateOneFight(graphSpecificData, allTotalDamageDataPoints, totalDam
 			modifierFuncBoostPercent = attack.preModifierFunc(attack, targetPatternData, graphSpecificData, timePassed);
 		}
 
-
-
-		// Make the current Orbus bug that triggers the charged strikes to crit an attack even on hits that don't add to the counter.
-		// Caused by the 10th hit will crit before it even knows if the 10th hit is a normal number that crits. So it becomes
-		// a crit after the 9th hit no matter if it is a normal hit or DoT.
-		// If "attack.damage > 0" would be replaced by "attack.hitCount > 0" then the bug would be fixed. If any dev ever reads this xD
 		var chargedStrikesWillCrit = false;
 		if(graphSpecificData.chargedStrikesCount >= 9 && attack.hitCount > 0){
 			graphSpecificData.chargedStrikesCount = -1;
@@ -385,14 +379,14 @@ function calculateOneFight(graphSpecificData, allTotalDamageDataPoints, totalDam
 		var critBoostPercent = 1;
 		if(attack.canCrit){
 			// Is crit
-			if(Math.random() <= graphSpecificData.critChance || chargedStrikesWillCrit){
+			if(Math.random() <= graphSpecificData.critChance || (chargedStrikesWillCrit && attack.hitCount > 0)){
 				attack.isCritting = true;
 				critBoostPercent = globalArmourCritDamage;
 			} else{
 				attack.isCritting = false;
 			}
 			// This removes all the randomizer of dps from critting itself. This way the dps is more accurate on average.
-			if(globalAveragingCritsFlag && !chargedStrikesWillCrit){
+			if(globalAveragingCritsFlag && (!chargedStrikesWillCrit && attack.hitCount > 0)){
 				critBoostPercent = graphSpecificData.dpsMultiplierFromCritting;
 			}
 		}
