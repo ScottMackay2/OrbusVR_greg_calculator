@@ -285,8 +285,8 @@ return {
 			}
 			if(attackData.type === "Poison"){
 				dotDamage = Data.POISON_DAMAGE*(1+dotIncrease);
-				dotDamage *= this.intBoost;
 				dotTimes = Data.POISON_DOT_COUNT;
+				tiles = "A";
 			}
 			if(time == undefined){
 				time = 0;
@@ -304,6 +304,8 @@ return {
 			const RANK_MULT = (1 + Data.SINGLE_RANK_MULT*endRank);
 			damage *= RANK_MULT;
 			damage *= this.strBoost;
+			dotDamage *= RANK_MULT;
+			dotDamage *= this.intBoost;
 
 			if(attackData.super === true){
 				damage *= Data.SUPER_BOOST;
