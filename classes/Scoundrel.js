@@ -170,7 +170,7 @@ return {
 				if (ACTIONS[cardInHand-1][1].length == 0) { // If you're supposed to use the card, but not use it with any particular effect
 					graphSpecificData.shootCard = cardInHand;
 				}
-				else if (createBurnSet(ACTIONS[cardInHand-1][1]).includes(determineBurnEffect(graphSpecificData.storedCard))) { // If you're supposed to use the card with a specific card burned, and your belt has that card
+				else if (createBurnSet(ACTIONS[cardInHand-1][1]).has(determineBurnEffect(graphSpecificData.storedCard))) { // If you're supposed to use the card with a specific card burned, and your belt has that card
 					graphSpecificData.shootCard = cardInHand;
 					graphSpecificData.burnEffect = determineBurnEffect(graphSpecificData.storedCard);
 					graphSpecificData.storedCard = CARD_NONE;
