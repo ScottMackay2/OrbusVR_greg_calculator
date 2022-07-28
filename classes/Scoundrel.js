@@ -59,7 +59,7 @@ return {
 		const ACTION_CARD_USE = 1;
 
 		const ACTION_CARD_FROST = [ACTION_CARD_BURN, [], 0];
-		const ACTION_CARD_HEAL = [ACTION_CARD_USE, [], 0];
+		const ACTION_CARD_HEAL = [ACTION_CARD_BURN, [], 0];
 		const ACTION_CARD_ASH = [ACTION_CARD_BURN, [CARD_POISON], 1];
 		const ACTION_CARD_WEAKNESS = [ACTION_CARD_BURN, [CARD_POISON], 1];
 		const ACTION_CARD_FLAME = [ACTION_CARD_USE, [], 0];
@@ -182,19 +182,19 @@ return {
 					print(getCardName(cardInHand) + " Stored", iteration);
 					graphSpecificData.storedCard = cardInHand;
 				}
-				else if (ACTIONS[cardInHand][2] <= ACTIONS[graphSpecificData.storedCard-1][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
+				else if (ACTIONS[cardInHand][2] <= ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
 					print(getCardName(cardInHand) + " Burned as Belted Card is " + getCardName(graphSpecificData.storedCard), iteration);
 					graphSpecificData.burnEffect = determineBurnEffect(cardInHand);
 					attack.tiles = BURN_CARD_TILE;
 				}
-				else if (ACTIONS[cardInHand][2] > ACTIONS[graphSpecificData.storedCard-1][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
-					if (ACTIONS[graphSpecificData.storedCard-1][0] == ACTION_CARD_BURN) {
+				else if (ACTIONS[cardInHand][2] > ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
+					if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_BURN) {
 						print(getCardName(graphSpecificData.storedCard) + " Burned as Drawn Card is " + getCardName(cardInHand), iteration);
 						graphSpecificData.burnEffect = determineBurnEffect(graphSpecificData.storedCard);
 						graphSpecificData.storedCard = cardInHand;
 						attack.tiles = BURN_CARD_TILE;
 					}
-					else if (ACTIONS[graphSpecificData.storedCard-1][0] == ACTION_CARD_USE) {
+					else if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_USE) {
 						print(getCardName(graphSpecificData.storedCard) + " Used as Drawn Card is " + getCardName(cardInHand), iteration);
 						graphSpecificData.shootCard = graphSpecificData.storedCard;
 						graphSpecificData.storedCard = cardInHand;
@@ -222,18 +222,18 @@ return {
 					graphSpecificData.storedCard = CARD_NONE;
 					attack.tiles = BURN_CARD_TILE;
 				}
-				else if (ACTIONS[cardInHand][2] <= ACTIONS[graphSpecificData.storedCard-1][2]) { // If you're supposed to use the card with a specific card burned, and your belt has a higher priority card
+				else if (ACTIONS[cardInHand][2] <= ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to use the card with a specific card burned, and your belt has a higher priority card
 					print(getCardName(cardInHand) + " Used as Belted Card is " + getCardName(graphSpecificData.storedCard), iteration);
 					graphSpecificData.shootCard = cardInHand;
 				}
-				else if (ACTIONS[cardInHand][2] > ACTIONS[graphSpecificData.storedCard-1][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
-					if (ACTIONS[graphSpecificData.storedCard-1][0] == ACTION_CARD_BURN) {
+				else if (ACTIONS[cardInHand][2] > ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
+					if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_BURN) {
 						print(getCardName(graphSpecificData.storedCard) + " Burned as Drawn Card is " + getCardName(cardInHand), iteration);
 						graphSpecificData.burnEffect = determineBurnEffect(graphSpecificData.storedCard);
 						graphSpecificData.storedCard = cardInHand;
 						attack.tiles = BURN_CARD_TILE;
 					}
-					else if (ACTIONS[graphSpecificData.storedCard-1][0] == ACTION_CARD_USE) {
+					else if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_USE) {
 						print(getCardName(graphSpecificData.storedCard) + " Used as Drawn Card is " + getCardName(cardInHand), iteration);
 						graphSpecificData.shootCard = graphSpecificData.storedCard;
 						graphSpecificData.storedCard = cardInHand;
