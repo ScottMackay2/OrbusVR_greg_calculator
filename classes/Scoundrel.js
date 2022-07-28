@@ -98,7 +98,7 @@ return {
 			deck.splice(newCardLocation, 0, card);
 		}
 
-		function resetScoundrel(attack, targetPatternData, graphSpecificData, timePassed) {
+		function resetScoundrel(attack, targetPatternData, graphSpecificData, timePassed, iterations) {
 			graphSpecificData.deck = generateRandomDeck();
 			// Choose to place a poison card at start of fight in the belt, because it is a very
 			// common scenario.
@@ -250,7 +250,7 @@ return {
 			return 1;
 		}
 
-		function updateCritChance(attack, targetPatternData, graphSpecificData, timePassed){
+		function updateCritChance(attack, targetPatternData, graphSpecificData, timePassed, iteration){
 			// Remove expired crit talent icons.
 			while(true){
 				var target = graphSpecificData.classData.critTalentList[0];
@@ -265,7 +265,7 @@ return {
 			return 1;
 		}
 
-		function increaseCritChance(attack, targetPatternData, graphSpecificData, timePassed){
+		function increaseCritChance(attack, targetPatternData, graphSpecificData, timePassed, iteration){
 			if(attack.isCritting){
 				if(graphSpecificData.classData.critTalentList.length >= Data.TRUE_GAMBLER_MAX_ACTIVE){
 					graphSpecificData.classData.critTalentList.shift(); // Remove first item in the list.
@@ -277,8 +277,8 @@ return {
 
 		var SCOUNDREL_NEW_SPAWNED_CARD = new Attack.Attack(0,  0, true,  	0, 0, 0, 	0.00, 0, 0, 	0, 4,"","");
 		var SCOUNDREL_NEW_SPAWNED_POISON = new Attack.Attack(0,0, true,  	Data.POISON_DAMAGE*Data.RANK_V, 0, 10, 	0.00, 0, 0, 	0, 3,"A","");
-		function useCard(attack, targetPatternData, graphSpecificData, timePassed) {
-			updateCritChance(attack, targetPatternData, graphSpecificData, timePassed);
+		function useCard(attack, targetPatternData, graphSpecificData, timePassed, iteration) {
+			updateCritChance(attack, targetPatternData, graphSpecificData, timePassed, iteration);
 
 			var boost = 1;
 
