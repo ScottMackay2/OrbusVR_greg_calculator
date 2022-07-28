@@ -46,19 +46,18 @@ return {
 		const CARD_FLAME = 5;
 		const CARD_HEAL = 6;
 		
-		
-		const ACTION_CARD_BURN = 0;
-		const ACTION_CARD_USE = 1;
-		
 		// Here's where we define what we do with every card. I wrote it so that:
 		/*
 			Format:
 			[
 				What do we do with this card? (ACTION_CARD_BURN, ACTION_CARD_USE),
-				Do we burn / use this card with a specific card(s)? [CARD_ONE, CARD_TWO, ...] - Leave Blank for Immediately Use/Burn
+				Do we burn / use this card with a specific card(s)? (CARD_X)
 				What's the priority for putting this card on our belt?
 			]
 		*/
+		const ACTION_CARD_BURN = 0;
+		const ACTION_CARD_USE = 1;
+
 		const ACTION_CARD_FROST = [ACTION_CARD_BURN, [], 0];
 		const ACTION_CARD_HEAL = [ACTION_CARD_BURN, [], 0];
 		const ACTION_CARD_ASH = [ACTION_CARD_BURN, [CARD_POISON], 1];
@@ -130,7 +129,7 @@ return {
 			}
 			return burnList;
 		}
-		
+
 		function getCardName(card) {
 			switch (card){
 				case CARD_FROST: return "Ice Card"
@@ -139,6 +138,7 @@ return {
 				case CARD_ASH: return "Ash Card"
 				case CARD_POISON: return "Poison Card"
 				case CARD_FLAME: return "Flame Card"
+				default: return "None"
 			}
 		}
 
@@ -146,6 +146,7 @@ return {
 			switch (burn){
 				case EFFECT_BOOST: return "Empower"
 				case EFFECT_CHEAT: return "Duplicate"
+				default: return "None"
 			}
 		}
 
@@ -153,6 +154,10 @@ return {
 		function handleNewSpawnedCard(attack, targetPatternData, graphSpecificData, timePassed) {
 			var cardInHand = graphSpecificData.deck.shift();
 			attack.tiles = "";
+
+			console.log("Drawn Card: " + getCardName(cardInHand) + "  -  Stored Card: " + getCardName(graphSpecificData.storedCard) + "  -  Burned Effect: " + getBurnName(graphSpecificData.burnEffect))
+			
+			
 
 			if (ACTIONS[cardInHand-1][0] == ACTION_CARD_BURN) { // If you're supposed to burn the card
 				if (ACTIONS[cardInHand-1][1].length == 0) { // If you're supposed to burn the card, but not use it with any particular card
@@ -229,6 +234,7 @@ return {
 					}
 				}
 			}
+
 
 			// Make a new deck if there are no cards left in the deck.
 			if(graphSpecificData.deck.length == 0){
