@@ -361,7 +361,7 @@ function calculateOneFight(graphSpecificData, allTotalDamageDataPoints, totalDam
 		// Execute a function call before calculating if crit has been done.
 		var modifierFuncBoostPercent = 1;
 		if(attack.preModifierFunc != undefined){
-			modifierFuncBoostPercent = attack.preModifierFunc(attack, targetPatternData, graphSpecificData, timePassed);
+			modifierFuncBoostPercent = attack.preModifierFunc(attack, targetPatternData, graphSpecificData, timePassed, i10);
 		}
 
 		var chargedStrikesWillCrit = false;
