@@ -1,8 +1,73 @@
-10k hit = 40k dps aggro
-60k heal = 30k dps aggro
-37k dps on empower book
-170k empower normal hit...
-66k ground slam (16137)
-30k stun lock (7k damage)
+plea of divinity stays up on player for about 5.5 mins... takes 10 mins to cast again.
+Blessing of Encouragement always add +5 int and str no matter your int and str. Its relative to your book always adding 50 str and int by default.
 
-plea of divinity stays up on player for about 5.5 mins... takes 10 mins to cast again
+Lvl 30 naked weapon:
+Pip:
+	Damage: 7822 (1x)
+	Aggro: 31288
+		Datapoints: 31508
+		Relative damage effect: 4x
+		Single pip potential: 1
+Stun pip:
+	Damage: 5084 (0.65x)
+	Aggro: 40672
+		Datapoints: 40779
+		Relative damage effect: 8x
+		Single pip potential: 1.30x
+Empowered stun:
+	Damage: 10168 (2x0.65)
+	Aggro: 162688
+		Datapoints: 163427
+		Relative damage effect: 16x
+		Single pip potential: 5.20x
+Empowered pip:
+	Damage: 15644 (2x)
+	Aggro: 125152
+		Datapoints: 125610
+		Datapoints with 250 int: 125456
+		Relative damage effect: 8x
+		Single pip potential: 4x
+Empowered pip 250 str:
+	Damage: 16947
+	Aggro: 135581 (8.3333% more aggro. So full 250 strength more aggro)
+		Datapoints: 135607
+		Relative damage effect: 8x
+		Single pip potential: 4x (single pip with strength will be same)
+Empower + empower talent:
+	Damage: 16035 (2.05x)
+	Aggro: 128281
+		Datapoints: 128474
+		Relative damage effect: 8x
+		Single pip potential: 4.1x
+Left book:
+	Aggro: 27377
+		Datapoints: 27439
+		Relative damage effect: 3.5x (relative to a pip damage)
+		Single pip potential: 0.875x
+Left book + 250 int:
+	Aggro: 29658 (8.3333% more aggro. So full 250 intellect more aggro)
+		Datapoints: 29785
+Groundslam (250 str/int - prob strength only counts):
+	Damage: 12710 (1.5x)
+	Aggro: 50840
+		Datapoints: 50871
+		Relative damage effect: 4x
+		Single pip potential: 1.5x
+Pally poke (250 str/int - prob strength only counts):
+	Damage: 5762 (0.68x pip) and 8474
+	Aggro: 56944
+		Datapoints: 57395
+		Relative damage effect: 4x
+		Single pip potential: 1.68x / 2 (It uses two pips) = 0.84x
+
+
+
+Lvl 30+6 (str=168 int=165) weapon:
+Stun pip:
+	Damage: 7522 (0.65x)
+Pip: 
+	Damage: 11572 (1x)
+Empowered stun:
+	Damage: 15043 (2x0.65)
+Empowered pip:
+	Damage: 23144 (2x)
