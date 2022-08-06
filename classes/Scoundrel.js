@@ -37,8 +37,25 @@ const Data = {
 
 	SUPER_BOOST : 1.1454,
 
-	SCOUNDREL_CARD_SPAWN_TIME : 2.4+SCOUNDREL_CARD_HUMAN_THINKING_TIME,
+	SCOUNDREL_CARD_SPAWN_TIME : 2.4+SCOUNDREL_CARD_HUMAN_THINKING_TIME, // Guess... Might be wrong...
 	SCOUNDREL_CARD_SPAWN_TIME_QUICK_DRAW : 2.2+SCOUNDREL_CARD_HUMAN_THINKING_TIME,
+
+	TILES : {
+		POISON_CARD : "A",
+		LIGHT_CARD : "SH",
+		FLAME_CARD : "B",
+		BURN_A_CARD : "F",
+
+		// 0 = start of combat
+		// 2 = 2 hits per second
+		// 3 = 3 hits per second
+		// 4 = 4 hits per second
+		// 5 = 5 hits per second
+		// 6 = 1-1.999 second delay
+		// 7 = 2-2.999 second delay
+		// 8 = 3-3.999 second delay
+		// 9 = 4-5.999 second delay
+	},
 };
 return {
 	Data: Data,
@@ -169,7 +186,6 @@ return {
 			}
 		}
 
-		const BURN_CARD_TILE = "F";
 		function handleNewSpawnedCard(attack, targetPatternData, graphSpecificData, timePassed, iteration) {
 			var cardInHand = graphSpecificData.deck.shift();
 			attack.tiles = "";
@@ -182,14 +198,14 @@ return {
 				if (ACTIONS[cardInHand][1].length == 0) { // If you're supposed to burn the card, but not use it with any particular card
 					print(getCardName(cardInHand) + " Burned", iteration);
 					graphSpecificData.burnEffect = determineBurnEffect(cardInHand);
-					attack.tiles = BURN_CARD_TILE;
+					attack.tiles = Data.TILES.BURN_A_CARD;
 				}
 				else if (ACTIONS[cardInHand][1].includes(graphSpecificData.storedCard)) { // If you're supposed to burn the card with a specific card used, and your belt has that card
 					print(getCardName(cardInHand) + " Burned with " + getCardName(graphSpecificData.storedCard), iteration);
 					graphSpecificData.shootCard = graphSpecificData.storedCard;
 					graphSpecificData.storedCard = CARD_NONE;
 					graphSpecificData.burnEffect = determineBurnEffect(cardInHand);
-					attack.tiles = BURN_CARD_TILE;
+					attack.tiles = Data.TILES.BURN_A_CARD;
 				}
 				else if (graphSpecificData.storedCard == CARD_NONE) {  // If you're supposed to burn the card with a specific card used, and your belt is empty
 					print(getCardName(cardInHand) + " Stored", iteration);
@@ -198,14 +214,14 @@ return {
 				else if (ACTIONS[cardInHand][2] <= ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
 					print(getCardName(cardInHand) + " Burned as Belted Card is " + getCardName(graphSpecificData.storedCard), iteration);
 					graphSpecificData.burnEffect = determineBurnEffect(cardInHand);
-					attack.tiles = BURN_CARD_TILE;
+					attack.tiles = Data.TILES.BURN_A_CARD;
 				}
 				else if (ACTIONS[cardInHand][2] > ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
 					if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_BURN) {
 						print(getCardName(graphSpecificData.storedCard) + " Burned as Drawn Card is " + getCardName(cardInHand), iteration);
 						graphSpecificData.burnEffect = determineBurnEffect(graphSpecificData.storedCard);
 						graphSpecificData.storedCard = cardInHand;
-						attack.tiles = BURN_CARD_TILE;
+						attack.tiles = Data.TILES.BURN_A_CARD;
 					}
 					else if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_USE) {
 						print(getCardName(graphSpecificData.storedCard) + " Used as Drawn Card is " + getCardName(cardInHand), iteration);
@@ -233,7 +249,7 @@ return {
 					graphSpecificData.shootCard = cardInHand;
 					graphSpecificData.burnEffect = determineBurnEffect(graphSpecificData.storedCard);
 					graphSpecificData.storedCard = CARD_NONE;
-					attack.tiles = BURN_CARD_TILE;
+					attack.tiles = Data.TILES.BURN_A_CARD;
 				}
 				else if (ACTIONS[cardInHand][2] <= ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to use the card with a specific card burned, and your belt has a higher priority card
 					print(getCardName(cardInHand) + " Used as Belted Card is " + getCardName(graphSpecificData.storedCard), iteration);
@@ -244,7 +260,7 @@ return {
 						print(getCardName(graphSpecificData.storedCard) + " Burned as Drawn Card is " + getCardName(cardInHand), iteration);
 						graphSpecificData.burnEffect = determineBurnEffect(graphSpecificData.storedCard);
 						graphSpecificData.storedCard = cardInHand;
-						attack.tiles = BURN_CARD_TILE;
+						attack.tiles = Data.TILES.BURN_A_CARD;
 					}
 					else if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_USE) {
 						print(getCardName(graphSpecificData.storedCard) + " Used as Drawn Card is " + getCardName(cardInHand), iteration);
@@ -289,7 +305,7 @@ return {
 		}
 
 		var SCOUNDREL_NEW_SPAWNED_CARD = new Attack.Attack(0,  0, true,  	0, 0, 0, 	0.00, 0, 0, 	0, 4,"","");
-		var SCOUNDREL_NEW_SPAWNED_POISON = new Attack.Attack(0,0, true,  	Data.POISON_DAMAGE*Data.RANK_V, 0, 10, 	0.00, 0, 0, 	0, 3,"A","");
+		var SCOUNDREL_NEW_SPAWNED_POISON = new Attack.Attack(0,0, true,  	Data.POISON_DAMAGE*Data.RANK_V, 0, 10, 	0.00, 0, 0, 	0, 3,Data.TILES.POISON_CARD,"");
 		function useCard(attack, targetPatternData, graphSpecificData, timePassed, iteration) {
 			updateCritChance(attack, targetPatternData, graphSpecificData, timePassed, iteration);
 
@@ -318,11 +334,11 @@ return {
 				// Add the flame damage to the card.
 				else if(graphSpecificData.shootCard == CARD_FLAME){
 					boost += Data.FLAME_CARD_MULTIPLIER; // Increase total damage from flame itself.
-					SCOUNDREL_NEW_SPAWNED_CARD.tiles = "B";
+					SCOUNDREL_NEW_SPAWNED_CARD.tiles = Data.TILES.FLAME_CARD;
 					var newAttack = clone(SCOUNDREL_NEW_SPAWNED_CARD);
 					targetPatternData.pattern.splice(targetPatternData.patternIdx+1, 0, newAttack);
 				} else if(graphSpecificData.shootCard == CARD_HEAL){
-					SCOUNDREL_NEW_SPAWNED_CARD.tiles = "SH";
+					SCOUNDREL_NEW_SPAWNED_CARD.tiles = DATA.TILES.LIGHT_CARD;
 					var newAttack = clone(SCOUNDREL_NEW_SPAWNED_CARD);
 					targetPatternData.pattern.splice(targetPatternData.patternIdx+1, 0, newAttack);
 				}
@@ -400,7 +416,7 @@ return {
 			if(attackData.type === "Poison"){
 				dotDamage = Data.POISON_DAMAGE*(1+dotIncrease);
 				dotTimes = Data.POISON_DOT_COUNT;
-				tiles = "A";
+				tiles = Data.TILES.POISON_CARD;
 			}
 			if(time == undefined){
 				time = 0;
