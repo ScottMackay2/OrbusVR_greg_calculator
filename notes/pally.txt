@@ -8,7 +8,7 @@ Pip:
 		Datapoints: 31508
 		Relative damage effect: 4x
 		Single pip potential: 1
-Stun pip:
+Stun:
 	Damage: 5084 (0.65x)
 	Aggro: 40672
 		Datapoints: 40779

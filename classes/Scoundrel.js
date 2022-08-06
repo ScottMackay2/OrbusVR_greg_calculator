@@ -1,5 +1,6 @@
 define(["./Attack"], function (Attack) {
 const SINGLE_RANK_MULT = 0.1436;
+const SCOUNDREL_CARD_HUMAN_THINKING_TIME = 0.3;
 const Data = {
 	BASE_DAMAGE: 322.3172/241.75,
 	POISON_DAMAGE: 215.447/241.75,
@@ -23,6 +24,8 @@ const Data = {
 	TRUE_GAMBLER_MAX_ACTIVE: 5,
 
 	SUPER_BOOST : 1.1454,
+
+	SCOUNDREL_CARD_SPAWN_TIME : 2.2+SCOUNDREL_CARD_HUMAN_THINKING_TIME,
 };
 return {
 	Data: Data,
@@ -30,9 +33,6 @@ return {
 		for (const [key, value] of Object.entries(data)) {
 			this[key] = value;
 		}
-
-		const SCOUNDREL_HUMAN_THINKING_TIME = 0.3;
-		const SCOUNDREL_CARD_TIME = 2.2+SCOUNDREL_HUMAN_THINKING_TIME;
 
 		const EFFECT_NONE = -1;
 		const EFFECT_BOOST = 1;
@@ -397,8 +397,8 @@ return {
 				attackID = 3;
 			}
 			if(attackData.tryGrabCard === true){
-				if(time < SCOUNDREL_CARD_TIME){
-					time = SCOUNDREL_CARD_TIME;
+				if(time < Data.SCOUNDREL_CARD_SPAWN_TIME){
+					time = Data.SCOUNDREL_CARD_SPAWN_TIME;
 				}
 				preModifierFuncs = handleNewSpawnedCard.bind({});
 			}
