@@ -5,9 +5,21 @@ const Data = {
 	BASE_DAMAGE: 322.3172/241.75,
 	POISON_DAMAGE: 215.447/241.75,
 
-	CHARGE2_MULTIPLIER: 2.1436,
-	CHARGE3_MULTIPLIER: 3.5375,
-	CHARGE4_MULTIPLIER: 5.2780,
+	CHARGE2_BULLET : {
+		COUNT : 2,
+		TIME : 1.21,
+		DAMAGE_MULT : 2.1436,
+	},
+	CHARGE3_BULLET : {
+		COUNT : 3,
+		TIME : 1.71,
+		DAMAGE_MULT : 3.5375,
+	},
+	CHARGE4_BULLET : {
+		COUNT : 4,
+		TIME : 2.21,
+		DAMAGE_MULT : 5.2780,
+	},
 
 	SINGLE_RANK_MULT: SINGLE_RANK_MULT,
 	RANK_V : (1 + SINGLE_RANK_MULT*5),
@@ -25,7 +37,8 @@ const Data = {
 
 	SUPER_BOOST : 1.1454,
 
-	SCOUNDREL_CARD_SPAWN_TIME : 2.2+SCOUNDREL_CARD_HUMAN_THINKING_TIME,
+	SCOUNDREL_CARD_SPAWN_TIME : 2.4+SCOUNDREL_CARD_HUMAN_THINKING_TIME,
+	SCOUNDREL_CARD_SPAWN_TIME_QUICK_DRAW : 2.2+SCOUNDREL_CARD_HUMAN_THINKING_TIME,
 };
 return {
 	Data: Data,
@@ -352,16 +365,16 @@ return {
 				damage = Data.BASE_DAMAGE;//5851;
 				damage*=(1+this.projectileIncrease);
 
-				if(attackData.bulletCount == 2){
-					damage *= Data.CHARGE2_MULTIPLIER;
+				if(attackData.bulletCount == Data.CHARGE2_BULLET.COUNT){
+					damage *= Data.CHARGE2_BULLET.DAMAGE_MULT;
 					if(time == undefined){
-						time = 1.21;
+						time = Data.CHARGE2_BULLET.TIME;
 					}
 				}
-				if(attackData.bulletCount == 3){
-					damage *= Data.CHARGE3_MULTIPLIER;
+				if(attackData.bulletCount == Data.CHARGE3_BULLET.COUNT){
+					damage *= Data.CHARGE3_BULLET.DAMAGE_MULT;
 					if(time == undefined){
-						time = 1.71;
+						time = Data.CHARGE3_BULLET.TIME;
 					}
 					if(this.talentlvl20 === "Break Shot"){
 						dmgBoostAmount = Data.BREAK_SHOT_MULTIPLIER;
@@ -369,10 +382,10 @@ return {
 						dmgBoostMaxActive = 1;
 					}
 				}
-				if(attackData.bulletCount == 4){
-					damage *= Data.CHARGE4_MULTIPLIER;
+				if(attackData.bulletCount == Data.CHARGE4_BULLET.COUNT){
+					damage *= Data.CHARGE4_BULLET.DAMAGE_MULT;
 					if(time == undefined){
-						time = 2.21;
+						time = Data.CHARGE4_BULLET.TIME;
 					}
 				}
 				modifierFuncs=increaseCritChance.bind({});
@@ -397,8 +410,9 @@ return {
 				attackID = 3;
 			}
 			if(attackData.tryGrabCard === true){
-				if(time < Data.SCOUNDREL_CARD_SPAWN_TIME){
-					time = Data.SCOUNDREL_CARD_SPAWN_TIME;
+				const drawTime = this.talentlvl10 === "Quick Draw" ? Data.SCOUNDREL_CARD_SPAWN_TIME_QUICK_DRAW : Data.SCOUNDREL_CARD_SPAWN_TIME;
+				if(time < drawTime){
+					time = drawTime;
 				}
 				preModifierFuncs = handleNewSpawnedCard.bind({});
 			}
