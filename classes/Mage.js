@@ -1,13 +1,29 @@
 define(["./Attack"], function (Attack) {
 const Data = {
-	FROST2_DAMAGE: 521.1281/241.75,
-	FIRE2_DAMAGE: 834.0254/241.75,
-	AFFLICTION2_DAMAGE: 195.1200/241.75,
-	AFFLICTION2_DOT_DAMAGE: 189.6113/241.75,
-	SUPER_DAMAGE: 1900/241.75, // Completely guessed number
+	FROST2_DAMAGE: 2.155648,
+	FIRE2_DAMAGE: 3.449949,
+	AFFLICTION2_DAMAGE: 0.807114,
+	AFFLICTION2_DOT_DAMAGE: 0.784328,
+	SUPER_DAMAGE: 7.859358, // Completely guessed number
 	SELFISH_STREAK_BOOST: 1.08,
 	RUNIC_DIVERSITY_MAGE: 1.2727,
 	AFFINITY_FIRE_BOOST_MAGE: 1.136,
+
+	TILES : {
+		FROST : "F",
+		FIRE : "B",
+		AFFLICTION : "A",
+
+		// 0 = start of combat
+		// 2 = 2 hits per second
+		// 3 = 3 hits per second
+		// 4 = 4 hits per second
+		// 5 = 5 hits per second
+		// 6 = 1-1.999 second delay
+		// 7 = 2-2.999 second delay
+		// 8 = 3-3.999 second delay
+		// 9 = 4-5.999 second delay
+	},
 };
 return {
 	Data: Data,
@@ -33,11 +49,11 @@ return {
 
 			if(spell.type == "Frost2"){
 				damage = Data.FROST2_DAMAGE;//9460;
-				tiles = "F";
+				tiles = Data.TILES.FROST;
 			}
 			if(spell.type == "Fire2"){
 				damage = Data.FIRE2_DAMAGE;//15140;
-				tiles = "B";
+				tiles = Data.TILES.FIRE;
 			}
 			if(spell.type == "Affliction2"){
 				damage = Data.AFFLICTION2_DAMAGE;//3542;
@@ -47,7 +63,7 @@ return {
 				dmgBoostAmount = 1.05; 
 				dmgBoostStayTime = 8; 
 				dmgBoostMaxActive = 2;
-				tiles = "A";
+				tiles = Data.TILES.AFFLICTION;
 				attackID = 1;
 			}
 			if(spell.type == "Super"){

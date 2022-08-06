@@ -3,6 +3,27 @@ define(["./Attack"], function (Attack) {
 		BASE_DMG: 0.75992,
 		HUNTERS_MARK: 0.05,
 		SUPER_TIME_WITH_WIGGLE: 8000,
+
+		TILES : {
+			POISON_ARROW : "A",
+			PIERCING_ARROW : "F",
+			FIRE_RAIN_ARROW : "P",
+			FIRE_RAIN_TICK : "P",
+
+			// Charging gives you '2' hits per second
+			// Poison gives you '2' hits per second
+			// So charged poison gives you '3' hits per second
+
+			// 0 = start of combat
+			// 2 = 2 hits per second
+			// 3 = 3 hits per second
+			// 4 = 4 hits per second
+			// 5 = 5 hits per second
+			// 6 = 1-1.999 second delay
+			// 7 = 2-2.999 second delay
+			// 8 = 3-3.999 second delay
+			// 9 = 4-5.999 second delay
+		},
 	};
 	return {
 		Data : Data,
@@ -89,10 +110,10 @@ define(["./Attack"], function (Attack) {
 					dotTimes = 8 + (arrow.charge == "Yes" ? 4 : 0);
 					dotMaxActive = 10;
 					attackID = 1;
-					tiles = "A";
+					tiles = Data.TILES.POISON_ARROW;
 				}
 				else if(arrow.type == "Piercing"){
-					tiles = "F";
+					tiles = Data.TILES.PIERCING_ARROW;
 				}
 				else if(arrow.type == "Spread"){
 					hitCount+=5;
@@ -110,8 +131,8 @@ define(["./Attack"], function (Attack) {
 					}
 					dotTimes = 6; 
 					dotMaxActive = 10;
-					tiles = "P";
-					dotTiles = "P";
+					tiles = Data.TILES.FIRE_RAIN_ARROW;
+					dotTiles = Data.TILES.FIRE_RAIN_TICK;
 					spawnsNormalAttack = true;
 				}
 

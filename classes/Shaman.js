@@ -1,5 +1,28 @@
 define(["./Attack"], function (Attack) {
+	const Data = {
+		BASE_DMG: 0.92674,
+
+		TILES : {
+			PLACE_TOTEM : "T",
+			FROST_TOTEM_PULSE : "F",
+			LAVA_TOTEM_PULSE : "P",
+			STUN_ORB : "S",
+			LIGHTNING_ORB : "X",
+			FIRE_ORB : "B",
+
+			// 0 = start of combat
+			// 2 = 2 hits per second
+			// 3 = 3 hits per second
+			// 4 = 4 hits per second
+			// 5 = 5 hits per second
+			// 6 = 1-1.999 second delay
+			// 7 = 2-2.999 second delay
+			// 8 = 3-3.999 second delay
+			// 9 = 4-5.999 second delay
+		},
+	};
 	return {
+		Data: Data,
 		Shaman: function(data){
 			for (const [key, value] of Object.entries(data)) {
 				this[key] = value;
@@ -22,34 +45,32 @@ define(["./Attack"], function (Attack) {
 				let spawnsNormalAttack = false;
 				let modifierFuncs = undefined;
 
-				const baseMult = 0.92674;
-
 				let usesProjectile = true;
 				if(attackData.type === "Place"){
-					tiles = "T";
+					tiles = Data.TILES.PLACE_TOTEM;
 				}
 				if(attackData.type === "Frost"){
 					usesProjectile = false;
-					damage = baseMult*0.372712;
+					damage = Data.BASE_DMG*0.372712;
 					if(this.dotIncrease !== undefined){
 						damage *= (1+this.dotIncrease);
 					}
 					// 30 = ; 
 					// 30+6 = 
-					tiles = "F";
+					tiles = Data.TILES.FROST_TOTEM_PULSE;
 				}
 				if(attackData.type === "Lava"){
 					usesProjectile = false;
-					damage = baseMult*2.01265;
+					damage = Data.BASE_DMG*2.01265;
 					if(this.dotIncrease !== undefined){
 						damage *= (1+this.dotIncrease);
 					}
 					// 30 = 8416; 
 					// 30+6 = 11902
-					tiles = "P";
+					tiles = Data.TILES.LAVA_TOTEM_PULSE;
 				}
 				if(attackData.type === "Stun"){
-					damage = baseMult*0.3727158;
+					damage = Data.BASE_DMG*0.3727158;
 					const addedWeaknessDamage = damage*(0.69*WEAKNESS_COUNT);
 					if(this.talentlvl5 == "Stunning"){
 						damage += damage*3;
@@ -60,29 +81,29 @@ define(["./Attack"], function (Attack) {
 					// 30+6 (no weakness) = 8816
 					// 30+6 (1 weakness) = 10337
 					// 30+6 (2 weakness) = 11858
-					tiles = "S";
+					tiles = Data.TILES.STUN_ORB;
 				}
 				if(attackData.type === "Lightning"){
-					damage = baseMult*2.2362947 * (1+0.5750*WEAKNESS_COUNT);
+					damage = Data.BASE_DMG*2.2362947 * (1+0.5750*WEAKNESS_COUNT);
 					// 30 (2 weakness) = 20180; 
 					// 30+6 (no weakness) = 13224
 					// 30+6 (1 weakness) = 20828
 					// 30+6 (2 weakness) = 28432
-					tiles = "X";
+					tiles = Data.TILES.LIGHTNING_ORB;
 					if(attackData.autoCrit != true && this.talentlvl20 == "Strikes Twice"){
 						modifierFuncs=this.extraFunc.bind({});
 					}
 					attackID = 2;
 				}
 				if(attackData.type === "Fire"){
-					damage = baseMult*2.9817263 * (1+0.8625*WEAKNESS_COUNT); // 689.346
+					damage = Data.BASE_DMG*2.9817263 * (1+0.8625*WEAKNESS_COUNT); // 689.346
 					// 30 (2 weakness) = 34103; 
 					// 30+6 (no weakness) = 17632
 					// 30+6 (1 weakness) = 32840
 					// 30+6 (2 weakness) = 48047
-					tiles = "B";
+					tiles = Data.TILES.FIRE_ORB;
 					if(this.talentlvl10 === "Fire Consumes"){
-						dotDamage = baseMult*0.559075;
+						dotDamage = Data.BASE_DMG*0.559075;
 						if(this.dotIncrease !== undefined){
 							dotDamage *= (1+this.dotIncrease);
 						}
