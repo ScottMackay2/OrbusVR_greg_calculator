@@ -2,7 +2,7 @@
 This program simulates the attack patterns done of multiple classes in the game OrbusVR. This includes different attack types and the triggering of tilesets.
 
 # How to use the program.
-##Download the zip from this webpage.
+## Download the zip from this webpage.
 ![image](https://user-images.githubusercontent.com/10028040/186525120-afd1ba43-a0bc-4efa-a5b7-d5fda12a1115.png)
 
 ## Unzip it
