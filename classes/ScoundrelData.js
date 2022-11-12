@@ -44,8 +44,7 @@ return {
 				// (D)eck (action that spawns a new card and do something with it. Then it will be used on the charged shot)
 				'D'    : scoundrel.getAttackFromInfo({tryGrabCard:true}),
 				// 'D'    : new Attack(SCOUNDREL_CARD_TIME,  		0, true,  							0.00, 0, 0, 	0.00, 0, 0, 	0, 0,"","", false, handleNewSpawnedCard), // Nothing card
-			},
-			critTalentList : []
+			}
 		};
 		return scoundrelData;
 

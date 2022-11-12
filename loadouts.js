@@ -17,6 +17,7 @@ var globalArmourProjectileDamage;
 var globalDpsMultiplierFromCritting;
 var globalStrengthBoost;
 var globalIntellectBoost;
+var globalBorderColor;
 
 var debug = true; // ONLY FOR TESTING
 
@@ -367,6 +368,7 @@ function refreshLoadout(){
 		}
 	}
 
+	globalBorderColor = globalLoadout.borderColor;
 	globalArmourCritChance = BASE_BASE_CRIT_CHANCE + ADDED_POTS_STAT/150*0.1;
 	globalArmourCritDamage = BASE_BASE_CRIT_AMOUNT;
 	globalArmourProjectileDamage = 0;

@@ -128,16 +128,17 @@ return {
 			deck.splice(newCardLocation, 0, card);
 		}
 
-		function resetScoundrel(attack, targetPatternData, graphSpecificData, timePassed, iterations) {
-			graphSpecificData.deck = generateRandomDeck();
+		function resetScoundrel(attack, targetPatternData, calcData, timePassed, iterations) {
+			calcData.scoundrel = {};
+			calcData.deck = generateRandomDeck();
 			// Choose to place a poison card at start of fight in the belt, because it is a very
 			// common scenario.
-			graphSpecificData.storedCard = START_STORED;
-			graphSpecificData.shootCard = START_USED;
-			graphSpecificData.burnEffect = START_BURNED;
+			calcData.storedCard = START_STORED;
+			calcData.shootCard = START_USED;
+			calcData.burnEffect = START_BURNED;
 
 			// Reset the crit talent remembering.
-			graphSpecificData.classData.critTalentList = [];
+			calcData.critTalentList = [];
 			return 1;
 		}
 
@@ -186,47 +187,47 @@ return {
 			}
 		}
 
-		function handleNewSpawnedCard(attack, targetPatternData, graphSpecificData, timePassed, iteration) {
-			var cardInHand = graphSpecificData.deck.shift();
+		function handleNewSpawnedCard(attack, targetPatternData, calcData, timePassed, iteration) {
+			var cardInHand = calcData.deck.shift();
 			attack.tiles = "";
 
-			print("Drawn Card: " + getCardName(cardInHand) + "  -  Stored Card: " + getCardName(graphSpecificData.storedCard) + "  -  Burned Effect: " + getBurnName(graphSpecificData.burnEffect))
+			print("Drawn Card: " + getCardName(cardInHand) + "  -  Stored Card: " + getCardName(calcData.storedCard) + "  -  Burned Effect: " + getBurnName(calcData.burnEffect))
 			
 			
 
 			if (ACTIONS[cardInHand][0] == ACTION_CARD_BURN) { // If you're supposed to burn the card
 				if (ACTIONS[cardInHand][1].length == 0) { // If you're supposed to burn the card, but not use it with any particular card
 					print(getCardName(cardInHand) + " Burned", iteration);
-					graphSpecificData.burnEffect = determineBurnEffect(cardInHand);
+					calcData.burnEffect = determineBurnEffect(cardInHand);
 					attack.tiles = Data.TILES.BURN_A_CARD;
 				}
-				else if (ACTIONS[cardInHand][1].includes(graphSpecificData.storedCard)) { // If you're supposed to burn the card with a specific card used, and your belt has that card
-					print(getCardName(cardInHand) + " Burned with " + getCardName(graphSpecificData.storedCard), iteration);
-					graphSpecificData.shootCard = graphSpecificData.storedCard;
-					graphSpecificData.storedCard = CARD_NONE;
-					graphSpecificData.burnEffect = determineBurnEffect(cardInHand);
+				else if (ACTIONS[cardInHand][1].includes(calcData.storedCard)) { // If you're supposed to burn the card with a specific card used, and your belt has that card
+					print(getCardName(cardInHand) + " Burned with " + getCardName(calcData.storedCard), iteration);
+					calcData.shootCard = calcData.storedCard;
+					calcData.storedCard = CARD_NONE;
+					calcData.burnEffect = determineBurnEffect(cardInHand);
 					attack.tiles = Data.TILES.BURN_A_CARD;
 				}
-				else if (graphSpecificData.storedCard == CARD_NONE) {  // If you're supposed to burn the card with a specific card used, and your belt is empty
+				else if (calcData.storedCard == CARD_NONE) {  // If you're supposed to burn the card with a specific card used, and your belt is empty
 					print(getCardName(cardInHand) + " Stored", iteration);
-					graphSpecificData.storedCard = cardInHand;
+					calcData.storedCard = cardInHand;
 				}
-				else if (ACTIONS[cardInHand][2] <= ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
-					print(getCardName(cardInHand) + " Burned as Belted Card is " + getCardName(graphSpecificData.storedCard), iteration);
-					graphSpecificData.burnEffect = determineBurnEffect(cardInHand);
+				else if (ACTIONS[cardInHand][2] <= ACTIONS[calcData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
+					print(getCardName(cardInHand) + " Burned as Belted Card is " + getCardName(calcData.storedCard), iteration);
+					calcData.burnEffect = determineBurnEffect(cardInHand);
 					attack.tiles = Data.TILES.BURN_A_CARD;
 				}
-				else if (ACTIONS[cardInHand][2] > ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
-					if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_BURN) {
-						print(getCardName(graphSpecificData.storedCard) + " Burned as Drawn Card is " + getCardName(cardInHand), iteration);
-						graphSpecificData.burnEffect = determineBurnEffect(graphSpecificData.storedCard);
-						graphSpecificData.storedCard = cardInHand;
+				else if (ACTIONS[cardInHand][2] > ACTIONS[calcData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
+					if (ACTIONS[calcData.storedCard][0] == ACTION_CARD_BURN) {
+						print(getCardName(calcData.storedCard) + " Burned as Drawn Card is " + getCardName(cardInHand), iteration);
+						calcData.burnEffect = determineBurnEffect(calcData.storedCard);
+						calcData.storedCard = cardInHand;
 						attack.tiles = Data.TILES.BURN_A_CARD;
 					}
-					else if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_USE) {
-						print(getCardName(graphSpecificData.storedCard) + " Used as Drawn Card is " + getCardName(cardInHand), iteration);
-						graphSpecificData.shootCard = graphSpecificData.storedCard;
-						graphSpecificData.storedCard = cardInHand;
+					else if (ACTIONS[calcData.storedCard][0] == ACTION_CARD_USE) {
+						print(getCardName(calcData.storedCard) + " Used as Drawn Card is " + getCardName(cardInHand), iteration);
+						calcData.shootCard = calcData.storedCard;
+						calcData.storedCard = cardInHand;
 					}
 				}
 			}
@@ -234,117 +235,117 @@ return {
 			else if (ACTIONS[cardInHand][0] == ACTION_CARD_USE) {
 				if (ACTIONS[cardInHand][1].length == 0) { // If you're supposed to use the card, but not use it with any particular effect
 					print(getCardName(cardInHand) + " Used", iteration);
-					graphSpecificData.shootCard = cardInHand;
+					calcData.shootCard = cardInHand;
 				}
-				else if (createBurnSet(ACTIONS[cardInHand][1]).has(graphSpecificData.burnEffect)) { // If you're supposed to use the card with a specific card burned, and that card is already burned
-					print(getCardName(cardInHand) + " Used with " + getBurnName(graphSpecificData.burnEffect) + " effect", iteration);
-					graphSpecificData.shootCard = cardInHand;
+				else if (createBurnSet(ACTIONS[cardInHand][1]).has(calcData.burnEffect)) { // If you're supposed to use the card with a specific card burned, and that card is already burned
+					print(getCardName(cardInHand) + " Used with " + getBurnName(calcData.burnEffect) + " effect", iteration);
+					calcData.shootCard = cardInHand;
 				}
-				else if (graphSpecificData.storedCard == CARD_NONE) {  // If you're supposed to use the card with a specific card used, and your belt is empty
+				else if (calcData.storedCard == CARD_NONE) {  // If you're supposed to use the card with a specific card used, and your belt is empty
 					print(getCardName(cardInHand) + " Stored", iteration);
-					graphSpecificData.storedCard = cardInHand;
+					calcData.storedCard = cardInHand;
 				}
-				else if (createBurnSet(ACTIONS[cardInHand][1]).has(determineBurnEffect(graphSpecificData.storedCard))) { // If you're supposed to use the card with a specific card burned, and your belt has that card
-					print(getCardName(cardInHand) + " Used with " + getCardName(graphSpecificData.storedCard), iteration);
-					graphSpecificData.shootCard = cardInHand;
-					graphSpecificData.burnEffect = determineBurnEffect(graphSpecificData.storedCard);
-					graphSpecificData.storedCard = CARD_NONE;
+				else if (createBurnSet(ACTIONS[cardInHand][1]).has(determineBurnEffect(calcData.storedCard))) { // If you're supposed to use the card with a specific card burned, and your belt has that card
+					print(getCardName(cardInHand) + " Used with " + getCardName(calcData.storedCard), iteration);
+					calcData.shootCard = cardInHand;
+					calcData.burnEffect = determineBurnEffect(calcData.storedCard);
+					calcData.storedCard = CARD_NONE;
 					attack.tiles = Data.TILES.BURN_A_CARD;
 				}
-				else if (ACTIONS[cardInHand][2] <= ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to use the card with a specific card burned, and your belt has a higher priority card
-					print(getCardName(cardInHand) + " Used as Belted Card is " + getCardName(graphSpecificData.storedCard), iteration);
-					graphSpecificData.shootCard = cardInHand;
+				else if (ACTIONS[cardInHand][2] <= ACTIONS[calcData.storedCard][2]) { // If you're supposed to use the card with a specific card burned, and your belt has a higher priority card
+					print(getCardName(cardInHand) + " Used as Belted Card is " + getCardName(calcData.storedCard), iteration);
+					calcData.shootCard = cardInHand;
 				}
-				else if (ACTIONS[cardInHand][2] > ACTIONS[graphSpecificData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
-					if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_BURN) {
-						print(getCardName(graphSpecificData.storedCard) + " Burned as Drawn Card is " + getCardName(cardInHand), iteration);
-						graphSpecificData.burnEffect = determineBurnEffect(graphSpecificData.storedCard);
-						graphSpecificData.storedCard = cardInHand;
+				else if (ACTIONS[cardInHand][2] > ACTIONS[calcData.storedCard][2]) { // If you're supposed to burn the card with a specific card used, and your belt has a higher priority card
+					if (ACTIONS[calcData.storedCard][0] == ACTION_CARD_BURN) {
+						print(getCardName(calcData.storedCard) + " Burned as Drawn Card is " + getCardName(cardInHand), iteration);
+						calcData.burnEffect = determineBurnEffect(calcData.storedCard);
+						calcData.storedCard = cardInHand;
 						attack.tiles = Data.TILES.BURN_A_CARD;
 					}
-					else if (ACTIONS[graphSpecificData.storedCard][0] == ACTION_CARD_USE) {
-						print(getCardName(graphSpecificData.storedCard) + " Used as Drawn Card is " + getCardName(cardInHand), iteration);
-						graphSpecificData.shootCard = graphSpecificData.storedCard;
-						graphSpecificData.storedCard = cardInHand;
+					else if (ACTIONS[calcData.storedCard][0] == ACTION_CARD_USE) {
+						print(getCardName(calcData.storedCard) + " Used as Drawn Card is " + getCardName(cardInHand), iteration);
+						calcData.shootCard = calcData.storedCard;
+						calcData.storedCard = cardInHand;
 					}
 				}
 			}
 
 			
 			// Make a new deck if there are no cards left in the deck.
-			if(graphSpecificData.deck.length == 0){
+			if(calcData.deck.length == 0){
 				print(" - DECK RESETS")
-				graphSpecificData.deck = generateRandomDeck();
+				calcData.deck = generateRandomDeck();
 			}
 			return 1;
 		}
 
-		function updateCritChance(attack, targetPatternData, graphSpecificData, timePassed, iteration){
+		function updateCritChance(attack, targetPatternData, calcData, timePassed, iteration){
 			// Remove expired crit talent icons.
 			while(true){
-				var target = graphSpecificData.classData.critTalentList[0];
+				var target = calcData.critTalentList[0];
 				if(target == undefined || timePassed-target < Data.TRUE_GAMBLER_EXPIRE_TIME){
 					break;
 				}
-				graphSpecificData.classData.critTalentList.shift();
+				calcData.critTalentList.shift();
 			}
-			var increasedChance = 0.1 * graphSpecificData.classData.critTalentList.length;
-			graphSpecificData.critChance = BASE_CRIT_CHANCE_SCOUNDREL + increasedChance;
-			graphSpecificData.dpsMultiplierFromCritting = 1 + graphSpecificData.critChance*(BASE_CRIT_DAMAGE_SCOUNDREL-1);
+			var increasedChance = 0.1 * calcData.critTalentList.length;
+			calcData.critChance = BASE_CRIT_CHANCE_SCOUNDREL + increasedChance;
+			calcData.dpsMultiplierFromCritting = 1 + calcData.critChance*(BASE_CRIT_DAMAGE_SCOUNDREL-1);
 			return 1;
 		}
 
-		function increaseCritChance(attack, targetPatternData, graphSpecificData, timePassed, iteration){
+		function increaseCritChance(attack, targetPatternData, calcData, timePassed, iteration){
 			if(attack.isCritting){
-				if(graphSpecificData.classData.critTalentList.length >= Data.TRUE_GAMBLER_MAX_ACTIVE){
-					graphSpecificData.classData.critTalentList.shift(); // Remove first item in the list.
+				if(calcData.critTalentList.length >= Data.TRUE_GAMBLER_MAX_ACTIVE){
+					calcData.critTalentList.shift(); // Remove first item in the list.
 				}
-				graphSpecificData.classData.critTalentList.push(timePassed);
+				calcData.critTalentList.push(timePassed);
 			}
 			return 1;
 		}
 
 		var SCOUNDREL_NEW_SPAWNED_CARD = new Attack.Attack(0,  0, true,  	0, 0, 0, 	0.00, 0, 0, 	0, 4,"","");
 		var SCOUNDREL_NEW_SPAWNED_POISON = new Attack.Attack(0,0, true,  	Data.POISON_DAMAGE*Data.RANK_V, 0, 10, 	0.00, 0, 0, 	0, 3,Data.TILES.POISON_CARD,"");
-		function useCard(attack, targetPatternData, graphSpecificData, timePassed, iteration) {
-			updateCritChance(attack, targetPatternData, graphSpecificData, timePassed, iteration);
+		function useCard(attack, targetPatternData, calcData, timePassed, iteration) {
+			updateCritChance(attack, targetPatternData, calcData, timePassed, iteration);
 
 			var boost = 1;
 
 			// Add damage to the rotation when a card is being used to shoot.
-			if(graphSpecificData.shootCard != CARD_NONE){
-				if(graphSpecificData.burnEffect == EFFECT_BOOST){
+			if(calcData.shootCard != CARD_NONE){
+				if(calcData.burnEffect == EFFECT_BOOST){
 					boost += Data.BURN_EFFECT_MULTIPLIER;
 				}
-				else if(graphSpecificData.burnEffect == EFFECT_CHEAT){
-					addToDeckRandom(graphSpecificData.deck, graphSpecificData.shootCard);
+				else if(calcData.burnEffect == EFFECT_CHEAT){
+					addToDeckRandom(calcData.deck, calcData.shootCard);
 				}
 
 				// Add a new poison DoT right after the attack with the poison card.
-				if(graphSpecificData.shootCard == CARD_POISON){
+				if(calcData.shootCard == CARD_POISON){
 					var newAttack = clone(SCOUNDREL_NEW_SPAWNED_POISON);
-					if(graphSpecificData.burnEffect == EFFECT_BOOST){
+					if(calcData.burnEffect == EFFECT_BOOST){
 						newAttack.dotTimes = Data.POISON_EXTENDED_DOT_COUNT;
 					} else{
 						newAttack.dotTimes = Data.POISON_DOT_COUNT;
 					}
-					newAttack.dotDamage*=graphSpecificData.weaponMultiplier;
+					newAttack.dotDamage*=calcData.weaponMultiplier;
 					targetPatternData.pattern.splice(targetPatternData.patternIdx+1, 0, newAttack);
 				}
 				// Add the flame damage to the card.
-				else if(graphSpecificData.shootCard == CARD_FLAME){
+				else if(calcData.shootCard == CARD_FLAME){
 					boost += Data.FLAME_CARD_MULTIPLIER; // Increase total damage from flame itself.
 					SCOUNDREL_NEW_SPAWNED_CARD.tiles = Data.TILES.FLAME_CARD;
 					var newAttack = clone(SCOUNDREL_NEW_SPAWNED_CARD);
 					targetPatternData.pattern.splice(targetPatternData.patternIdx+1, 0, newAttack);
-				} else if(graphSpecificData.shootCard == CARD_HEAL){
+				} else if(calcData.shootCard == CARD_HEAL){
 					SCOUNDREL_NEW_SPAWNED_CARD.tiles = DATA.TILES.LIGHT_CARD;
 					var newAttack = clone(SCOUNDREL_NEW_SPAWNED_CARD);
 					targetPatternData.pattern.splice(targetPatternData.patternIdx+1, 0, newAttack);
 				}
-				graphSpecificData.burnEffect = EFFECT_NONE;
+				calcData.burnEffect = EFFECT_NONE;
 			}
-			graphSpecificData.shootCard = CARD_NONE;
+			calcData.shootCard = CARD_NONE;
 			return boost;
 		}
 

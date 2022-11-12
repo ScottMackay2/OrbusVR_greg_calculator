@@ -94,36 +94,30 @@ return{
 		return hitChart;
 	},
 
-	loadChartDatasets: function(orbusClass, name) {
-		// TODO: The colors wont work as it currently is color per class
+	getEmptyChartDatasets: function(name) {
+		return {
+			data: [],
+			label: name,
+			borderColor: globalBorderColor,
+			fill: false,
+		};
+	},
 
+	loadAttacksOfClass: function(orbusClass, calcData){
+		let classData;
 		if(orbusClass == MAGE_VALUE){
-			var classData = MageData.getData();
-			var borderColor = "#3e95cd";
+			classData = MageData.getData();
 		}
 		if(orbusClass == SCOUNDREL_VALUE){
-			var classData = ScoundrelData.getData();
-			var borderColor = "#9e954d";
+			classData = ScoundrelData.getData();
 		}
 		if(orbusClass == SHAMAN_VALUE){
-			var classData = ShamanData.getData();
-			var borderColor = "#000000";
+			classData = ShamanData.getData();
 		}
 		if(orbusClass == RANGER_VALUE){
-			var classData = RangerData.getData();
-			var borderColor = "#5eD54d";
+			classData = RangerData.getData();
 		}
-
-		dpsChart.data.datasets.push(
-			{
-				data: [],
-				label: name,
-				borderColor: borderColor,
-				fill: false,
-				usedTilesets: [],
-				classData: Attack.classDataMultiplyByWeaponMult(classData),
-			}
-		);
+		calcData.classData = Attack.classDataMultiplyByWeaponMult(classData);
 	}
 }
 });

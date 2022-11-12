@@ -58,41 +58,41 @@
 						<tbody>
 						<tr>
 							<td><input type="text" id="tileset1" placeholder="tileset1"></td>
-							<td colspan="2"><input type="text" id="tileset_percent_1" placeholder="boost %" disabled></td>
-							<td colspan="2"><input type="text" id="tileset_numprocs_1"  disabled></td>
-							<td><input type="text" id="tileset_avgint_1" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_percent_1" placeholder="empty" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_number_of_procs_1" placeholder="empty"  disabled></td>
+							<td><input type="text" id="tileset_avgint_1" placeholder="empty" disabled></td>
 						</tr>
 						<tr>
 							<td><input type="text" id="tileset2" placeholder="tileset2"></td>
-							<td colspan="2"><input type="text" id="tileset_percent_2" placeholder="boost %" disabled></td>
-							<td colspan="2"><input type="text" id="tileset_numprocs_2"  disabled></td>
-							<td><input type="text" id="tileset_avgint_2"  disabled></td>
+							<td colspan="2"><input type="text" id="tileset_percent_2" placeholder="empty" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_number_of_procs_2" placeholder="empty"  disabled></td>
+							<td><input type="text" id="tileset_avgint_2" placeholder="empty" disabled></td>
 						</tr>
 						<tr>
 							<td><input type="text" id="tileset3" placeholder="tileset3"></td>
-							<td colspan="2"><input type="text" id="tileset_percent_3" placeholder="boost %" disabled></td>
-							<td colspan="2"><input type="text" id="tileset_numprocs_3"  disabled></td>
-							<td><input type="text" id="tileset_avgint_3"  disabled></td>
+							<td colspan="2"><input type="text" id="tileset_percent_3" placeholder="empty" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_number_of_procs_3" placeholder="empty"  disabled></td>
+							<td><input type="text" id="tileset_avgint_3" placeholder="empty" disabled></td>
 						</tr>
 						<tr>
 							<td><input type="text" id="tileset4" placeholder="tileset4"></td>
-							<td colspan="2"><input type="text" id="tileset_percent_4" placeholder="boost %" disabled></td>
-							<td colspan="2"><input type="text" id="tileset_numprocs_4"  disabled></td>
-							<td><input type="text" id="tileset_avgint_4"  disabled></td>
+							<td colspan="2"><input type="text" id="tileset_percent_4" placeholder="empty" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_number_of_procs_4" placeholder="empty"  disabled></td>
+							<td><input type="text" id="tileset_avgint_4" placeholder="empty" disabled></td>
 						</tr>
 						<tr>
 							<td><input type="text" id="tileset5" placeholder="tileset5"></td>
-							<td colspan="2"><input type="text" id="tileset_percent_5" placeholder="boost %" disabled></td>
-							<td colspan="2"><input type="text" id="tileset_numprocs_5" disabled></td>
-							<td><input type="text" id="tileset_avgint_5"  disabled></td>
+							<td colspan="2"><input type="text" id="tileset_percent_5" placeholder="empty" disabled></td>
+							<td colspan="2"><input type="text" id="tileset_number_of_procs_5" placeholder="empty" disabled></td>
+							<td><input type="text" id="tileset_avgint_5" placeholder="empty" disabled></td>
 						</tr>
 						<tr class="bg-info">
 							<td>Avg. Total Boost</td>
-							<td><input type="text" id="tileset_percent_total" placeholder="boost % all" disabled></td>
+							<td><input type="text" id="tileset_percent_total" placeholder="loading..." disabled></td>
 							<td>Low Run Total Boost</td>
-							<td><input type="text" id="min_tileset_percent_total" placeholder="boost % all" disabled></td>
+							<td><input type="text" id="min_tileset_percent_total" placeholder="loading..." disabled></td>
 							<td>High Run Total Boost</td>
-							<td><input type="text" id="max_tileset_percent_total" placeholder="boost % all" disabled></td>
+							<td><input type="text" id="max_tileset_percent_total" placeholder="loading..." disabled></td>
 						</tr>
 						</tbody>
 					</table>
@@ -103,7 +103,7 @@
 					<label for="calcCount" class="headerText">Calc Count</label>
 					<div>
 						<input type="number"  name="calcCount" id="calcCount" class="form-control" style="max-width:120px; margin-bottom:10px; display: inline-block;">
-						<button id="updateChart" class="btn btn-info float-right" onclick="loadAllCharts()" style="display: inline-block;">Update Chart and Save Load Outs</button>
+						<button id="calculateButton" class="btn btn-info float-right" style="display: inline-block;">Update Chart and Save Load Outs</button>
 					</div>				
 				</div>
 			</div>
