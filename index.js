@@ -39,6 +39,7 @@ const TIME_SPACING_DOTS = 1.06;
 
 let minCalcData;
 let maxCalcData;
+let tilesetState = 0;
 
 Number.prototype.countDecimals = function () {
 	if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
@@ -47,6 +48,8 @@ Number.prototype.countDecimals = function () {
 
 let totalDamageDataPoints;
 let REPEAT_FIGHT_COUNT;
+let REPEAT_FIGHT_TILESETS_COUNT;
+let FILTER_TILESETS_BELOW_PERCENT;
 
 // Fill the X axis with labels that will be used as time spacing between datapoints. 
 var labelsAxisX = [];
@@ -91,7 +94,7 @@ function populateTilesetStatsTable(calcData){
 
 function updateTilesetData(calcData){
 	if(globalTilesetsEnabledFlag){
-		var totalNonTilesetDmg = calcData.addedTotalDamage-calcData.tilesetData.addedDmgTilesets;
+		let totalNonTilesetDmg = calcData.addedTotalDamage-calcData.tilesetData.addedDmgTilesets;
 		for(var i=0;i<calcData.tilesetData.usedTilesets.length;i++){
 			let tileset = calcData.tilesetData.usedTilesets[i];
 			tileset.percentBoost = tileset.addedDmg*100.0/totalNonTilesetDmg;
@@ -209,6 +212,7 @@ function getAttackPatterns(graphSpecificData){
 	return attackPatternsData;
 }
 
+const ROW_OF_HITS_PER_SEC = "999";
 function calculateOneFight(calcData, i10){
 	let localStoringAllTiles = '';
 	let localHitChartData = {data: [], pointBackgroundColor: [], customLabels: []};
@@ -216,46 +220,48 @@ function calculateOneFight(calcData, i10){
 	let localAddedDmgTilesets = 0;
 
 	// Set charged strikes start count. If randomized a random rotation can not be influenced
-	calcData.chargedStrikesCount = globalRandomizedStartLocationChargedStrikes ? parseInt(Math.random()*11-1) : -1;
+	let chargedStrikesCount = globalRandomizedStartLocationChargedStrikes ? parseInt(Math.random()*11-1) : -1;
 
 	calcData.critChance = globalArmourCritChance;
 	calcData.dpsMultiplierFromCritting = globalDpsMultiplierFromCritting;
 
 	// Convert the raw string of actions to actual data.
-	var attackPatternsData = getAttackPatterns(calcData);
+	let attackPatternsData = getAttackPatterns(calcData);
 
-	var prevNormalAttackTimePassed = -100; // Minus number to trigger start of combat tile.
+	let prevNormalAttackTimePassed = -100; // Minus number to trigger start of combat tile.
 
 	// Generate a random startFrame from where the hits a second tiles start triggering.
 	// var RANDOM_ADDED_TIME_HITS_A_SEC = Math.random();
 
 	// Generate a random startFrame from where the hits a second tiles start triggering and
 	// make them seperate attacks that trigger the hits per second tiles.
-	var ROW_OF_HITS_PER_SEC = "999";
-		attackPatternsData[ROW_OF_HITS_PER_SEC] = {patternTimePassed:Math.random()-1, patternIdx:0};
-	var newAttackPattern = [];
+	let newAttackPattern = [];
 	for(var i2=0;i2<MAX_TIME_SECONDS;i2++){
 		var newAttack = new Attack(1, 0, false, 	0, 0, 0,  	0, 0, 0,  	0, 10, "","");
 		newAttack.type = ATTACK_HITS_PER_SECOND;
 		newAttackPattern.push(newAttack);
 	}
-	attackPatternsData[ROW_OF_HITS_PER_SEC].pattern = newAttackPattern;
+	attackPatternsData[ROW_OF_HITS_PER_SEC] = {
+		patternTimePassed:Math.random()-1, 
+		patternIdx:0,
+		pattern: newAttackPattern
+	};
 
 	// Initialize variables.
-	var usedPrevTimePassed = 0;
-	var usedPrevTotalDamage = 0;
-	var prevTimePassed = 0;
-	var prevTotalDamage = 0;
-	var timePassed = 0;
-	var totalDamage = 0;
-	var hitCount = 0;
-	var lastpointTimeX = -1;
-	var dmgBoosts = [];
-	var activeDots = [];
+	let usedPrevTimePassed = 0;
+	let usedPrevTotalDamage = 0;
+	let prevTimePassed = 0;
+	let prevTotalDamage = 0;
+	let timePassed = 0;
+	let totalDamage = 0;
+	let hitCount = 0;
+	let lastpointTimeX = -1;
+	let dmgBoosts = [];
+	let activeDots = [];
 
-	// Clear active tilesets from previous tileset calculation.
-	var usedTilesets = calcData.tilesetData.usedTilesets;
-	var activeTilesets = [];
+	// Initialize active tilesets.
+	let usedTilesets = calcData.tilesetData.usedTilesets;
+	let activeTilesets = [];
 	let localProccedInfoLists = [];
 	for (var i = 0; i < usedTilesets.length; i++) {
 		usedTilesets[i].conditionLeft = usedTilesets[i].condition;
@@ -300,14 +306,14 @@ function calculateOneFight(calcData, i10){
 		}
 
 		var chargedStrikesWillCrit = false;
-		if(calcData.chargedStrikesCount >= 9 && attack.hitCount > 0){
-			calcData.chargedStrikesCount = -1;
+		if(chargedStrikesCount >= 9 && attack.hitCount > 0){
+			chargedStrikesCount = -1;
 			chargedStrikesWillCrit = true;
 		}
 
 		// Only attacks that are hitting add to the charged strikes counter. (only when charged strikes is enabled though)
 		if(globalUsingChargedStrikes && attack.hitCount > 0){
-			calcData.chargedStrikesCount++;
+			chargedStrikesCount++;
 		}
 
 		// Determine if this hit is going to crit.
@@ -622,7 +628,10 @@ function calculateOneFight(calcData, i10){
 		});
 	}
 
-	calcData.addedTotalDamage += totalDamage;
+	return {
+		totalDamage: totalDamage,
+		timePassed: timePassed
+	};
 }
 
 function fillDpsGraphData(graphData, totalDamageDataPoints, REPEAT_FIGHT_COUNT){
@@ -682,8 +691,6 @@ function retreiveCurrentInterfaceTilesets(){
 
 function initializeBeforeCalculations(calcData){
 	totalDamageDataPoints = [];
-	REPEAT_FIGHT_COUNT = parseInt($("#calcCount").val());
-	REPEAT_FIGHT_COUNT = REPEAT_FIGHT_COUNT != undefined ? REPEAT_FIGHT_COUNT : 1;
 	minMaxData = {
 		lowestTotal: -1,
 		lowestRunDataPoints: {},
@@ -693,6 +700,8 @@ function initializeBeforeCalculations(calcData){
 		highestRunAddedTilesetDmg: 0
 	};
 	calcData.addedTotalDamage = 0;
+	calcData.addedTimePassed = 0;
+	calcData.averageTilesetBoostPercent = 0;
 	calcData.tilesetData = {};
 
 	calcData.weaponMultiplier = getWeaponMultiplier(globalWeaponLvl, globalWeaponPlusLvl);
@@ -707,7 +716,7 @@ function initializeGraphData(){
 	return graphSpecificData;
 }
 
-function doAllCalculations(tilesets){
+function doAllCalculations(tilesets, repeatFightCount, stopEarlyBelowPercent){
 	let calcData = {};
 
 	const orbusClass = $("#classData").val();
@@ -718,10 +727,19 @@ function doAllCalculations(tilesets){
 	// Retrieve the current tilesets.
 	initializeTilesetsData(calcData, tilesets);
 
-	for(let i10=0;i10<REPEAT_FIGHT_COUNT;i10++){
-		calculateOneFight(calcData, i10);
+	for(let i10=0;i10<repeatFightCount;i10++){
+		const oneFightData = calculateOneFight(calcData, i10);
+		calcData.addedTotalDamage += oneFightData.totalDamage;
+		calcData.addedTimePassed += oneFightData.timePassed;
+		if(i10 == 0 && stopEarlyBelowPercent != undefined){
+			updateTilesetData(calcData);
+			if(calcData.tilesetData.totalTilesetPercent < stopEarlyBelowPercent){
+				return false; // Stop with calculations when tileset group is too weak.
+			}
+		}
 	}
 
+	calcData.dps = calcData.addedTotalDamage/calcData.addedTimePassed;
 	updateTilesetData(calcData);
 
 	return calcData;
@@ -755,7 +773,9 @@ function calculateFightAndPopulateUI(){
 	setTimeout(function(){
 		const tilesets = retreiveCurrentInterfaceTilesets();
 		
-		const calcData = doAllCalculations(tilesets);
+		REPEAT_FIGHT_COUNT = parseInt($("#calcCount").val());
+		REPEAT_FIGHT_COUNT = REPEAT_FIGHT_COUNT != undefined ? REPEAT_FIGHT_COUNT : 1;
+		const calcData = doAllCalculations(tilesets, REPEAT_FIGHT_COUNT);
 
 		populateDpsGraphs(graphSpecificData, calcData);
 		populateTilesetStatsTable(calcData);
@@ -807,6 +827,9 @@ function clone(obj) {
 	throw new Error("Unable to copy obj! Its type isn't supported.");
 }
 
+let allPossibleTilesetGroupsGlobal;
+let sortedTilesetsByDps;
+
 let updateEditTextTimemout = null;
 let chartFilling = false;
 let startLoadingIconFunc = function(){
@@ -833,9 +856,186 @@ function preStartCalculation(){
 	}
 }
 
+function obtainAllPossibleTilesetCombinations(possibleTiles){
+	let allPossibleTilesets = createAllPossibleVariations(possibleTiles, 3);
+	allPossibleTilesets = allPossibleTilesets.concat(createAllPossibleVariations(possibleTiles, 4));
+	for(let i=0;i<allPossibleTilesets.length;i++){
+		allPossibleTilesets[i] = allPossibleTilesets[i].join("");
+	}
+
+	// Remove any impossible tilesets.
+	if(possibleTiles.indexOf("0") >= 0){
+		for(let i=allPossibleTilesets.length-1;i>=0;i--){
+			if(allPossibleTilesets[i].indexOf("0") > 0){
+				allPossibleTilesets.splice(i, 1);
+			}
+		}
+	}
+
+	let newAllPossibleTilesetGroups = createAllPossibleCombinations(allPossibleTilesets, 5);
+
+	return newAllPossibleTilesetGroups;
+}
+
+function prepareTilesetResults(results){
+	results.sort( function compare( a, b ) {
+	if ( a.dps < b.dps ){
+		return 1;
+	}
+	if ( a.dps > b.dps ){
+		return -1;
+		}
+		return 0;
+	});
+	return results;
+}
+
+function findAndRankAllTilesetGroups(allPossibleTilesetGroups){
+	const startTime = Date.now();
+	let results = [];
+	for(let i=0;i<allPossibleTilesetGroups.length;i++){
+		let tilesets = allPossibleTilesetGroups[i];
+		
+		calcData = doAllCalculations(tilesets, REPEAT_FIGHT_TILESETS_COUNT, FILTER_TILESETS_BELOW_PERCENT);
+		if(calcData !== false){
+			results.push({dps:calcData.dps, tilesets:tilesets, averageBoost: calcData.tilesetData.totalTilesetPercent});
+		}
+	}
+
+	console.log("Calculation time:"+millisecondsToTimeRemaining(Date.now()-startTime));
+
+	let preSortedTilesetsByDps = prepareTilesetResults(results);
+
+	if(preSortedTilesetsByDps.length > 0){
+		sortedTilesetsByDps = preSortedTilesetsByDps;
+		document.getElementById("recalculateTopTileset").value = sortedTilesetsByDps.length;
+
+		renderjson.set_icons('+', '-');
+		renderjson.set_show_to_level(1);
+		document.getElementById('resultTilesetsJson').innerHTML = ""; // Clear previous data.
+		document.getElementById('resultTilesetsJson').appendChild(renderjson(sortedTilesetsByDps));
+	}
+	else{
+		document.getElementById('resultTilesetsJson').innerHTML = "<span style='color:#F00'>No tilesets met your criteria... Not keeping the current tilesets...</span>";
+		return false;
+	}
+	return true;
+}
+
+function prepareFindingBestTilesets(possibleTiles){
+	let startTime = Date.now();
+	let timePassed=0;
+	let calculations = 0;
+	while(timePassed < 500){
+		let maxRepeatFight = REPEAT_FIGHT_TILESETS_COUNT > 1000 ? 1000 : REPEAT_FIGHT_TILESETS_COUNT;
+		doAllCalculations(possibleTiles[0], maxRepeatFight);
+		calculations+=maxRepeatFight;
+		timePassed = Date.now()-startTime;
+	}
+	
+	let maxCalculations = possibleTiles.length*REPEAT_FIGHT_TILESETS_COUNT;
+	let timeItWillTakeToCalculateFight = maxCalculations/calculations * timePassed;
+
+	timeItWillTakeToCalculateFight
+	let statusMsg = document.getElementById("tilesetsStatusMsg");
+	statusMsg.innerHTML = "There are <b>"+possibleTiles.length+"</b> inique combinations and it will take approximately <b>"+millisecondsToTimeRemaining(timeItWillTakeToCalculateFight)+"</b>. Are you sure?";
+}
+
+function setTilesetPromptState(newState){
+	if(newState == 0){
+		document.getElementById("tilesetsStatusMsg").innerHTML = "";
+		document.getElementById("redoTilesetCalculationContainer").style.display = "none";
+		document.getElementById("resetTilesetsButton").classList.remove("active-button");
+		document.getElementById("startFindingTheBestTilesetCombinations").classList.remove("active-button");
+	} 
+	else if(newState == 1){
+		document.getElementById("tilesetsStatusMsg").style.display = "block";
+		document.getElementById("redoTilesetCalculationContainer").style.display = "none";
+		document.getElementById("resetTilesetsButton").classList.add("active-button");
+		document.getElementById("startFindingTheBestTilesetCombinations").classList.add("active-button");
+		document.getElementById("startFindingTheBestTilesetCombinations").innerHTML = "Yes (Start calculation)";
+	}
+	else if(newState == 2){
+		document.getElementById("tilesetsStatusMsg").innerHTML = "";
+		document.getElementById("redoTilesetCalculationContainer").style.display = "inline-block";
+		document.getElementById("resetTilesetsButton").classList.add("active-button");
+		document.getElementById("startFindingTheBestTilesetCombinations").classList.remove("active-button");
+	}
+	else if(newState == 3){
+		document.getElementById("tilesetsStatusMsg").style.display = "block";
+		document.getElementById("redoTilesetCalculationContainer").style.display = "inline-block";
+		document.getElementById("resetTilesetsButton").classList.add("active-button");
+		document.getElementById("startFindingTheBestTilesetCombinations").classList.add("active-button");
+		document.getElementById("startFindingTheBestTilesetCombinations").innerHTML = "Yes (Finetune calculation)";
+	}
+	tilesetState = newState;
+}
+
+document.getElementById("resetTilesetsButton").addEventListener("click", function(){
+	setTilesetPromptState(0);
+});
+
 document.getElementById("calculateButton").addEventListener("click", function(){
 	preStartCalculation();
 });
+
+document.getElementById("openFindBestTilesetButton").addEventListener("click", function(){
+	document.getElementById("myForm").style.display = "block";
+});
+
+document.getElementById("closeFindTilesetButton").addEventListener("click", function(){
+	document.getElementById("myForm").style.display = "none";
+});
+
+let finetunedTilesetGroups;
+document.getElementById("checkTilesetsButton").addEventListener("click", function(){
+	if(tilesetState == 0 || tilesetState == 1){
+		let possibleTiles = document.getElementById("possibleTiles").value.replaceAll(" ", "").split("");
+		REPEAT_FIGHT_TILESETS_COUNT = parseInt($("#repeatFightCount").val());
+		FILTER_TILESETS_BELOW_PERCENT = parseFloat($("#filterBelowTilesetPercent").val());
+		allPossibleTilesetGroupsGlobal = obtainAllPossibleTilesetCombinations(possibleTiles);
+		prepareFindingBestTilesets(allPossibleTilesetGroupsGlobal);
+		setTilesetPromptState(1);
+	}
+	else if(tilesetState == 2 || tilesetState == 3){
+		finetunedTilesetGroups = [];
+		let theTopSize = parseInt(document.getElementById("recalculateTopTileset").value);
+		for(let i=0;i<Math.min(theTopSize, sortedTilesetsByDps.length);i++){
+			finetunedTilesetGroups.push(sortedTilesetsByDps[i].tilesets);
+		}
+
+		REPEAT_FIGHT_TILESETS_COUNT = parseInt($("#re-repeatFightCount").val());
+		FILTER_TILESETS_BELOW_PERCENT = parseFloat($("#filterBelowTilesetPercent").val());
+
+		if(finetunedTilesetGroups.length > 0){
+			prepareFindingBestTilesets(finetunedTilesetGroups);
+			setTilesetPromptState(3);
+		}
+		else{
+			let statusMsg = document.getElementById("tilesetsStatusMsg");
+			statusMsg.innerHTML = "<span style='color:#F00'>There are no tiles left to use. Reset calculation...</span>";
+		}
+	}
+});
+
+document.getElementById("startFindingTheBestTilesetCombinations").addEventListener("click", function(){
+	if(tilesetState == 1){
+		if(findAndRankAllTilesetGroups(allPossibleTilesetGroupsGlobal)){
+			setTilesetPromptState(2);
+		}
+	} else if(tilesetState == 3){
+		if(findAndRankAllTilesetGroups(finetunedTilesetGroups)){
+			setTilesetPromptState(2);
+		}
+	} else{
+		let statusMsg = document.getElementById("tilesetsStatusMsg");
+		statusMsg.innerHTML = "Press the check button first before continuing...";
+	}
+});
+
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
 
 require(["./ChartInitializer"], 
 function(newChartInitializer){

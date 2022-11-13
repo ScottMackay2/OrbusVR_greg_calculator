@@ -183,7 +183,7 @@ return {
 
 		function print(msg, iteration) {
 			if (iteration == 0) {
-				console.log(msg);
+				// console.log(msg);
 			}
 		}
 

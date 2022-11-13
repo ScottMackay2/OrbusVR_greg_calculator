@@ -252,6 +252,17 @@ if (needsDefaultValues || debug) {
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:100,
 			borderColor : "#9e954d",
+		},
+		'no pause': {
+			savedAttacks: "X f BBBB(CB)*62 SssSsC BBBB(CB)*62 \nD*150",
+			savedTilesets: ['A26', '26F', '2F6', 'F62', 'F6A2'],
+			usingPotsFlag: true,
+			usingTilesetsFlag: true,
+			averagingCrits: true,
+			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
+			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
+			calcCount:100,
+			borderColor : "#9e954d",
 		}
 	};
 	res[RANGER_VALUE] = {

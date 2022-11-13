@@ -5,6 +5,8 @@
 	<script src="libs//Chart.min.js"></script>
 	<script src="libs//jquery-3.4.1.min.js"></script>
 	<script src="libs//bootstrap.min.js"></script>
+	<script src="libs//renderjson.js"></script>
+	<script src="Tools.js"></script>
 	<link rel="stylesheet" href="libs//bootstrap.min.css">
 	<link rel="stylesheet" href="index.css">
 </head>
@@ -103,7 +105,36 @@
 					<label for="calcCount" class="headerText">Calc Count</label>
 					<div>
 						<input type="number"  name="calcCount" id="calcCount" class="form-control" style="max-width:120px; margin-bottom:10px; display: inline-block;">
-						<button id="calculateButton" class="btn btn-info float-right" style="display: inline-block;">Update Chart and Save Load Outs</button>
+						<div class="form-popup" id="myForm">
+							<div class="form-container">
+								<button type="button" class="btn cancel float-right active-button" id="closeFindTilesetButton" style="width:30%;">Close</button>
+								<h1>Finding best tilesets</h1>
+
+								<label for="possibleTiles"><b>Possible tiles to use:</b></label>
+								<input id="possibleTiles" type="text" value="6AF2" placeholder="Fill in possible tiles" name="possibleTiles" required>
+
+								<label for="repeatFightCount"><b>Repeat fight count (higher = more accurate = takes longer):</b></label>
+								<input id="repeatFightCount" type="text" value="1" placeholder="Fill in possible tiles" name="repeatFightCount" required>
+
+								<label for="filterBelowTilesetPercent"><b>Filter everything below total tileset boost %:</b></label>
+								<input id="filterBelowTilesetPercent" type="text" value="8" placeholder="Fill in possible tiles" name="filterBelowTilesetPercent" required>
+
+								<div id="redoTilesetCalculationContainer" style="display:none;">
+									Use the top <input id="recalculateTopTileset" type="text" value="20" placeholder="top tilesets" style="width:80px;" required> tilesets to do <input id="re-repeatFightCount" type="text" value="1000" placeholder="count" style="width:80px;" required> more calculations.
+								</div>
+
+								<div id="tilesetsStatusMsg" style="display:none;">There are 343210 combination and it will take approximately 34 minutes. Are you sure?</div>
+
+								<button type="submit" class="btn" id="resetTilesetsButton">New calculation</button>
+								<button type="submit" class="btn active-button" id="checkTilesetsButton">Check time needed</button>
+								<button type="submit" class="btn" id="startFindingTheBestTilesetCombinations">Yes (Start calculation)</button>
+
+								<div id="resultTilesetsJson"></div>
+							</div>
+						</div>
+						
+						<button id="openFindBestTilesetButton" class="btn btn-info float-right" style="display: inline-block;margin-left:2px;">Find best tilesets</button>
+						<button id="calculateButton" class="btn btn-info float-right" style="display: inline-block;">Calculate result</button>
 					</div>				
 				</div>
 			</div>
@@ -120,32 +151,32 @@
 			<div class="container-fluid mt-3">
 				<ul class="nav nav-tabs">
 					<li class="nav-item">
-			  			<a class="nav-link active" data-toggle="tab" href="#avg">Avg. Data</a>
+						<a class="nav-link active" data-toggle="tab" href="#avg">Avg. Data</a>
 					</li>
 					<li class="nav-item">
 							<a class="nav-link" data-toggle="tab" href="#min">Minimum Data</a>
 					</li>
 					<li class="nav-item">
-			  			<a class="nav-link" data-toggle="tab" href="#max">Maximum Data</a>
+						<a class="nav-link" data-toggle="tab" href="#max">Maximum Data</a>
 					</li>
 				</ul>
 
-			  	<div class="tab-content">
-			    	<div id="avg" class="container-fluid tab-pane active"><br>
-			      		<canvas id="line_chart" width="1800" height="400"></canvas>
+				<div class="tab-content">
+					<div id="avg" class="container-fluid tab-pane active"><br>
+						<canvas id="line_chart" width="1800" height="400"></canvas>
 					</div>
 					<div id="min" class="container-fluid tab-pane fade"><br>
-			      		<canvas id="min_line_chart" width="1800" height="400"></canvas>
-			      		<canvas id="min_hit_chart" width="1800" height="400"></canvas>
-			      		<canvas id="min_tiles_graph" width="1800" height="100"></canvas>
-			      		<textarea class= "form-control" placeholder="No triggered tiles." id="min_triggered_tiles" rows="5" disabled></textarea>
-			    	</div>
+						<canvas id="min_line_chart" width="1800" height="400"></canvas>
+						<canvas id="min_hit_chart" width="1800" height="400"></canvas>
+						<canvas id="min_tiles_graph" width="1800" height="100"></canvas>
+						<textarea class= "form-control" placeholder="No triggered tiles." id="min_triggered_tiles" rows="5" disabled></textarea>
+					</div>
 					<div id="max" class="container-fluid tab-pane fade"><br>
-			      		<canvas id="max_line_chart" width="1800" height="400"></canvas>				
+						<canvas id="max_line_chart" width="1800" height="400"></canvas>				
 						<canvas id="max_hit_chart" width="1800" height="400"></canvas>
 						<canvas id="max_tiles_graph" width="1800" height="100"></canvas>
 						<textarea class= "form-control" placeholder="No triggered tiles." id="max_triggered_tiles" rows="5" disabled></textarea>
-			    	</div>
+					</div>
 				</div>
 			</div>
 		</div>
