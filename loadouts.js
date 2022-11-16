@@ -244,7 +244,8 @@ if (needsDefaultValues || debug) {
 	res[SCOUNDREL_VALUE] = {
 		'default': {
 			savedAttacks: "X f BBBB(CCB CBB CB)*15 SssSsC BBBB(CCB CBB CB)*15 \nD*150",
-			savedTilesets: ['A26', '26F', '2F6', 'F62', 'F6A2'],
+			// savedTilesets: ['A26', '26F', '2F6', 'F62', 'F6A2'],
+			savedTilesets: ['A26', '26F', '2F6', 'F62', 'F26'],
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: true,
@@ -255,7 +256,124 @@ if (needsDefaultValues || debug) {
 		},
 		'no pause': {
 			savedAttacks: "X f BBBB(CB)*62 SssSsC BBBB(CB)*62 \nD*150",
-			savedTilesets: ['A26', '26F', '2F6', 'F62', 'F6A2'],
+			savedTilesets: ['62F', 'A62', 'F62', '26F', 'F6A2'],
+		// 	-{
+		   //      "dps": 118674.42470075541,
+		   //      "tilesets": -[
+		   //          "62F",
+		   //          "A62",
+		   //          "F62",
+		   //          "26F",
+		   //          "F6A2"
+		   //      ],
+		   //      "averageBoost": "15.49",
+		   //      "minBoost": "13.58",
+		   //      "maxBoost": "17.02"
+		   //  },
+		   // -{
+		   //      "dps": 118630.6417672459,
+		   //      "tilesets": -[
+		   //          "A62",
+		   //          "F62",
+		   //          "26F",
+		   //          "2F6",
+		   //          "F6A2"
+		   //      ],
+		   //      "averageBoost": "15.47",
+		   //      "minBoost": "13.82",
+		   //      "maxBoost": "18.00"
+		   //  },
+		   // -{
+		   //      "dps": 118544.50837766123,
+		   //      "tilesets": -[
+		   //          "62F",
+		   //          "A62",
+		   //          "A26",
+		   //          "F62",
+		   //          "26F"
+		   //      ],
+		   //      "averageBoost": "15.37",
+		   //      "minBoost": "12.77",
+		   //      "maxBoost": "16.76"
+		   //  },
+		   // -{
+		   //      "dps": 118491.91098175137,
+		   //      "tilesets": -[
+		   //          "A62",
+		   //          "A26",
+		   //          "F62",
+		   //          "26F",
+		   //          "2F6"
+		   //      ],
+		   //      "averageBoost": "15.32",
+		   //      "minBoost": "12.82",
+		   //      "maxBoost": "17.35"
+		   //  },
+		   // -{
+		   //      "dps": 118397.84391517044,
+		   //      "tilesets": -[
+		   //          "62F",
+		   //          "A62",
+		   //          "F62",
+		   //          "26F",
+		   //          "A2F6"
+		   //      ],
+		   //      "averageBoost": "15.23",
+		   //      "minBoost": "13.71",
+		   //      "maxBoost": "18.46"
+		   //  }
+		// 	{
+		   //      "dps": 118669.14681262341,
+		   //      "tilesets": -[
+		   //          "62F",
+		   //          "A62",
+		   //          "F62",
+		   //          "26F",
+		   //          "F6A2"
+		   //      ],
+		   //      "averageBoost": "15.49",
+		   //      "minBoost": "13.89",
+		   //      "maxBoost": "17.07"
+		   //  },
+		   // -{
+		   //      "dps": 118662.17067884469,
+		   //      "tilesets": -[
+		   //          "A62",
+		   //          "F62",
+		   //          "26F",
+		   //          "2F6",
+		   //          "F6A2"
+		   //      ],
+		   //      "averageBoost": "15.47",
+		   //      "minBoost": "13.33",
+		   //      "maxBoost": "17.80"
+		   //  },
+		   // -{
+		   //      "dps": 118535.20711628893,
+		   //      "tilesets": -[
+		   //          "62F",
+		   //          "A62",
+		   //          "A26",
+		   //          "F62",
+		   //          "26F"
+		   //      ],
+		   //      "averageBoost": "15.36",
+		   //      "minBoost": "13.96",
+		   //      "maxBoost": "18.65"
+		   //  },
+			// -{
+		    //     "dps": 118467.04275771361,
+		    //     "tilesets": -[
+		    //         "A62",
+		    //         "A26",
+		    //         "F62",
+		    //         "26F",
+		    //         "2F6"
+		    //     ],
+		    //     "averageBoost": "15.31",
+		    //     "minBoost": "12.84",
+		    //     "maxBoost": "16.94"
+		    // },
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: true,

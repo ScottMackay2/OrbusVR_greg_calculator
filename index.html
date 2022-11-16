@@ -111,25 +111,25 @@
 								<h1>Finding best tilesets</h1>
 
 								<label for="possibleTiles"><b>Possible tiles to use:</b></label>
-								<input id="possibleTiles" type="text" value="6AF2" placeholder="Fill in possible tiles" name="possibleTiles" required>
+								<input id="possibleTiles" type="text" value="6AF2" placeholder="Fill in possible tiles" name="possibleTiles">
 
-								<label for="repeatFightCount"><b>Repeat fight count (higher = more accurate = takes longer):</b></label>
+								<label for="repeatFightCount"><b>Iteration fight count (higher = more accurate = takes longer):</b></label>
 								<input id="repeatFightCount" type="text" value="1" placeholder="Fill in possible tiles" name="repeatFightCount" required>
 
-								<label for="filterBelowTilesetPercent"><b>Filter everything below total tileset boost %:</b></label>
-								<input id="filterBelowTilesetPercent" type="text" value="8" placeholder="Fill in possible tiles" name="filterBelowTilesetPercent" required>
+								<div>Filter everything below total tileset boost <input id="filterBelowTilesetPercent" type="text" value="0" placeholder="%" style="width:60px;">% starting from iteration number <input id="filterStartIdxBelowTilesetPercent" type="text" value="1" placeholder="num" style="width:60px;"></div>
 
 								<div id="redoTilesetCalculationContainer" style="display:none;">
-									Use the top <input id="recalculateTopTileset" type="text" value="20" placeholder="top tilesets" style="width:80px;" required> tilesets to do <input id="re-repeatFightCount" type="text" value="1000" placeholder="count" style="width:80px;" required> more calculations.
+									Use the top <input id="recalculateTopTileset" type="text" value="20" placeholder="top tilesets" style="width:80px;" required> tilesets.
 								</div>
 
-								<div id="tilesetsStatusMsg" style="display:none;">There are 343210 combination and it will take approximately 34 minutes. Are you sure?</div>
+								<div id="tilesetsStatusMsg"></div>
 
 								<button type="submit" class="btn" id="resetTilesetsButton">New calculation</button>
 								<button type="submit" class="btn active-button" id="checkTilesetsButton">Check time needed</button>
 								<button type="submit" class="btn" id="startFindingTheBestTilesetCombinations">Yes (Start calculation)</button>
 
-								<div id="resultTilesetsJson"></div>
+								<div>Best tilesets:<span id="bestResultTilesetsJson"></span></div>
+								<div>Worse tilesets:<span id="worseResultTilesetsJson"></span></div>
 							</div>
 						</div>
 						

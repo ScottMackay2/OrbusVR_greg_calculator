@@ -41,15 +41,20 @@ let minCalcData;
 let maxCalcData;
 let tilesetState = 0;
 
+let timeItWillTakeToCalculateTilesets;
+
 Number.prototype.countDecimals = function () {
 	if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
 	return this.toString().split(".")[1].length || 0; 
 }
 
+let statusMsgTilesets = document.getElementById("tilesetsStatusMsg");
+
 let totalDamageDataPoints;
 let REPEAT_FIGHT_COUNT;
 let REPEAT_FIGHT_TILESETS_COUNT;
 let FILTER_TILESETS_BELOW_PERCENT;
+let FILTER_START_IDX_TILESETS_BELOW_PERCENT;
 
 // Fill the X axis with labels that will be used as time spacing between datapoints. 
 var labelsAxisX = [];
@@ -85,11 +90,16 @@ function populateTilesetStatsTable(calcData){
 
 		$("#tileset_percent_total").val(calcData.tilesetData.totalTilesetPercent.toFixed(2));
 
-		$("#min_tileset_percent_total").val((minCalcData.tilesetData.addedDmgTilesets*100.0/(minCalcData.addedTotalDamage-minCalcData.tilesetData.addedDmgTilesets)).toFixed(2));
-		$("#max_tileset_percent_total").val((maxCalcData.tilesetData.addedDmgTilesets*100.0/(maxCalcData.addedTotalDamage-maxCalcData.tilesetData.addedDmgTilesets)).toFixed(2));
+		$("#min_tileset_percent_total").val(calcData.tilesetData.minTotalTilesetPercent.toFixed(2));
+		$("#max_tileset_percent_total").val(calcData.tilesetData.maxTotalTilesetPercent.toFixed(2));
 		$("#min_triggered_tiles").val(minStringStoringAllTiles);
 		$("#max_triggered_tiles").val(maxStringStoringAllTiles);
 	}
+}
+
+function updateTotalTilesetPercent(calcData){
+	let totalNonTilesetDmg = calcData.addedTotalDamage-calcData.tilesetData.addedDmgTilesets;
+	calcData.tilesetData.totalTilesetPercent = calcData.tilesetData.addedDmgTilesets*100.0/totalNonTilesetDmg;
 }
 
 function updateTilesetData(calcData){
@@ -103,7 +113,17 @@ function updateTilesetData(calcData){
 			tileset.averageInterference = sumInt/ tileset.interferenceList.length;
 		}
 
-		calcData.tilesetData.totalTilesetPercent = calcData.tilesetData.addedDmgTilesets*100.0/totalNonTilesetDmg;
+		updateTotalTilesetPercent(calcData);
+
+		minCalcData = {tilesetData:{}};
+		maxCalcData = {tilesetData:{}};
+		minCalcData.addedTotalDamage = minMaxData.lowestTotal;
+		maxCalcData.addedTotalDamage = minMaxData.highestTotal;
+		minCalcData.tilesetData.addedDmgTilesets = minMaxData.lowestRunAddedTilesetDmg;
+		maxCalcData.tilesetData.addedDmgTilesets = minMaxData.highestRunAddedTilesetDmg;
+
+		calcData.tilesetData.minTotalTilesetPercent = minCalcData.tilesetData.addedDmgTilesets*100.0/(minCalcData.addedTotalDamage-minCalcData.tilesetData.addedDmgTilesets);
+		calcData.tilesetData.maxTotalTilesetPercent = maxCalcData.tilesetData.addedDmgTilesets*100.0/(maxCalcData.addedTotalDamage-maxCalcData.tilesetData.addedDmgTilesets);
 	}
 }
 
@@ -716,7 +736,7 @@ function initializeGraphData(){
 	return graphSpecificData;
 }
 
-function doAllCalculations(tilesets, repeatFightCount, stopEarlyBelowPercent){
+function doAllCalculations(tilesets, repeatFightCount, stopEarlyBelowPercent, startIndexOfStopEarly){
 	let calcData = {};
 
 	const orbusClass = $("#classData").val();
@@ -731,8 +751,8 @@ function doAllCalculations(tilesets, repeatFightCount, stopEarlyBelowPercent){
 		const oneFightData = calculateOneFight(calcData, i10);
 		calcData.addedTotalDamage += oneFightData.totalDamage;
 		calcData.addedTimePassed += oneFightData.timePassed;
-		if(i10 == 0 && stopEarlyBelowPercent != undefined){
-			updateTilesetData(calcData);
+		if(i10 >= startIndexOfStopEarly && stopEarlyBelowPercent != undefined){
+			updateTotalTilesetPercent(calcData);
 			if(calcData.tilesetData.totalTilesetPercent < stopEarlyBelowPercent){
 				return false; // Stop with calculations when tileset group is too weak.
 			}
@@ -748,17 +768,11 @@ function doAllCalculations(tilesets, repeatFightCount, stopEarlyBelowPercent){
 function populateDpsGraphs(graphSpecificData, calcData){
 	let minGraphSpecificData = JSON.parse(JSON.stringify(graphSpecificData));
 	let maxGraphSpecificData = JSON.parse(JSON.stringify(graphSpecificData));
-	minCalcData = JSON.parse(JSON.stringify(calcData));
-	maxCalcData = JSON.parse(JSON.stringify(calcData));
 
 	// Make all draw points of the graph showing the dps over time. (the whole reason for all the above code xD)
 	fillDpsGraphData(graphSpecificData, totalDamageDataPoints, REPEAT_FIGHT_COUNT);
 	fillDpsGraphData(minGraphSpecificData, minMaxData.lowestRunDataPoints, 1);
 	fillDpsGraphData(maxGraphSpecificData, minMaxData.highestRunDataPoints, 1);
-	minCalcData.addedTotalDamage = minMaxData.lowestTotal;
-	maxCalcData.addedTotalDamage = minMaxData.highestTotal;
-	minCalcData.tilesetData.addedDmgTilesets = minMaxData.lowestRunAddedTilesetDmg;
-	maxCalcData.tilesetData.addedDmgTilesets = minMaxData.highestRunAddedTilesetDmg;
 	minDpsChart.data.datasets[0] = minGraphSpecificData;
 	maxDpsChart.data.datasets[0] = maxGraphSpecificData;
 }
@@ -896,13 +910,17 @@ function findAndRankAllTilesetGroups(allPossibleTilesetGroups){
 	for(let i=0;i<allPossibleTilesetGroups.length;i++){
 		let tilesets = allPossibleTilesetGroups[i];
 		
-		calcData = doAllCalculations(tilesets, REPEAT_FIGHT_TILESETS_COUNT, FILTER_TILESETS_BELOW_PERCENT);
+		calcData = doAllCalculations(tilesets, REPEAT_FIGHT_TILESETS_COUNT, FILTER_TILESETS_BELOW_PERCENT, FILTER_START_IDX_TILESETS_BELOW_PERCENT);
 		if(calcData !== false){
-			results.push({dps:calcData.dps, tilesets:tilesets, averageBoost: calcData.tilesetData.totalTilesetPercent});
+			results.push({
+				dps:calcData.dps, 
+				tilesets:tilesets, 
+				averageBoost: calcData.tilesetData.totalTilesetPercent.toFixed(2),
+				minBoost: calcData.tilesetData.minTotalTilesetPercent.toFixed(2),
+				maxBoost: calcData.tilesetData.maxTotalTilesetPercent.toFixed(2)
+			});
 		}
 	}
-
-	console.log("Calculation time:"+millisecondsToTimeRemaining(Date.now()-startTime));
 
 	let preSortedTilesetsByDps = prepareTilesetResults(results);
 
@@ -912,56 +930,76 @@ function findAndRankAllTilesetGroups(allPossibleTilesetGroups){
 
 		renderjson.set_icons('+', '-');
 		renderjson.set_show_to_level(1);
-		document.getElementById('resultTilesetsJson').innerHTML = ""; // Clear previous data.
-		document.getElementById('resultTilesetsJson').appendChild(renderjson(sortedTilesetsByDps));
+		document.getElementById('bestResultTilesetsJson').innerHTML = "";
+		document.getElementById('worseResultTilesetsJson').innerHTML = "";
+
+		let best10 = sortedTilesetsByDps.slice(0, 10);
+		let worse10 = sortedTilesetsByDps.slice(Math.max(10, sortedTilesetsByDps.length-10), sortedTilesetsByDps.length);
+
+		document.getElementById('bestResultTilesetsJson').appendChild(renderjson(best10));
+		document.getElementById('worseResultTilesetsJson').appendChild(renderjson(worse10));
 	}
 	else{
-		document.getElementById('resultTilesetsJson').innerHTML = "<span style='color:#F00'>No tilesets met your criteria... Not keeping the current tilesets...</span>";
+		document.getElementById('worseResultTilesetsJson').innerHTML = "<span style='color:#F00'>No tilesets met your criteria... Not keeping the current tilesets...</span>";
 		return false;
 	}
+	statusMsgTilesets.innerHTML = "<b>Calculation took:"+millisecondsToTimeRemaining(Date.now()-startTime) + ". Found "+sortedTilesetsByDps.length + " tilesets.</b>";
 	return true;
 }
 
 function prepareFindingBestTilesets(possibleTiles){
-	let startTime = Date.now();
+	const TARGET_MAX_CALC_TIME = 1500;
+	const BASE_CALC_COUNT = 100;
+
 	let timePassed=0;
 	let calculations = 0;
-	while(timePassed < 500){
-		let maxRepeatFight = REPEAT_FIGHT_TILESETS_COUNT > 1000 ? 1000 : REPEAT_FIGHT_TILESETS_COUNT;
-		doAllCalculations(possibleTiles[0], maxRepeatFight);
+	let maxRepeatFight = REPEAT_FIGHT_TILESETS_COUNT;
+	
+	let startTime = Date.now();
+	doAllCalculations(possibleTiles[0], BASE_CALC_COUNT);
+	let initialTimePassed = (Date.now()-startTime) * maxRepeatFight / BASE_CALC_COUNT;
+
+	const steps = Math.max(1, Math.min(possibleTiles.length/5, TARGET_MAX_CALC_TIME/initialTimePassed));
+	const indexShiftEachStep = Math.max(1, parseInt(possibleTiles.length/steps));
+
+	startTime = Date.now();
+	for(let i=0;i<possibleTiles.length;i+=indexShiftEachStep){
+		const result = doAllCalculations(possibleTiles[i], maxRepeatFight, FILTER_TILESETS_BELOW_PERCENT, FILTER_START_IDX_TILESETS_BELOW_PERCENT);
 		calculations+=maxRepeatFight;
 		timePassed = Date.now()-startTime;
 	}
 	
 	let maxCalculations = possibleTiles.length*REPEAT_FIGHT_TILESETS_COUNT;
-	let timeItWillTakeToCalculateFight = maxCalculations/calculations * timePassed;
+	let localTimeItWillTakeToCalculateTilesets = maxCalculations/calculations * timePassed;
 
-	timeItWillTakeToCalculateFight
-	let statusMsg = document.getElementById("tilesetsStatusMsg");
-	statusMsg.innerHTML = "There are <b>"+possibleTiles.length+"</b> inique combinations and it will take approximately <b>"+millisecondsToTimeRemaining(timeItWillTakeToCalculateFight)+"</b>. Are you sure?";
+	timeItWillTakeToCalculateTilesets = millisecondsToTimeRemaining(localTimeItWillTakeToCalculateTilesets);
+	statusMsgTilesets.innerHTML = "There are <b>"+possibleTiles.length+"</b> inique combinations and it will take approximately <b>"+timeItWillTakeToCalculateTilesets+"</b>. Are you sure?";
 }
 
 function setTilesetPromptState(newState){
 	if(newState == 0){
+		document.getElementById("possibleTiles").removeAttribute("readonly");
 		document.getElementById("tilesetsStatusMsg").innerHTML = "";
 		document.getElementById("redoTilesetCalculationContainer").style.display = "none";
 		document.getElementById("resetTilesetsButton").classList.remove("active-button");
 		document.getElementById("startFindingTheBestTilesetCombinations").classList.remove("active-button");
 	} 
 	else if(newState == 1){
+		document.getElementById("possibleTiles").removeAttribute("readonly");
 		document.getElementById("tilesetsStatusMsg").style.display = "block";
 		document.getElementById("redoTilesetCalculationContainer").style.display = "none";
-		document.getElementById("resetTilesetsButton").classList.add("active-button");
+		document.getElementById("resetTilesetsButton").classList.remove("active-button");
 		document.getElementById("startFindingTheBestTilesetCombinations").classList.add("active-button");
 		document.getElementById("startFindingTheBestTilesetCombinations").innerHTML = "Yes (Start calculation)";
 	}
 	else if(newState == 2){
-		document.getElementById("tilesetsStatusMsg").innerHTML = "";
+		document.getElementById("possibleTiles").setAttribute("readonly", true);
 		document.getElementById("redoTilesetCalculationContainer").style.display = "inline-block";
 		document.getElementById("resetTilesetsButton").classList.add("active-button");
 		document.getElementById("startFindingTheBestTilesetCombinations").classList.remove("active-button");
 	}
 	else if(newState == 3){
+		document.getElementById("possibleTiles").setAttribute("readonly", true);
 		document.getElementById("tilesetsStatusMsg").style.display = "block";
 		document.getElementById("redoTilesetCalculationContainer").style.display = "inline-block";
 		document.getElementById("resetTilesetsButton").classList.add("active-button");
@@ -987,15 +1025,27 @@ document.getElementById("closeFindTilesetButton").addEventListener("click", func
 	document.getElementById("myForm").style.display = "none";
 });
 
+function rertrieveInterfaceDataTilesets(){
+	REPEAT_FIGHT_TILESETS_COUNT = parseInt($("#repeatFightCount").val());
+	if(REPEAT_FIGHT_TILESETS_COUNT < 1){REPEAT_FIGHT_TILESETS_COUNT = 1;}
+	FILTER_TILESETS_BELOW_PERCENT = parseFloat($("#filterBelowTilesetPercent").val());
+	FILTER_START_IDX_TILESETS_BELOW_PERCENT = parseInt($("#filterStartIdxBelowTilesetPercent").val()) - 1;
+	if(FILTER_START_IDX_TILESETS_BELOW_PERCENT < 0) {FILTER_START_IDX_TILESETS_BELOW_PERCENT = 0;}
+}
+
 let finetunedTilesetGroups;
 document.getElementById("checkTilesetsButton").addEventListener("click", function(){
 	if(tilesetState == 0 || tilesetState == 1){
 		let possibleTiles = document.getElementById("possibleTiles").value.replaceAll(" ", "").split("");
-		REPEAT_FIGHT_TILESETS_COUNT = parseInt($("#repeatFightCount").val());
-		FILTER_TILESETS_BELOW_PERCENT = parseFloat($("#filterBelowTilesetPercent").val());
-		allPossibleTilesetGroupsGlobal = obtainAllPossibleTilesetCombinations(possibleTiles);
-		prepareFindingBestTilesets(allPossibleTilesetGroupsGlobal);
-		setTilesetPromptState(1);
+		const MAX_POSSIBLE_TILES = 4;
+		if(possibleTiles.length > MAX_POSSIBLE_TILES){
+			statusMsgTilesets.innerHTML = "<span style='color:#F00'>Sorry. The max allowed of tiles are "+MAX_POSSIBLE_TILES+". Or the program will just crash for having to many options xD</span>";
+		} else{
+			rertrieveInterfaceDataTilesets();
+			allPossibleTilesetGroupsGlobal = obtainAllPossibleTilesetCombinations(possibleTiles);
+			prepareFindingBestTilesets(allPossibleTilesetGroupsGlobal);
+			setTilesetPromptState(1);
+		}
 	}
 	else if(tilesetState == 2 || tilesetState == 3){
 		finetunedTilesetGroups = [];
@@ -1004,33 +1054,36 @@ document.getElementById("checkTilesetsButton").addEventListener("click", functio
 			finetunedTilesetGroups.push(sortedTilesetsByDps[i].tilesets);
 		}
 
-		REPEAT_FIGHT_TILESETS_COUNT = parseInt($("#re-repeatFightCount").val());
-		FILTER_TILESETS_BELOW_PERCENT = parseFloat($("#filterBelowTilesetPercent").val());
+		rertrieveInterfaceDataTilesets();
 
 		if(finetunedTilesetGroups.length > 0){
 			prepareFindingBestTilesets(finetunedTilesetGroups);
 			setTilesetPromptState(3);
 		}
 		else{
-			let statusMsg = document.getElementById("tilesetsStatusMsg");
-			statusMsg.innerHTML = "<span style='color:#F00'>There are no tiles left to use. Reset calculation...</span>";
+			statusMsgTilesets.innerHTML = "<span style='color:#F00'>There are no tiles left to use. Reset calculation...</span>";
 		}
 	}
 });
 
 document.getElementById("startFindingTheBestTilesetCombinations").addEventListener("click", function(){
-	if(tilesetState == 1){
-		if(findAndRankAllTilesetGroups(allPossibleTilesetGroupsGlobal)){
-			setTilesetPromptState(2);
+	// const date = new Date();
+	// const hour = date.getHours();
+	// const minutes = date.getMinutes();
+	// statusMsgTilesets.innerHTML = "<b>Started calculation at "+hour+":"+minutes+". Will take around "+timeItWillTakeToCalculateTilesets+"</b>";
+	// setTimeout(function(){
+		if(tilesetState == 1){
+			if(findAndRankAllTilesetGroups(allPossibleTilesetGroupsGlobal)){
+				setTilesetPromptState(2);
+			}
+		} else if(tilesetState == 3){
+			if(findAndRankAllTilesetGroups(finetunedTilesetGroups)){
+				setTilesetPromptState(2);
+			}
+		} else{
+			statusMsgTilesets.innerHTML = "Press the check button first before continuing...";
 		}
-	} else if(tilesetState == 3){
-		if(findAndRankAllTilesetGroups(finetunedTilesetGroups)){
-			setTilesetPromptState(2);
-		}
-	} else{
-		let statusMsg = document.getElementById("tilesetsStatusMsg");
-		statusMsg.innerHTML = "Press the check button first before continuing...";
-	}
+	// },500);
 });
 
 function openForm() {
