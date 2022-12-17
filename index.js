@@ -872,7 +872,7 @@ function preStartCalculation(){
 
 function obtainAllPossibleTilesetCombinations(possibleTiles){
 	let allPossibleTilesets = createAllPossibleVariations(possibleTiles, 3);
-	allPossibleTilesets = allPossibleTilesets.concat(createAllPossibleVariations(possibleTiles, 4));
+	// allPossibleTilesets = allPossibleTilesets.concat(createAllPossibleVariations(possibleTiles, 4));
 	for(let i=0;i<allPossibleTilesets.length;i++){
 		allPossibleTilesets[i] = allPossibleTilesets[i].join("");
 	}
@@ -938,6 +938,8 @@ function findAndRankAllTilesetGroups(allPossibleTilesetGroups){
 
 		document.getElementById('bestResultTilesetsJson').appendChild(renderjson(best10));
 		document.getElementById('worseResultTilesetsJson').appendChild(renderjson(worse10));
+
+		console.log(sortedTilesetsByDps);
 	}
 	else{
 		document.getElementById('worseResultTilesetsJson').innerHTML = "<span style='color:#F00'>No tilesets met your criteria... Not keeping the current tilesets...</span>";
@@ -1037,7 +1039,7 @@ let finetunedTilesetGroups;
 document.getElementById("checkTilesetsButton").addEventListener("click", function(){
 	if(tilesetState == 0 || tilesetState == 1){
 		let possibleTiles = document.getElementById("possibleTiles").value.replaceAll(" ", "").split("");
-		const MAX_POSSIBLE_TILES = 4;
+		const MAX_POSSIBLE_TILES = 5;
 		if(possibleTiles.length > MAX_POSSIBLE_TILES){
 			statusMsgTilesets.innerHTML = "<span style='color:#F00'>Sorry. The max allowed of tiles are "+MAX_POSSIBLE_TILES+". Or the program will just crash for having to many options xD</span>";
 		} else{

@@ -246,6 +246,71 @@ if (needsDefaultValues || debug) {
 			savedAttacks: "X f BBBB(CCB CBB CB)*15 SssSsC BBBB(CCB CBB CB)*15 \nD*150",
 			// savedTilesets: ['A26', '26F', '2F6', 'F62', 'F6A2'],
 			savedTilesets: ['A26', '26F', '2F6', 'F62', 'F26'],
+		// 	-{
+		   //      "dps": 119251.98143975553,
+		   //      "tilesets": -[
+		   //          "A26",
+		   //          "F62",
+		   //          "F26",
+		   //          "26F",
+		   //          "2F6"
+		   //      ],
+		   //      "averageBoost": "16.14",
+		   //      "minBoost": "13.82",
+		   //      "maxBoost": "17.89"
+		   //  },
+		   // -{
+		   //      "dps": 119033.77926132923,
+		   //      "tilesets": -[
+		   //          "A62",
+		   //          "A26",
+		   //          "F62",
+		   //          "26F",
+		   //          "2F6"
+		   //      ],
+		   //      "averageBoost": "15.89",
+		   //      "minBoost": "14.72",
+		   //      "maxBoost": "18.23"
+		   //  },
+		   // -{
+		   //      "dps": 118898.54910036399,
+		   //      "tilesets": -[
+		   //          "A26",
+		   //          "F62",
+		   //          "26F",
+		   //          "2F6",
+		   //          "362"
+		   //      ],
+		   //      "averageBoost": "15.80",
+		   //      "minBoost": "14.93",
+		   //      "maxBoost": "17.71"
+		   //  },
+		   // -{
+		   //      "dps": 118772.66670079654,
+		   //      "tilesets": -[
+		   //          "A26",
+		   //          "F62",
+		   //          "F26",
+		   //          "26F",
+		   //          "362"
+		   //      ],
+		   //      "averageBoost": "15.65",
+		   //      "minBoost": "13.25",
+		   //      "maxBoost": "17.51"
+		   //  },
+		   // -{
+		   //      "dps": 118700.99278957413,
+		   //      "tilesets": -[
+		   //          "A26",
+		   //          "F62",
+		   //          "F26",
+		   //          "2F6",
+		   //          "362"
+		   //      ],
+		   //      "averageBoost": "15.60",
+		   //      "minBoost": "13.81",
+		   //      "maxBoost": "17.14"
+		   //  },
 			usingPotsFlag: true,
 			usingTilesetsFlag: true,
 			averagingCrits: true,
@@ -381,6 +446,43 @@ if (needsDefaultValues || debug) {
 			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
 			calcCount:100,
 			borderColor : "#9e954d",
+		},
+		'4 bullet': {
+			savedAttacks: "X F BBBB(RBB)*62 ZssZsR BBBB(RBB)*62 \nD*150",
+			savedTilesets: ['A37', '273', '2F7', '37F', '3F7'],
+			usingPotsFlag: true,
+			usingTilesetsFlag: true,
+			averagingCrits: true,
+			weaponAffixes: [{"lvl":30},{"plusLvl":7},{"strength":168},{"intellect":168},{"ICEHEART":{}},{"BLEED":{}}],
+			armourAffixes: {critChance:2*RING_CRIT_CHANCE,critDamage:0.08+RING_EMPOWERED,projectileDamage:0.04},
+			calcCount:100,
+			borderColor : "#9e954d",
+		// 	-{
+		   //      "dps": 123123.98036086607,
+		   //      "tilesets": -[
+		   //          "A37",
+		   //          "273",
+		   //          "2F7",
+		   //          "37F",
+		   //          "3F7"
+		   //      ],
+		   //      "averageBoost": "14.60",
+		   //      "minBoost": "13.86",
+		   //      "maxBoost": "16.01"
+		   //  },
+		   // -{
+		   //      "dps": 122942.34387197629,
+		   //      "tilesets": -[
+		   //          "A37",
+		   //          "F37",
+		   //          "273",
+		   //          "2F7",
+		   //          "3F7"
+		   //      ],
+		   //      "averageBoost": "14.42",
+		   //      "minBoost": "13.45",
+		   //      "maxBoost": "15.81"
+		   //  },
 		}
 	};
 	res[RANGER_VALUE] = {
