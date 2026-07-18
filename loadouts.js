@@ -51,7 +51,7 @@ if (needsDefaultValues || debug) {
 			averagingCrits: true,
 			weaponAffixes: MAGE_WEAPON_STATS,
 			armourAffixes: MAGE_ARMOUR_STATS,
-			calcCount:300,
+			calcCount:1,
 			FIRE_HITS_PER_SECOND: 0.8,
 			FROST_HITS_PER_SECOND: 0.8,
 			AFFLICTION_HITS_PER_SECOND: 0.00,

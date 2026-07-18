@@ -108,7 +108,7 @@ define(["./Attack"], function (Attack) {
 					hitCount++;
 					dotDamage = 0.96714910*(1+GLOBE_BOOST)*intBoost*(1+dotIncrease);
 					dotTimes = 8 + (arrow.charge == "Yes" ? 4 : 0);
-					dotMaxActive = 10;
+					dotMaxActive = 5;
 					attackID = 1;
 					tiles = Data.TILES.POISON_ARROW;
 				}
@@ -130,7 +130,7 @@ define(["./Attack"], function (Attack) {
 						dotDamage*=1.85;
 					}
 					dotTimes = 6; 
-					dotMaxActive = 10;
+					dotMaxActive = 5;
 					tiles = Data.TILES.FIRE_RAIN_ARROW;
 					dotTiles = Data.TILES.FIRE_RAIN_TICK;
 					spawnsNormalAttack = true;

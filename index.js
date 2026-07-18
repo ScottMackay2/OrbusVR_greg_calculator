@@ -306,6 +306,7 @@ function calculateOneFight(calcData, i10){
 				}
 			}
 		}
+		
 		// When last attack found of all attack patterns, exit loop.
 		if(targetPatternData == null || closestTimePassed > MAX_TIME_SECONDS){
 			break;
